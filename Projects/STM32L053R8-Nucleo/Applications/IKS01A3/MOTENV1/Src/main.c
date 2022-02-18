@@ -163,6 +163,12 @@ int main(void)
   MOTENV1_PRINTF("Debug Notify Trasmission Enabled\r\n\n");
 #endif /* MOTENV1_DEBUG_NOTIFY_TRAMISSION */
 
+  //Set the BLE Board Name 
+  sprintf(BlueNRG_StackValue.BoardName,"%s%c%c%c","ME1V",
+          MOTENV1_VERSION_MAJOR,
+          MOTENV1_VERSION_MINOR,
+          MOTENV1_VERSION_PATCH);
+  
   /* Initialize the BlueNRG stack and services */
   BluetoothInit();
 
