@@ -1,8 +1,8 @@
 | Component                                | Copyright            | License   |
 |:---------                                |:-------              |:----------|
 | Core CMSIS                               | ARM Limited          | Apache 2.0 |
-| CMSIS                                    | ARM Limited          | Apache License 2.0 |
-| CMSIS Device                             | ARM Limited - STMicroelectronics   | Apache License 2.0 |
+| CMSIS                                    | ARM Limited          | Apache-2.0 |
+| CMSIS Device                             | ARM Limited - STMicroelectronics   | Apache-2.0 |
 | STM32F4 HAL                              | STMicroelectronics   | BSD-3-Clause |
 | STM32L4 HAL                              | STMicroelectronics   | BSD-3-Clause |
 | STM32L0 HAL                              | STMicroelectronics   | BSD-3-Clause |
@@ -21,7 +21,7 @@
 | STM32_MotionGR_Library Middleware        | STMicroelectronics   | SLA0077 |
 | STM32_MotionID_Library Middleware        | STMicroelectronics   | SLA0077 |
 | STM32_MotionPM_Library Middleware        | STMicroelectronics   | SLA0077 |
-| Parson Middleware                        | Third_Party          | MIT License |
+| Parson Middleware                        | Third_Party          | MIT     |
 | STM32F401RE-Nucleo Application Projects  | STMicroelectronics   | SLA0055 |
 | STM32L053R8-Nucleo Application Projects  | STMicroelectronics   | SLA0055 |
 | STM32L476RG-Nucleo Application Projects  | STMicroelectronics   | SLA0055 |
