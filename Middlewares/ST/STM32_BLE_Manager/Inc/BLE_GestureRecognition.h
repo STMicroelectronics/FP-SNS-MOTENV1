@@ -2,13 +2,13 @@
   ******************************************************************************
   * @file    BLE_GestureRecognition.h
   * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version 1.0.0
-  * @date    18-Nov-2021
+  * @version 1.6.0
+  * @date    15-September-2022
   * @brief   Gesture Recognition info service APIs.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -29,8 +29,6 @@
 /* Exported defines ---------------------------------------------------------*/
 
 /* Exported typedef --------------------------------------------------------- */
-typedef void (*CustomReadRequestGestureRecognition_t)(void);
-
 typedef enum
 {
   BLE_GR_NOGESTURE       = 0x00,
@@ -39,9 +37,12 @@ typedef enum
   BLE_GR_WAKEUP          = 0x03
 } BLE_GR_output_t;
 
+typedef void (*CustomReadRequestGestureRecognition_t)(BLE_GR_output_t *GestureRecognitionCode);
+typedef void (*CustomNotifyEventGestureRecognition_t)(BLE_NotifyEvent_t Event);
+
 /* Exported Variables ------------------------------------------------------- */
-extern BLE_NotifyEnv_t BLE_GestureRecognition_NotifyEvent;
 extern CustomReadRequestGestureRecognition_t CustomReadRequestGestureRecognition;
+extern CustomNotifyEventGestureRecognition_t CustomNotifyEventGestureRecognition;
 
 /* Exported functions ------------------------------------------------------- */
 
@@ -58,7 +59,7 @@ extern BleCharTypeDef* BLE_InitGestureRecognitionService(void);
  * @param  uint8_t *manuf_data: Advertise Data
  * @retval None
  */
-extern void BLE_SetGestureRecognitionAdvertizeData(uint8_t *manuf_data);
+extern void BLE_SetGestureRecognitionAdvertiseData(uint8_t *manuf_data);
 #endif /* BLE_MANAGER_SDKV2 */
 
 /**

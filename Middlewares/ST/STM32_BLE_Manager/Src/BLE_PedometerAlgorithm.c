@@ -2,13 +2,13 @@
   ******************************************************************************
   * @file    BLE_PedometerAlgorithm.c
   * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version 1.0.0
-  * @date    18-Nov-2021
+  * @version 1.6.0
+  * @date    15-September-2022
   * @brief   Add Pedometer Algorithm service using vendor specific profiles.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -26,11 +26,11 @@
 /* Private define ------------------------------------------------------------*/
 #define COPY_PEDOMETER_ALGORITHM_CHAR_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0x00,0x00,0x00,0x01,0x00,0x01,0x11,0xe1,0xac,0x36,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
-#define PEDOMETER_ALGORITHM_ADVERTIZE_DATA_POSITION  18
+#define PEDOMETER_ALGORITHM_ADVERTISE_DATA_POSITION  18
 
 /* Exported variables --------------------------------------------------------*/
-BLE_NotifyEnv_t BLE_PedometerAlgorithm_NotifyEvent = BLE_NOTIFY_NOTHING;
 CustomReadRequestPedometerAlgorithm_t CustomReadRequestPedometerAlgorithm=NULL;
+CustomNotifyEventPedometerAlgorithm_t CustomNotifyEventPedometerAlgorithm=NULL;
 
 /* Private variables ---------------------------------------------------------*/
 /* Data structure pointer for Pedometer Algorithm service */
@@ -38,7 +38,17 @@ static BleCharTypeDef BlePedometerAlgorithm;
 
 /* Private functions ---------------------------------------------------------*/
 static void AttrMod_Request_PedometerAlgorithm(void *BleCharPointer,uint16_t attr_handle, uint16_t Offset, uint8_t data_length, uint8_t *att_data);
+#if (BLUE_CORE != BLUENRG_LP)
 static void Read_Request_PedometerAlgorithm(void *BleCharPointer,uint16_t handle);
+#else /* (BLUE_CORE != BLUENRG_LP) */
+static void Read_Request_PedometerAlgorithm(void *BleCharPointer,
+                             uint16_t handle,
+                             uint16_t Connection_Handle,
+                             uint8_t Operation_Type,
+                             uint16_t Attr_Val_Offset,
+                             uint8_t Data_Length,
+                             uint8_t Data[]);
+#endif /* (BLUE_CORE != BLUENRG_LP) */
 
 /**
  * @brief  Init Pedometer Algorithm service
@@ -79,9 +89,9 @@ BleCharTypeDef* BLE_InitPedometerAlgorithmService(void)
  * @param  uint8_t *manuf_data: Advertise Data
  * @retval None
  */
-void BLE_SetPedometerAlgorithmAdvertizeData(uint8_t *manuf_data)
+void BLE_SetPedometerAlgorithmAdvertiseData(uint8_t *manuf_data)
 {
-  manuf_data[PEDOMETER_ALGORITHM_ADVERTIZE_DATA_POSITION] |= 0x01U;
+  manuf_data[PEDOMETER_ALGORITHM_ADVERTISE_DATA_POSITION] |= 0x01U;
 }
 #endif /* BLE_MANAGER_SDKV2 */
 
@@ -128,19 +138,24 @@ tBleStatus BLE_PedometerAlgorithmUpdate(BLE_PM_output_t *PedometerAlgorithmData)
  */
 static void AttrMod_Request_PedometerAlgorithm(void *VoidCharPointer, uint16_t attr_handle, uint16_t Offset, uint8_t data_length, uint8_t *att_data)
 {
-  if (att_data[0] == 01U) {
-    BLE_PedometerAlgorithm_NotifyEvent= BLE_NOTIFY_SUB;
-  } else if (att_data[0] == 0U){
-    BLE_PedometerAlgorithm_NotifyEvent= BLE_NOTIFY_UNSUB;
+  if(CustomNotifyEventPedometerAlgorithm!=NULL) {
+    if (att_data[0] == 01U) {
+      CustomNotifyEventPedometerAlgorithm(BLE_NOTIFY_SUB);
+    } else if (att_data[0] == 0U){
+      CustomNotifyEventPedometerAlgorithm(BLE_NOTIFY_UNSUB);
+    }
   }
- 
 #if (BLE_DEBUG_LEVEL>1)
- if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
-   BytesToWrite =(uint8_t)sprintf((char *)BufferToWrite,"--->Pedometer Algorithm=%s\n", (BLE_PedometerAlgorithm_NotifyEvent == BLE_NOTIFY_SUB) ? " ON" : " OFF");
-   Term_Update(BufferToWrite,BytesToWrite);
- } else {
-   BLE_MANAGER_PRINTF("--->Pedometer Algorithm=%s", (BLE_PedometerAlgorithm_NotifyEvent == BLE_NOTIFY_SUB) ? " ON\r\n" : " OFF\r\n");
- }
+  else {
+    BLE_MANAGER_PRINTF("CustomNotifyEventPedometerAlgorithm function Not Defined\r\n");
+  }
+
+  if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
+    BytesToWrite = (uint8_t)sprintf((char *)BufferToWrite,"--->PedometerAlg=%s\n", (att_data[0] == 01U) ? " ON" : " OFF");
+    Term_Update(BufferToWrite,BytesToWrite);
+  } else {
+    BLE_MANAGER_PRINTF("--->PedometerAlg=%s", (att_data[0] == 01U) ? " ON\r\n" : " OFF\r\n");
+  }
 #endif
 }
 
@@ -150,10 +165,57 @@ static void AttrMod_Request_PedometerAlgorithm(void *VoidCharPointer, uint16_t a
  * @param  uint16_t handle Handle of the attribute
  * @retval None
  */
+#if (BLUE_CORE != BLUENRG_LP)
 static void Read_Request_PedometerAlgorithm(void *VoidCharPointer,uint16_t handle)
 {
   if(CustomReadRequestPedometerAlgorithm != NULL) {
-    CustomReadRequestPedometerAlgorithm();
+    BLE_PM_output_t PedometerAlgorithmData;
+    CustomReadRequestPedometerAlgorithm(&PedometerAlgorithmData);
+    BLE_PedometerAlgorithmUpdate(&PedometerAlgorithmData);
+  } else {
+    BLE_MANAGER_PRINTF("\r\n\nRead request >Pedometer Algorithm function not defined\r\n\n");
   }
 }
+#else /* (BLUE_CORE != BLUENRG_LP) */
+static void Read_Request_PedometerAlgorithm(void *BleCharPointer,
+                                             uint16_t handle,
+                                             uint16_t Connection_Handle,
+                                             uint8_t Operation_Type,
+                                             uint16_t Attr_Val_Offset,
+                                             uint8_t Data_Length,
+                                             uint8_t Data[])
+{
+  tBleStatus ret;
+  if(CustomReadRequestPedometerAlgorithm != NULL) {
+    BLE_PM_output_t PedometerAlgorithmData;
+    uint8_t buff[2+4+2];
+    uint16_t Cadence;
 
+    CustomReadRequestPedometerAlgorithm(&PedometerAlgorithmData);
+    
+    Cadence = (uint16_t) PedometerAlgorithmData.Cadence;
+    STORE_LE_16(buff  ,(HAL_GetTick()>>3));
+    STORE_LE_32(buff+2,PedometerAlgorithmData.Nsteps);
+    STORE_LE_16(buff+6,Cadence);
+    
+    ret = aci_gatt_srv_write_handle_value_nwk(handle, 0, 2+4+2,buff);
+    if (ret != (tBleStatus)BLE_STATUS_SUCCESS){
+      if(BLE_StdErr_Service==BLE_SERV_ENABLE){
+        BytesToWrite = (uint8_t)sprintf((char *)BufferToWrite, "Error Updating Pedometer Algorithm Char\n");
+        Stderr_Update(BufferToWrite,BytesToWrite);
+      } else {
+        BLE_MANAGER_PRINTF("Error: Updating Pedometer Algorithm Char\r\n");
+      }
+    }
+  } else {
+    BLE_MANAGER_PRINTF("\r\n\nRead request Pedometer Algorithm function not defined\r\n\n");
+  }
+  
+  ret = aci_gatt_srv_authorize_resp_nwk(Connection_Handle, handle,
+                                      Operation_Type, 0, Attr_Val_Offset,
+                                      Data_Length, Data);
+  if( ret != BLE_STATUS_SUCCESS) {
+    BLE_MANAGER_PRINTF("aci_gatt_srv_authorize_resp_nwk() failed: 0x%02x\r\n", ret);
+  }
+}
+#endif /* (BLUE_CORE != BLUENRG_LP) */

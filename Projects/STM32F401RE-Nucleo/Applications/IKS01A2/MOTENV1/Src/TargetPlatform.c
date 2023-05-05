@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    TargetPlatform.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Initialization of the Target Platform
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,18 +18,197 @@
   *
   ******************************************************************************
   */
+
+/* USER CODE END Header */
+#include <stdio.h>
+
 #include "TargetFeatures.h"
+#include "BLE_Function.h"
 #include "main.h"
 
 /* Imported variables ---------------------------------------------------------*/
 
 /* Exported variables ---------------------------------------------------------*/
+
+TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim4;
+TIM_HandleTypeDef htim1;
+
 TargetFeatures_t TargetBoardFeatures;
 
 /* Local defines -------------------------------------------------------------*/
 
 /* Local function prototypes --------------------------------------------------*/
 static void Init_MEM1_Sensors(void);
+
+/**
+  * @brief Led_TIM_INSTANCE Initialization Function
+  * @param None
+  * @retval None
+  */
+void Led_TIM_Init(void)
+{
+
+  /* USER CODE BEGIN Led_TIM_INSTANCE_Init 0 */
+
+  /* USER CODE END Led_TIM_INSTANCE_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  TimLedHandle.Instance = Led_TIM_INSTANCE;
+  TimLedHandle.Init.Prescaler = ((SystemCoreClock / 10000) - 1);
+  TimLedHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
+  TimLedHandle.Init.Period = ((((SystemCoreClock / 10000) * ALGO_PERIOD_LED) / 1000)- 1);
+  TimLedHandle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  TimLedHandle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&TimLedHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&TimLedHandle, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&TimLedHandle, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN Led_TIM_INSTANCE_Init 2 */
+
+  /* USER CODE END Led_TIM_INSTANCE_Init 2 */
+
+}
+
+/**
+  * @brief TimDistanceHandle Initialization Function
+  * @param None
+  * @retval None
+  */
+void Env_TIM_Init(void)
+{
+
+  /* USER CODE BEGIN Env_TIM_Init 0 */
+
+  /* USER CODE END Env_TIM_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN Env_TIM_Init 1 */
+
+  /* USER CODE END Env_TIM_Init 1 */
+  TimEnvHandle.Instance = ENV_TIM_INSTANCE;
+  TimEnvHandle.Init.Prescaler = ((SystemCoreClock / 10000) - 1);
+  TimEnvHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
+  TimEnvHandle.Init.Period = ((((SystemCoreClock / 10000) * ALGO_PERIOD_ENV) / 1000)- 1);
+  TimEnvHandle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  TimEnvHandle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&TimEnvHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&TimEnvHandle, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&TimEnvHandle, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN Env_TIM_Init 2 */
+
+  /* USER CODE END Env_TIM_Init 2 */
+
+}
+
+/**
+  * @brief TIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+void MotionAlgo_TIM_Init(void)
+{
+
+  /* USER CODE BEGIN MotionAlgo_TIM_Init 0 */
+
+  /* USER CODE END MotionAlgo_TIM_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
+
+  /* USER CODE BEGIN MotionAlgo_TIM_Init 1 */
+
+  /* USER CODE END MotionAlgo_TIM_Init 1 */
+  TimCCHandle.Instance = MOTION_ALGO_TIM_INSTANCE;
+  TimCCHandle.Init.Prescaler = ((SystemCoreClock / 10000) - 1);
+  TimCCHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
+  TimCCHandle.Init.Period = 65535;
+  TimCCHandle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  TimCCHandle.Init.RepetitionCounter = 0;
+  TimCCHandle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_OC_Init(&TimCCHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&TimCCHandle, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_TOGGLE;
+  sConfigOC.Pulse = (10000 / ALGO_FREQ_FX);
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  if (HAL_TIM_OC_ConfigChannel(&TimCCHandle, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.Pulse = (10000 / ALGO_FREQ_CP_GR_PM);
+  if (HAL_TIM_OC_ConfigChannel(&TimCCHandle, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.Pulse = (10000 / ALGO_FREQ_AR_ID);
+  if (HAL_TIM_OC_ConfigChannel(&TimCCHandle, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.Pulse = (10000 / FREQ_ACC_GYRO_MAG);
+  if (HAL_TIM_OC_ConfigChannel(&TimCCHandle, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_LOW;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN MotionAlgo_TIM_Init 2 */
+
+  /* USER CODE END MotionAlgo_TIM_Init 2 */
+}
 
 /**
   * @brief  Initialize all the Target platform's Features
@@ -46,19 +226,20 @@ void InitTargetPlatform(void)
     MOTENV1_PRINTF("UART Initialized\r\n");
   }
 #endif /* MOTENV1_ENABLE_PRINTF */
-  
+
   /* Initialize button */
   BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI);
-  
+
   /* Initialize LED */
   BSP_LED_Init(LED2);
 
   MOTENV1_PRINTF("\r\nSTMicroelectronics %s:\r\n"
          "\tVersion %c.%c.%c\r\n"
-         "\tSTM32F401RE-Nucleo board"
+         "\t%s board"
           "\r\n",
           MOTENV1_PACKAGENAME,
-          MOTENV1_VERSION_MAJOR,MOTENV1_VERSION_MINOR,MOTENV1_VERSION_PATCH);
+          MOTENV1_VERSION_MAJOR,MOTENV1_VERSION_MINOR,MOTENV1_VERSION_PATCH,
+          BLE_STM32_BOARD);
 
   /* Reset all the Target's Features */
   memset(&TargetBoardFeatures, 0, sizeof(TargetFeatures_t));
@@ -75,7 +256,7 @@ static void Init_MEM1_Sensors(void)
 {
   MOTENV1_PRINTF("\nCode compiled for X-NUCLEO-IKS01A2 board\n\r");
   TargetBoardFeatures.mems_expansion_board= _IKS01A2;
-      
+
    /* Accelero & Gyro */
   if (MOTION_SENSOR_Init(ACCELERO_INSTANCE, MOTION_ACCELERO | MOTION_GYRO)==BSP_ERROR_NONE){
     MOTENV1_PRINTF("\tOK Accelero Sensor\n\r");
@@ -86,6 +267,7 @@ static void Init_MEM1_Sensors(void)
     MOTENV1_PRINTF("\tError Gyroscope Sensor\n\r");
 
     MOTENV1_PRINTF("\tX-NUCLEO-IKS01A2 board not present\n\r");
+
   }
 
   if(TargetBoardFeatures.IKS01Ax_support)
@@ -96,7 +278,7 @@ static void Init_MEM1_Sensors(void)
       MOTENV1_PRINTF("\tError Magneto Sensor\n\r");
     }
 
-    /* Temperarure & Humidity */  
+    /* Temperarure & Humidity */
     if(ENV_SENSOR_Init(TEMPERATURE_INSTANCE_1,ENV_TEMPERATURE| ENV_HUMIDITY)==BSP_ERROR_NONE){
       MOTENV1_PRINTF("\tOK Temperature and Humidity\t(Sensor1)\n\r");
       TargetBoardFeatures.NumTempSensors++;
@@ -104,7 +286,7 @@ static void Init_MEM1_Sensors(void)
       MOTENV1_PRINTF("\tError Temperature and Humidity\t(Sensor1)\n\r");
     }
 
-    /* Temperarure & Pressure */ 
+    /* Temperarure & Pressure */
     if(ENV_SENSOR_Init(TEMPERATURE_INSTANCE_2,ENV_TEMPERATURE| ENV_PRESSURE)==BSP_ERROR_NONE) {
       MOTENV1_PRINTF("\tOK Temperature and Pressure\t(Sensor2)\n\r");
       TargetBoardFeatures.NumTempSensors++;
@@ -120,7 +302,7 @@ static void Init_MEM1_Sensors(void)
       MOTENV1_PRINTF("\tEnabled Gyroscope Sensor\n\r");
     if(MOTION_SENSOR_Enable(MAGNETO_INSTANCE, MOTION_MAGNETO)==BSP_ERROR_NONE)
       MOTENV1_PRINTF("\tEnabled Magneto Sensor\n\r");
-       
+
     if(ENV_SENSOR_Enable(TEMPERATURE_INSTANCE_1, ENV_TEMPERATURE)==BSP_ERROR_NONE)
       MOTENV1_PRINTF("\tEnabled Temperature\t(Sensor1)\n\r");
     if(ENV_SENSOR_Enable(HUMIDITY_INSTANCE, ENV_HUMIDITY)==BSP_ERROR_NONE)
@@ -156,75 +338,3 @@ void LedOffTargetPlatform(void)
   BSP_LED_Off(LED2);
   TargetBoardFeatures.LedStatus=0;
 }
-
-/**
- * @brief User function for Erasing the Flash data for MDM
- * @param None
- * @retval uint32_t Success/NotSuccess [1/0]
- */
-uint32_t UserFunctionForErasingFlash(void) {
-  FLASH_EraseInitTypeDef EraseInitStruct;
-  uint32_t SectorError = 0;
-  uint32_t Success=1;
-
-  EraseInitStruct.TypeErase = TYPEERASE_SECTORS;
-  EraseInitStruct.VoltageRange = VOLTAGE_RANGE_3;
-  EraseInitStruct.Sector = FLASH_SECTOR_7;
-  EraseInitStruct.NbSectors = 1;
-
-  /* Unlock the Flash to enable the flash control register access *************/
-  HAL_FLASH_Unlock();
-
-  if(HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK){
-    /* Error occurred while sector erase. 
-      User can add here some code to deal with this error. 
-      SectorError will contain the faulty sector and then to know the code error on this sector,
-      user can call function 'HAL_FLASH_GetError()'
-      FLASH_ErrorTypeDef errorcode = HAL_FLASH_GetError(); */
-    Success=0;
-    Error_Handler();
-  }
-
-  /* Lock the Flash to disable the flash control register access (recommended
-  to protect the FLASH memory against possible unwanted operation) *********/
-  HAL_FLASH_Lock();
-
-  return Success;
-}
-
-/**
- * @brief User function for Saving the MDM  on the Flash
- * @param void *InitMetaDataVector Pointer to the MDM beginning
- * @param void *EndMetaDataVector Pointer to the MDM end
- * @retval uint32_t Success/NotSuccess [1/0]
- */
-uint32_t UserFunctionForSavingFlash(void *InitMetaDataVector,void *EndMetaDataVector)
-{
-  uint32_t Success=1;
-
-  /* Store in Flash Memory */
-  uint32_t Address = MDM_FLASH_ADD;
-  uint32_t *WriteIndex;
-
-  /* Unlock the Flash to enable the flash control register access *************/
-  HAL_FLASH_Unlock();
-
-  for(WriteIndex =((uint32_t *) InitMetaDataVector); WriteIndex<((uint32_t *) EndMetaDataVector); WriteIndex++) {
-    if (HAL_FLASH_Program(TYPEPROGRAM_WORD, Address,*WriteIndex) == HAL_OK){
-      Address = Address + 4;
-    } else {
-      /* Error occurred while writing data in Flash memory.
-         User can add here some code to deal with this error
-         FLASH_ErrorTypeDef errorcode = HAL_FLASH_GetError(); */
-      Error_Handler();
-      Success=0;
-    }
-  }
-
-  /* Lock the Flash to disable the flash control register access (recommended
-   to protect the FLASH memory against possible unwanted operation) *********/
-  HAL_FLASH_Lock();
- 
-  return Success;
-}
-

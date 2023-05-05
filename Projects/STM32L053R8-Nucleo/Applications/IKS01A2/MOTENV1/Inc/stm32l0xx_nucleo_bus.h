@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32l0xx_nucleo_bus.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   header file for the BSP BUS IO driver
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,7 +17,8 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */
+*/
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32L0XX_NUCLEO_BUS_H
@@ -86,7 +88,7 @@
 #ifndef BUS_I2C1_POLL_TIMEOUT
    #define BUS_I2C1_POLL_TIMEOUT                0x1000U
 #endif
-/* I2C1 Frequeny in Hz  */
+/* I2C1 Frequency in Hz  */
 #ifndef BUS_I2C1_FREQUENCY
    #define BUS_I2C1_FREQUENCY  1000000U /* Frequency of I2Cn = 100 KHz*/
 #endif
@@ -142,6 +144,7 @@ int32_t BSP_SPI1_SendRecv(uint8_t *pTxData, uint8_t *pRxData, uint16_t Length);
 int32_t BSP_SPI1_RegisterDefaultMspCallbacks (void);
 int32_t BSP_SPI1_RegisterMspCallbacks (BSP_SPI_Cb_t *Callbacks);
 #endif /* (USE_HAL_SPI_REGISTER_CALLBACKS == 1U) */
+
 /* BUS IO driver over I2C Peripheral */
 HAL_StatusTypeDef MX_I2C1_Init(I2C_HandleTypeDef* hi2c);
 int32_t BSP_I2C1_Init(void);

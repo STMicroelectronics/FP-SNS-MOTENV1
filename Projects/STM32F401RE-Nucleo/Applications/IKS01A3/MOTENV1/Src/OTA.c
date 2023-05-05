@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    OTA.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Over-the-Air Update API implementation
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,33 +18,15 @@
   *
   ******************************************************************************
   */
+
+/* USER CODE END Header */
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef USE_STM32L4XX_NUCLEO
-  #include <string.h>
-#endif /* USE_STM32L4XX_NUCLEO */
+#include <string.h>
 
-#include "MOTENV1_config.h"
-
-#ifdef USE_STM32F4XX_NUCLEO
-  #include "stm32f4xx_hal.h"
-  #ifdef STM32_NUCLEO
-    #include "stm32f4xx_nucleo.h"
-  #elif STM32_BLUECOIN
-    #include "BlueCoin.h"
-  #endif /* STM32_NUCLEO */
-#endif /* USE_STM32F4XX_NUCLEO */
-
-#ifdef USE_STM32L4XX_NUCLEO
-  #include "stm32l4xx_hal.h"
-  #ifdef STM32_NUCLEO
-    #include "stm32l4xx_nucleo.h"
-  #elif STM32_SENSORTILE
-    #include "SensorTile.h"
-  #endif /* STM32_NUCLEO */
-#endif /* USE_STM32L4XX_NUCLEO */
-
+#include "TargetFeatures.h"
 #include "OTA.h"
 
 /* Local types ---------------------------------------------------------------*/
@@ -51,39 +34,60 @@ typedef struct
 {
   uint32_t Version;
   uint32_t MagicNum;
+  uint32_t FlashDim;
   uint32_t OTAStartAdd;
+  uint32_t OTADoneAdd;
   uint32_t OTAMaxSize;
   uint32_t ProgStartAdd;
+  uint32_t IDE;
 } BootLoaderFeatures_t;
 
 /* Local defines -------------------------------------------------------------*/
+/*---------------------------------- STM32F401xE/STM32F411xE/STM32F446xx ------------------------------*/
+#if defined(STM32F401xE) || defined(STM32F411xE) || defined(STM32F446xx)
+#define FLASH_SECTOR_NUMBER FLASH_SECTOR_6
+#endif /* STM32F401xE || STM32F411xE || STM32F446xx */
+/*-----------------------------------------------------------------------------------------------------*/
+
+/*--------------------------------------- STM32F40xxx/STM32F41xxx -------------------------------------*/
+#if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F407xx) || defined(STM32F417xx) || defined(STM32F412Zx) ||\
+    defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F412Cx)
+#define FLASH_SECTOR_NUMBER FLASH_SECTOR_8
+#endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx || STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F412Cx */
+/*-----------------------------------------------------------------------------------------------------*/
+
+/*-------------------------------------- STM32F413xx/STM32F423xx --------------------------------------*/
+#if defined(STM32F413xx) || defined(STM32F423xx)
+#define FLASH_SECTOR_NUMBER FLASH_SECTOR_10
+#endif /* STM32F413xx || STM32F423xx */
+/*-----------------------------------------------------------------------------------------------------*/
+
+/*-------------------------------------- STM32F42xxx/STM32F43xxx/STM32F469xx ------------------------------------*/
+#if defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx)|| defined(STM32F439xx) ||\
+    defined(STM32F469xx) || defined(STM32F479xx)
+#define FLASH_SECTOR_NUMBER FLASH_SECTOR_12
+#endif /* STM32F427xx || STM32F437xx || STM32F429xx|| STM32F439xx || STM32F469xx || STM32F479xx */
+/*-----------------------------------------------------------------------------------------------------*/
 
 /* Compliant BootLoader version */
-#define BL_VERSION_MAJOR 1
-#define BL_VERSION_MINOR 3
+#define BL_VERSION_MAJOR 3
+#define BL_VERSION_MINOR 0
 #define BL_VERSION_PATCH 0
 
-#ifdef USE_STM32F4XX_NUCLEO
-  /* Board/BlueNRG FW OTA Position */
-  #define OTA_ADDRESS_START  0x08040008
+/* Board  FW OTA Magic Number Position */
+#define OTA_MAGIC_NUM_POS  (FLASH_BASE + FLASH_FOTA_END)
 
-  /* Board  FW OTA Magic Number Position */
-  #define OTA_MAGIC_NUM_POS  0x08040000
-#endif /* USE_STM32F4XX_NUCLEO */
+/* Board  FW OTA DONE Magic Number Position */
+#define OTA_MAGIC_DONE_NUM_POS  (OTA_MAGIC_NUM_POS + 0x8)
 
-#ifdef USE_STM32L4XX_NUCLEO
-  /* Board/BlueNRG FW OTA Position */
-  #define OTA_ADDRESS_START  0x08080008
-
-  /* Board  FW OTA Magic Number Position */
-  #define OTA_MAGIC_NUM_POS  0x08080000
-#endif /* USE_STM32L4XX_NUCLEO */
+/* Board/BlueNRG FW OTA Position */
+#define OTA_ADDRESS_START  (OTA_MAGIC_NUM_POS + 0x10)
 
 /* Board  FW OTA Magic Number */
 #define OTA_MAGIC_NUM 0xDEADBEEF
 
 /* Uncomment the following define for enabling the PRINTF capability if it's supported */
-#define OTA_ENABLE_PRINTF
+//#define OTA_ENABLE_PRINTF
 
 #ifdef OTA_ENABLE_PRINTF
   /* Each application must declare it's printf implementation if it wants to use it */
@@ -99,14 +103,9 @@ typedef struct
 /* Private variables ---------------------------------------------------------*/
 static uint32_t SizeOfUpdateBlueFW=0;
 static uint32_t AspecteduwCRCValue=0;
+static uint32_t WritingAddress = OTA_ADDRESS_START;
 
 static BootLoaderFeatures_t *BootLoaderFeatures = (BootLoaderFeatures_t *)0x08003F00;
-
-#ifdef USE_STM32L4XX_NUCLEO
-/* Local function prototypes --------------------------------------------------*/
-static uint32_t GetPage(uint32_t Address);
-static uint32_t GetBank(uint32_t Address);
-#endif /* USE_STM32L4XX_NUCLEO */
 
 /* Exported functions  --------------------------------------------------*/
 /**
@@ -115,42 +114,76 @@ static uint32_t GetBank(uint32_t Address);
  * @retval int8_t Return value for checking purpouse (0/-1 == Ok/Error)
  */
 int8_t CheckBootLoaderCompliance(void)
-{ 
+{
+  uint8_t ret= 1;
+
   OTA_PRINTF("Testing BootLoaderCompliance:\r\n");
-  OTA_PRINTF("\tVersion  %ld.%ld.%ld\r\n",
+  OTA_PRINTF("\tFirmware MCU STM32F401RETX:\r\n");
+  if( (FLASH_END - FLASH_BASE) != BootLoaderFeatures->FlashDim) {
+    OTA_PRINTF("\t\tBootLoader and firmware was have build with different MCUs\r\n");
+    OTA_PRINTF("\t\tFlash Dim Firmware (%ld Kbyte) != Flash Dim BootLoader (%ld Kbyte)\r\n", (((FLASH_END - FLASH_BASE) + 0x1) / 1024), (BootLoaderFeatures->FlashDim / 1024));
+    OTA_PRINTF("\t\tMCUs check: KO\r\n");
+    ret= 0;
+  } else {
+    OTA_PRINTF("\t\tFlash Dim=\t%ld Kbyte\r\n", (((FLASH_END - FLASH_BASE) + 0x1) / 1024));
+    OTA_PRINTF("\t\tOTA Max Size=\t%ld Kbyte\r\n", ((BootLoaderFeatures->OTAMaxSize) / 1024));
+    OTA_PRINTF("\t\tFirmware Start=\t0x%lx\r\n", BootLoaderFeatures->ProgStartAdd);
+    OTA_PRINTF("\t\tOTA Start=\t0x%lx\r\n", BootLoaderFeatures->OTAStartAdd);
+    OTA_PRINTF("\t\tMCUs check: OK\r\n");
+  }
+
+  OTA_PRINTF("\tBootLoader\r\n");
+  OTA_PRINTF("\t\tVersion BL\t%ld.%ld.%ld ",
               BootLoaderFeatures->Version>>16     ,
              (BootLoaderFeatures->Version>>8)&0xFF,
               BootLoaderFeatures->Version    &0xFF);
-			  
+
+  if(BootLoaderFeatures->IDE == 0)
+    OTA_PRINTF("(IAR)");
+
+  if(BootLoaderFeatures->IDE == 1)
+    OTA_PRINTF("(KEIL)");
+
+  if(BootLoaderFeatures->IDE == 2)
+    OTA_PRINTF("(STM32CubeIDE)");
+
+  OTA_PRINTF("\r\n");
+
+  OTA_PRINTF("\t\tVersion Used\t%d.%d.%d\r\n", BL_VERSION_MAJOR, BL_VERSION_MINOR, BL_VERSION_PATCH);
+
   if((( BootLoaderFeatures->Version>>16      )!=BL_VERSION_MAJOR) |
      (((BootLoaderFeatures->Version>>8 )&0xFF)!=BL_VERSION_MINOR) |
       ((BootLoaderFeatures->Version     &0xFF)!=BL_VERSION_PATCH)) {
-    OTA_PRINTF("\tBL Version  Ko\r\n");
-    return 0;
+    OTA_PRINTF("\t\tCheck Version\tKO\r\n");
+    ret= 0;
   } else {
-    OTA_PRINTF("\tBL Version  Ok\r\n");
+    OTA_PRINTF("\t\tCheck Version\tOk\r\n");
   }
 
   if(BootLoaderFeatures->MagicNum==OTA_MAGIC_NUM) {
     OTA_PRINTF("\tMagicNum    OK\r\n");
   } else {
     OTA_PRINTF("\tMagicNum    KO\r\n");
-    return 0;
+    ret= 0;
   }
 
-  OTA_PRINTF("\tMaxSize =%lx\r\n",BootLoaderFeatures->OTAMaxSize);
-
-  if(BootLoaderFeatures->OTAStartAdd==(OTA_ADDRESS_START-8)) {
+  if(BootLoaderFeatures->OTAStartAdd==(OTA_ADDRESS_START- 0x10)) {
     OTA_PRINTF("\tOTAStartAdd OK\r\n");
   } else {
     OTA_PRINTF("\tOTAStartAdd KO\r\n");
-    return 0;
+    ret= 0;
   }
-  
-  return 1;
+
+  if(BootLoaderFeatures->OTADoneAdd==OTA_MAGIC_DONE_NUM_POS) {
+    OTA_PRINTF("\tOTADoneAdd  OK\r\n");
+  } else {
+    OTA_PRINTF("\tOTADoneAdd  KO\r\n");
+    ret= 0;
+  }
+
+  return ret;
 }
 
-#ifdef USE_STM32F4XX_NUCLEO
 /**
  * @brief Function for Updating the Firmware
  * @param uint32_t *SizeOfUpdate Remaining size of the firmware image [bytes].
@@ -159,11 +192,11 @@ int8_t CheckBootLoaderCompliance(void)
  * @param uint8_t WriteMagicNum 1/0 for writing or not the magic number
  * @retval int8_t Return value for checking purpouse (1/-1 == Ok/Error)
  */
-int8_t UpdateFWBlueMS(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_length,uint8_t WriteMagicNum)
+int8_t UpdateFW(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_length,uint8_t WriteMagicNum)
 {
   int8_t ReturnValue=0;
   /* Save the Packed received */
-  //OTA_PRINTF("What UpdateFWBlueMS receives SizeOfUpdateBlueFW=%d InSizeOfUpdate=%d lenght=%d\r\n",SizeOfUpdateBlueFW,*SizeOfUpdate,data_length);
+  //OTA_PRINTF("What UpdateFW receives SizeOfUpdateBlueFW=%d InSizeOfUpdate=%d lenght=%d\r\n",SizeOfUpdateBlueFW,*SizeOfUpdate,data_length);
   if(data_length>(*SizeOfUpdate)){
     /* Too many bytes...Something wrong... necessity to send it again... */
     //OTA_PRINTF("OTA something wrong data_length=%ld RemSizeOfUpdate=%ld....\r\nPlease Try again\r\n",data_length,(*SizeOfUpdate));
@@ -171,16 +204,16 @@ int8_t UpdateFWBlueMS(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_le
     /* Reset for Restarting again */
     *SizeOfUpdate=0;
   } else {
-    static uint32_t Address = OTA_ADDRESS_START;
+    //static uint32_t Address = OTA_ADDRESS_START;
     int32_t Counter;
     /* Save the received OTA packed ad save it to flash */
     /* Unlock the Flash to enable the flash control register access *************/
     HAL_FLASH_Unlock();
-    
-    for(Counter=0;Counter<data_length;Counter++) {
-      if(HAL_FLASH_Program(TYPEPROGRAM_BYTE, Address,att_data[Counter])==HAL_OK) {
 
-       Address++;
+    for(Counter=0;Counter<data_length;Counter++) {
+      if(HAL_FLASH_Program(TYPEPROGRAM_BYTE, WritingAddress,att_data[Counter])==HAL_OK) {
+
+       WritingAddress++;
       } else {
         /* Error occurred while writing data in Flash memory.
            User can add here some code to deal with this error
@@ -198,7 +231,7 @@ int8_t UpdateFWBlueMS(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_le
 
         uint32_t uwCRCValue = 0;
         if(AspecteduwCRCValue) {
-          /* Make the CRC integrety check */         
+          /* Make the CRC integrety check */
 
           /* CRC handler declaration */
           CRC_HandleTypeDef   CrcHandle;
@@ -231,9 +264,9 @@ int8_t UpdateFWBlueMS(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_le
 
         if(ReturnValue==1) {
           /* We write the Magic number for making the OTA at the next Board reset */
-          Address = OTA_MAGIC_NUM_POS;
+          WritingAddress = OTA_MAGIC_NUM_POS;
 
-          if(HAL_FLASH_Program(TYPEPROGRAM_WORD, Address,OTA_MAGIC_NUM)!=HAL_OK) {
+          if(HAL_FLASH_Program(TYPEPROGRAM_WORD, WritingAddress,OTA_MAGIC_NUM)!=HAL_OK) {
           /* Error occurred while writing data in Flash memory.
              User can add here some code to deal with this error
              FLASH_ErrorTypeDef errorcode = HAL_FLASH_GetError(); */
@@ -263,7 +296,7 @@ int8_t UpdateFWBlueMS(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_le
  * @param uint32_t uwCRCValue aspected CRV value
  * @retval None
  */
-void StartUpdateFWBlueMS(uint32_t SizeOfUpdate, uint32_t uwCRCValue)
+void StartUpdateFW(uint32_t SizeOfUpdate, uint32_t uwCRCValue)
 {
   FLASH_EraseInitTypeDef EraseInitStruct;
   uint32_t SectorError = 0;
@@ -274,7 +307,7 @@ void StartUpdateFWBlueMS(uint32_t SizeOfUpdate, uint32_t uwCRCValue)
 
   EraseInitStruct.TypeErase = TYPEERASE_SECTORS;
   EraseInitStruct.VoltageRange = VOLTAGE_RANGE_3;
-  EraseInitStruct.Sector = FLASH_SECTOR_6;
+  EraseInitStruct.Sector = FLASH_SECTOR_NUMBER;
   if(SizeOfUpdate>(0x20000-8)) {
     /* We need 2 sectors of 128KB */
     EraseInitStruct.NbSectors = 2;
@@ -287,13 +320,13 @@ void StartUpdateFWBlueMS(uint32_t SizeOfUpdate, uint32_t uwCRCValue)
   HAL_FLASH_Unlock();
 
   if(HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK){
-    /* Error occurred while sector erase. 
-      User can add here some code to deal with this error. 
+    /* Error occurred while sector erase.
+      User can add here some code to deal with this error.
       SectorError will contain the faulty sector and then to know the code error on this sector,
       user can call function 'HAL_FLASH_GetError()'
       FLASH_ErrorTypeDef errorcode = HAL_FLASH_GetError(); */
     OTA_ERROR_FUNCTION();
-  } else {    
+  } else {
     OTA_PRINTF("End FLASH Erase %ld Sectors of 128KB\r\n",EraseInitStruct.NbSectors);
   }
 
@@ -301,216 +334,4 @@ void StartUpdateFWBlueMS(uint32_t SizeOfUpdate, uint32_t uwCRCValue)
   to protect the FLASH memory against possible unwanted operation) *********/
   HAL_FLASH_Lock();
 }
-#endif /* USE_STM32F4XX_NUCLEO */
-
-#ifdef USE_STM32L4XX_NUCLEO
-/**
- * @brief Function for Updating the Firmware
- * @param uint32_t *SizeOfUpdate Remaining size of the firmware image [bytes]
- * @param uint8_t *att_data attribute data
- * @param int32_t data_length length of the data
- * @param uint8_t WriteMagicNum 1/0 for writing or not the magic number
- * @retval int8_t Return value for checking purpouse (1/-1 == Ok/Error)
- */
-int8_t UpdateFWBlueMS(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_length,uint8_t WriteMagicNum)
-{
-  int8_t ReturnValue=0;
-  /* Save the Packed received */
-  //OTA_PRINTF("What UpdateFWBlueMS receives SizeOfUpdateBlueFW=%d InSizeOfUpdate=%d lenght=%d\r\n",SizeOfUpdateBlueFW,*SizeOfUpdate,data_length);
-  if(data_length>(*SizeOfUpdate)){
-    /* Too many bytes...Something wrong... necessity to send it again... */
-    OTA_PRINTF("OTA something wrong data_length=%ld RemSizeOfUpdate=%ld....\r\nPlease Try again\r\n",data_length,(*SizeOfUpdate));
-    ReturnValue = -1;
-    /* Reset for Restarting again */
-    *SizeOfUpdate=0;
-  } else {
-    static uint32_t Address = OTA_ADDRESS_START;
-    uint64_t ValueToWrite;
-    int32_t Counter;
-    /* Save the received OTA packed ad save it to flash */
-    /* Unlock the Flash to enable the flash control register access *************/
-    HAL_FLASH_Unlock();
-    
-    for(Counter=0;Counter<data_length;Counter+=8) {
-      memcpy((uint8_t*) &ValueToWrite,att_data+Counter,8);
-
-      if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, Address,ValueToWrite)==HAL_OK) {
-       Address+=8;
-      } else {
-        /* Error occurred while writing data in Flash memory.
-           User can add here some code to deal with this error
-           FLASH_ErrorTypeDef errorcode = HAL_FLASH_GetError(); */
-        OTA_ERROR_FUNCTION();
-      }
-    }
-    /* Reduce the remaing bytes for OTA completition */
-    *SizeOfUpdate -= data_length;
-
-    if(*SizeOfUpdate==0) {
-      /* We had received the whole firmware and we have saved it in Flash */
-      OTA_PRINTF("OTA Update saved\r\n");
-
-      if(WriteMagicNum) {
-        uint32_t uwCRCValue = 0;
-
-        if(AspecteduwCRCValue) {
-          /* Make the CRC integrety check */          
-          /* CRC handler declaration */
-          CRC_HandleTypeDef   CrcHandle;
-
-          /* Init CRC for OTA-integrity check */
-          CrcHandle.Instance = CRC;
-          /* The default polynomial is used */
-          CrcHandle.Init.DefaultPolynomialUse    = DEFAULT_POLYNOMIAL_ENABLE;
-
-          /* The default init value is used */
-          CrcHandle.Init.DefaultInitValueUse     = DEFAULT_INIT_VALUE_ENABLE;
-
-          /* The input data are not inverted */
-          CrcHandle.Init.InputDataInversionMode  = CRC_INPUTDATA_INVERSION_NONE;
-
-          /* The output data are not inverted */
-          CrcHandle.Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_DISABLE;
-
-          /* The input data are 32-bit long words */
-          CrcHandle.InputDataFormat              = CRC_INPUTDATA_FORMAT_WORDS;
-
-          if(HAL_CRC_GetState(&CrcHandle) != HAL_CRC_STATE_RESET) {
-            HAL_CRC_DeInit(&CrcHandle);
-          }
-
-          if (HAL_CRC_Init(&CrcHandle) != HAL_OK) {
-            /* Initialization Error */
-            OTA_ERROR_FUNCTION();
-          } else {
-            OTA_PRINTF("CRC  Initialized\n\r");
-          }
-          /* Compute the CRC */
-          uwCRCValue = HAL_CRC_Calculate(&CrcHandle, (uint32_t *)OTA_ADDRESS_START, SizeOfUpdateBlueFW>>2);
-
-          if(uwCRCValue==AspecteduwCRCValue) {
-            ReturnValue=1;
-            OTA_PRINTF("OTA CRC-checked\r\n");
-          }
-        } else {
-          ReturnValue=1;
-
-        }
-        if(ReturnValue==1) {
-          /* We write the Magic number for making the OTA at the next Board reset */
-          Address = OTA_MAGIC_NUM_POS;
-          ValueToWrite=OTA_MAGIC_NUM;
-
-          if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, Address,ValueToWrite)!=HAL_OK) {
-            /* Error occurred while writing data in Flash memory.
-               User can add here some code to deal with this error
-               FLASH_ErrorTypeDef errorcode = HAL_FLASH_GetError(); */
-            OTA_ERROR_FUNCTION();
-          } else {
-            OTA_PRINTF("OTA will be installed at next board reset\r\n");
-          }
-        } else {
-          ReturnValue=-1;
-          if(AspecteduwCRCValue) {
-            OTA_PRINTF("Wrong CRC! Computed=%lx  aspected=%lx ... Try again\r\n",uwCRCValue,AspecteduwCRCValue);
-          }
-        }
-      }
-    }
-
-    /* Lock the Flash to disable the flash control register access (recommended
-     to protect the FLASH memory against possible unwanted operation) *********/
-    HAL_FLASH_Lock();
-  }
-  return ReturnValue;
-}
-
-/**
- * @brief Start Function for Updating the Firmware
- * @param uint32_t SizeOfUpdate  size of the firmware image [bytes]
- * @param uint32_t uwCRCValue aspected CRV value
- * @retval None
- */
-void StartUpdateFWBlueMS(uint32_t SizeOfUpdate, uint32_t uwCRCValue)
-{
-  FLASH_EraseInitTypeDef EraseInitStruct;
-  uint32_t SectorError = 0;
-  OTA_PRINTF("Start FLASH Erase\r\n");
-
-  SizeOfUpdateBlueFW = SizeOfUpdate;
-  AspecteduwCRCValue = uwCRCValue;
-
-  EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
-  EraseInitStruct.Banks       = GetBank(OTA_MAGIC_NUM_POS);
-  EraseInitStruct.Page        = GetPage(OTA_MAGIC_NUM_POS);
-  EraseInitStruct.NbPages     = (SizeOfUpdate+8+FLASH_PAGE_SIZE-1)/FLASH_PAGE_SIZE;
-    
-  /* Unlock the Flash to enable the flash control register access *************/
-  HAL_FLASH_Unlock();
-
-  if(HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK){
-    /* Error occurred while sector erase. 
-      User can add here some code to deal with this error. 
-      SectorError will contain the faulty sector and then to know the code error on this sector,
-      user can call function 'HAL_FLASH_GetError()'
-      FLASH_ErrorTypeDef errorcode = HAL_FLASH_GetError(); */
-    OTA_ERROR_FUNCTION();
-  } else {    
-    OTA_PRINTF("End FLASH Erase %ld Pages of 2KB\r\n",EraseInitStruct.NbPages);
-  }
-
-  /* Lock the Flash to disable the flash control register access (recommended
-  to protect the FLASH memory against possible unwanted operation) *********/
-  HAL_FLASH_Lock();
-}
-
-/* Local functions  --------------------------------------------------*/
-/**
-  * @brief  Gets the page of a given address
-  * @param  Addr: Address of the FLASH Memory
-  * @retval The page of a given address
-  */
-static uint32_t GetPage(uint32_t Addr)
-{
-  uint32_t page = 0;
-  
-  if (Addr < (FLASH_BASE + FLASH_BANK_SIZE)) {
-    /* Bank 1 */
-    page = (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
-  } else {
-    /* Bank 2 */
-    page = (Addr - (FLASH_BASE + FLASH_BANK_SIZE)) / FLASH_PAGE_SIZE;
-  }
-  
-  return page;
-}
-
-/**
-  * @brief  Gets the bank of a given address
-  * @param  Addr: Address of the FLASH Memory
-  * @retval The bank of a given address
-  */
-static uint32_t GetBank(uint32_t Addr)
-{
-  uint32_t bank = 0;
-  
-  if (READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_FB_MODE) == 0) {
-    /* No Bank swap */
-    if (Addr < (FLASH_BASE + FLASH_BANK_SIZE)) {
-      bank = FLASH_BANK_1;
-    } else {
-      bank = FLASH_BANK_2;
-    }
-  } else {
-    /* Bank swap */
-    if (Addr < (FLASH_BASE + FLASH_BANK_SIZE)){
-      bank = FLASH_BANK_2;
-    } else {
-      bank = FLASH_BANK_1;
-    }
-  }
-  
-  return bank;
-}
-#endif /* USE_STM32L4XX_NUCLEO */
 

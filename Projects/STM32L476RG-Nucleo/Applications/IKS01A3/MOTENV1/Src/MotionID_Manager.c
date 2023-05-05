@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionID_Manager.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   This file includes Motion Intensity Detection interface functions
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,7 +19,11 @@
   ******************************************************************************
   */
 
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+
 #include "TargetFeatures.h"
 
 /* Imported Variable -------------------------------------------------------------*/
@@ -26,7 +31,6 @@ extern float sensitivity_Mul;
 
 /* exported Variable -------------------------------------------------------------*/
 MID_output_t MIDCode = MID_ON_DESK; /* on desk */
-
 
 /* Private defines -----------------------------------------------------------*/
 
@@ -36,11 +40,11 @@ MID_output_t MIDCode = MID_ON_DESK; /* on desk */
 
 /** @addtogroup Drv_MotionID    Drv_MotionID
   * @{
-  */   
+  */
 
 /* Exported Functions --------------------------------------------------------*/
 /**
-* @brief  Run motion intensity detection algorithm. This function collects and 
+* @brief  Run motion intensity detection algorithm. This function collects and
 *         scale data from accelerometer and calls the motion Intensity Detection Algo
 * @param  MOTION_SENSOR_AxesRaw_t ACC_Value_Raw Acceleration value (x/y/z)
 * @retval None
@@ -64,10 +68,10 @@ void MotionID_manager_run(MOTION_SENSOR_AxesRaw_t ACC_Value_Raw)
 void MotionID_manager_init(void)
 {
   char LibVersion[36];
-  
+
   MotionID_Initialize(MID_MCU_STM32);
   MotionID_GetLibVersion(LibVersion);
-  
+
   TargetBoardFeatures.MotionIDIsInitalized=1;
   MOTENV1_PRINTF("Initialized %s\r\n", LibVersion);
 }

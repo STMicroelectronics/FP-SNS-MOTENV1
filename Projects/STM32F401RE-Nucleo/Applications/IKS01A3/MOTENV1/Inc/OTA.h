@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    OTA.h 
+  * @file    OTA.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Over-the-Air Update API
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,8 +18,10 @@
   *
   ******************************************************************************
   */
-  
-/* Define to prevent recursive inclusion -------------------------------------*/  
+
+/* USER CODE END Header */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _OTA_H_
 #define _OTA_H_
 
@@ -28,26 +31,19 @@
 
 /* Exported defines ---------------------------------------------------------*/
 
-
-#ifdef USE_STM32F4XX_NUCLEO
-  /* 240Kbytes Max Program Size */
-  #define OTA_MAX_PROG_SIZE (0x40000-0x4000-8)
-#endif /* USE_STM32F4XX_NUCLEO */
-   
-#ifdef USE_STM32L4XX_NUCLEO
-  /* 496Kbytes Max Program Size */
-  #define OTA_MAX_PROG_SIZE (0x80000-0x4000-8)
-#endif /* USE_STM32L4XX_NUCLEO */
+#define FLASH_FOTA_END          (((FLASH_END - FLASH_BASE) + 0x1) / 0x2)
+#define OTA_MAX_PROG_SIZE       (FLASH_FOTA_END - 0x4000 - 0x8)
 
 /* Exported functions ---------------------------------------------------------*/
 
 /* API for preparing the Flash for receiving the Update. It defines also the Size of the Update and the CRC value aspected */
-extern void StartUpdateFWBlueMS(uint32_t SizeOfUpdate,uint32_t uwCRCValue);
+extern void StartUpdateFW(uint32_t SizeOfUpdate,uint32_t uwCRCValue);
+
 /* API for storing chuck of data to Flash.
- * When it has received the total number of byte defined by StartUpdateFWBlueMS,
+ * When it has received the total number of byte defined by StartUpdateFW,
  * it computes the CRC value and if it matches the aspected CRC value,
  * it writes the Magic Number in Flash for BootLoader */
-extern int8_t UpdateFWBlueMS(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_length,uint8_t WriteMagicNum);
+extern int8_t UpdateFW(uint32_t *SizeOfUpdate,uint8_t * att_data, int32_t data_length,uint8_t WriteMagicNum);
 
 /* API for checking the BootLoader compliance */
 extern int8_t CheckBootLoaderCompliance(void);

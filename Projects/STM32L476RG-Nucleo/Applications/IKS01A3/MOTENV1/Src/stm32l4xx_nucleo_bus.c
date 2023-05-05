@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32l4xx_nucleo_bus.c
-  * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @author  System Research & Applications Team - Catania Lab.
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   source file for the BSP BUS IO driver
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,7 +17,8 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */
+*/
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_nucleo_bus.h"
@@ -827,9 +829,16 @@ __weak HAL_StatusTypeDef MX_I2C1_Init(I2C_HandleTypeDef* hi2c)
 static void I2C1_MspInit(I2C_HandleTypeDef* i2cHandle)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   /* USER CODE BEGIN I2C1_MspInit 0 */
 
   /* USER CODE END I2C1_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
+    PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+    HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**I2C1 GPIO Configuration
@@ -838,14 +847,14 @@ static void I2C1_MspInit(I2C_HandleTypeDef* i2cHandle)
     */
     GPIO_InitStruct.Pin = BUS_I2C1_SCL_GPIO_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = BUS_I2C1_SCL_GPIO_AF;
     HAL_GPIO_Init(BUS_I2C1_SCL_GPIO_PORT, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = BUS_I2C1_SDA_GPIO_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = BUS_I2C1_SDA_GPIO_AF;
     HAL_GPIO_Init(BUS_I2C1_SDA_GPIO_PORT, &GPIO_InitStruct);
@@ -1077,7 +1086,7 @@ static uint32_t Compute_SCLL_SCLH (uint32_t clock_src_freq, uint32_t I2C_speed)
   * @brief  Convert the SPI baudrate into prescaler.
   * @param  clock_src_hz : SPI source clock in HZ.
   * @param  baudrate_mbps : SPI baud rate in mbps.
-  * @retval Prescaler dividor
+  * @retval Prescaler divisor
   */
 static uint32_t SPI_GetPrescaler( uint32_t clock_src_hz, uint32_t baudrate_mbps )
 {

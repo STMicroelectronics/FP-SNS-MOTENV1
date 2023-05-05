@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionPM_Manager.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   This file includes Pedometer interface functions
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,7 +19,11 @@
   ******************************************************************************
   */
 
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+
 #include "TargetFeatures.h"
 
 /* Imported Variable -------------------------------------------------------------*/
@@ -26,7 +31,6 @@ extern float sensitivity_Mul;
 
 /* exported Variable -------------------------------------------------------------*/
 MPM_output_t PM_DataOUT;
-
 
 /* Private defines -----------------------------------------------------------*/
 
@@ -36,11 +40,11 @@ MPM_output_t PM_DataOUT;
 
 /** @addtogroup Drv_MotionGR    Drv_MotionPM
   * @{
-  */   
+  */
 
 /* Exported Functions --------------------------------------------------------*/
 /**
-* @brief  Run gesture recognition algorithm. This function collects and scale data 
+* @brief  Run gesture recognition algorithm. This function collects and scale data
 * from accelerometer and calls the Pedometer Algo
 * @param  MOTION_SENSOR_AxesRaw_t ACC_Value_Raw Acceleration values (x/y/z)
 * @retval None
@@ -64,10 +68,10 @@ void MotionPM_manager_run(MOTION_SENSOR_AxesRaw_t ACC_Value_Raw)
 void MotionPM_manager_init(void)
 {
   char LibVersion[36];
-  
+
   MotionPM_Initialize();
   MotionPM_GetLibVersion(LibVersion);
-  
+
   TargetBoardFeatures.MotionPMIsInitalized=1;
   MOTENV1_PRINTF("Initialized %s\n\r", LibVersion);
 }

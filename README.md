@@ -18,7 +18,7 @@ The expansion is built on STM32Cube software technology to ease portability acro
 - For Nucleo-F401RE and Nucleo-L476RG, middleware libraries for sensor data fusion and acelerometer-based real-time activity recognition, carry position, gesture recognition, motion intensity recognition and pedometer.
 
 - Firmware compatible with ST BLE Sensor applications for Android/iOS, to perform sensor data reading, motion algorithm features demo and firmware update (FOTA - For Nucleo-F401RE and Nucleo-L476RG)
-(Version 4.13.0/4.11.0 or higher)
+(Version 4.17.0/4.17.0 or higher)
 
 - Easy portability across different MCU families, thanks to STM32Cube
 
@@ -66,18 +66,18 @@ Here is the list of references to user documents:
 
 ## Known Issues
 
-- Flash Download fails with MDK-ARM Professional Version 5.32.0 on NUCLEO-L053R8 Board.
-- For NUCLEO-L053R8 Board, due to flash size constraints, initialization control phase via UART is not available for Integrated Development Environment for STM32 (STM32CubeIDE).
+- Flash Download fails with MDK-ARM Professional Version 5.37.0 on NUCLEO-L053R8 Board.
+- For NUCLEO-L053R8 Board, due to flash size constraints, initialization control phase via UART is not available.
 	
 ## Development Toolchains and Compilers
 
--   IAR Embedded Workbench for ARM (EWARM) toolchain V8.50.9 + STLink/V2
--   RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.32.0 + ST-LINK/V2
--   Integrated Development Environment for STM32 (STM32CubeIDE) V1.7.0 + ST-LINK
+-   IAR Embedded Workbench for ARM (EWARM) toolchain V9.20.1 + STLink/V2
+-   RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.37.0 + ST-LINK/V2
+-   Integrated Development Environment for STM32 (STM32CubeIDE) V1.11.0 + ST-LINK
 	
 ## Dependencies 
 
 This software release is compatible with:
 
-- [**ST BLE Sensor Android application**](https://play.google.com/store/apps/details?id=com.st.bluems)  V4.13.0 (or higher)
-- [**ST BLE Sensor iOS application**](https://apps.apple.com/it/app/st-ble-sensor/id993670214)  V4.11.0 (or higher)
+- [**ST BLE Sensor Android application**](https://play.google.com/store/apps/details?id=com.st.bluems)  V4.17.0 (or higher)
+- [**ST BLE Sensor iOS application**](https://apps.apple.com/it/app/st-ble-sensor/id993670214)  V4.17.0 (or higher)

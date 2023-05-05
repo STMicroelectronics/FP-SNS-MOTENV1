@@ -23,7 +23,9 @@
 | STM32_MotionPM_Library Middleware        | STMicroelectronics   | SLA0077 |
 | Parson Middleware                        | Third_Party          | MIT     |
 | STM32F401RE-Nucleo Application Projects  | STMicroelectronics   | SLA0055 |
+| STM32F401RE-Nucleo Examples Projects	   | STMicroelectronics   | BSD-3-Clause |
 | STM32L053R8-Nucleo Application Projects  | STMicroelectronics   | SLA0055 |
 | STM32L476RG-Nucleo Application Projects  | STMicroelectronics   | SLA0055 |
+| STM32L476RG-Nucleo Examples Projects	   | STMicroelectronics   | BSD-3-Clause |
 | Bootloader Utilities                     | STMicroelectronics   | SLA0055 | 
 

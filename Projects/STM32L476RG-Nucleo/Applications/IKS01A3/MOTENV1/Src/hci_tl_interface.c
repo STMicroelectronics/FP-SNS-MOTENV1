@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -26,7 +26,7 @@
 
 #define HEADER_SIZE       5U
 #define MAX_BUFFER_SIZE   255U
-#define TIMEOUT_DURATION  15U
+#define TIMEOUT_DURATION  100U
 #define TIMEOUT_IRQ_HIGH  1000U
 
 /* Private variables ---------------------------------------------------------*/
@@ -351,7 +351,6 @@ void hci_tl_lowlevel_isr(void)
   }
 
   /* USER CODE BEGIN hci_tl_lowlevel_isr */
-  extern volatile uint32_t HCI_ProcessEvent;
-  HCI_ProcessEvent=1;
+
   /* USER CODE END hci_tl_lowlevel_isr */
 }

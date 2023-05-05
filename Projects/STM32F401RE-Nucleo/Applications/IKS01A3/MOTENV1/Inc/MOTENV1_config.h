@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MOTENV1_config.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   FP-SNS-MOTENV1 configuration
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,16 +19,13 @@
   ******************************************************************************
   */
 
+/* USER CODE END Header */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MOTENV1_CONFIG_H
 #define __MOTENV1_CONFIG_H
 
 /* Exported define ------------------------------------------------------------*/
-/* Define The transmission interval in Multiple of 10ms for quaternions*/
-#define QUAT_UPDATE_MUL_10MS 3
-
-/* Define How Many quaternions you want to transmit (from 1 to 3) */
-#define SEND_N_QUATERNIONS 3
 
 /*************************************/
 /*  Remapping istance sensor defines */
@@ -95,21 +93,10 @@
 #define MOTION_SENSOR_Get_6D_Orientation_YL             IKS01A3_MOTION_SENSOR_Get_6D_Orientation_YL
 #define MOTION_SENSOR_Get_6D_Orientation_YH             IKS01A3_MOTION_SENSOR_Get_6D_Orientation_YH
 #define MOTION_SENSOR_Get_6D_Orientation_ZL             IKS01A3_MOTION_SENSOR_Get_6D_Orientation_ZL
-#define MOTION_SENSOR_Get_6D_Orientation_ZH             IKS01A3_MOTION_SENSOR_Get_6D_Orientation_ZH 
+#define MOTION_SENSOR_Get_6D_Orientation_ZH             IKS01A3_MOTION_SENSOR_Get_6D_Orientation_ZH
 /********************************/
 
-
-/* Define The transmission interval in Multiple of 100ms for CO concentration Values */
-
-/* IMPORTANT
-The Sensors fusion runs at 100Hz so like MAXIMUM it possible to send:
-1 quaternion every 10ms
-2 quaternions every 20ms
-3 quaternions every 30ms
-
-if QUAT_UPDATE_MUL_10MS!=3, then SEND_N_QUATERNIONS must be ==1
-*/
-
+/* USER CODE BEGIN 1 */
 /*************** Debug Defines ******************/
 #define MOTENV1_ENABLE_PRINTF
 
@@ -120,14 +107,12 @@ if QUAT_UPDATE_MUL_10MS!=3, then SEND_N_QUATERNIONS must be ==1
 #define MOTENV1_DEBUG_NOTIFY_TRAMISSION
 
 /*************** Don't Change the following defines *************/
+/* USER CODE END 1 */
 
 /* Package Version only numbers 0->9 */
 #define MOTENV1_VERSION_MAJOR '4'
-#define MOTENV1_VERSION_MINOR '2'
+#define MOTENV1_VERSION_MINOR '3'
 #define MOTENV1_VERSION_PATCH '0'
-
-/* Define the MOTENV1 Name MUST be 7 char long */
-#define NAME_BLUEMS 'M','E','1','V',MOTENV1_VERSION_MAJOR,MOTENV1_VERSION_MINOR,MOTENV1_VERSION_PATCH
 
 /* Package Name */
 #define MOTENV1_PACKAGENAME "FP-SNS-MOTENV1"
@@ -137,32 +122,6 @@ if QUAT_UPDATE_MUL_10MS!=3, then SEND_N_QUATERNIONS must be ==1
 #else /* MOTENV1_ENABLE_PRINTF */
   #define MOTENV1_PRINTF(...)
 #endif /* MOTENV1_ENABLE_PRINTF */
-
-/* STM32 Unique ID */
-#ifdef USE_STM32F4XX_NUCLEO
-#define STM32_UUID ((uint32_t *)0x1FFF7A10)
-#endif /* USE_STM32F4XX_NUCLEO */
-
-#ifdef USE_STM32L4XX_NUCLEO
-#define STM32_UUID ((uint32_t *)0x1FFF7590)
-#endif /* USE_STM32L4XX_NUCLEO */
-
-#ifdef USE_STM32L0XX_NUCLEO
-#define STM32_UUID ((uint32_t *)0x1FF80050)
-#endif /* USE_STM32L0XX_NUCLEO */
-
-/* STM32 MCU_ID */
-#define STM32_MCU_ID ((uint32_t *)0xE0042000)
-
-/* Control Section */
-
-#if ((SEND_N_QUATERNIONS<1) || (SEND_N_QUATERNIONS>3))
-  #error "SEND_N_QUATERNIONS could be only 1,2 or 3"
-#endif
-
-#if ((QUAT_UPDATE_MUL_10MS!=3) && (SEND_N_QUATERNIONS!=1))
-  #error "If QUAT_UPDATE_MUL_10MS!=3 then SEND_N_QUATERNIONS must be = 1"
-#endif
 
 #endif /* __MOTENV1_CONFIG_H */
 

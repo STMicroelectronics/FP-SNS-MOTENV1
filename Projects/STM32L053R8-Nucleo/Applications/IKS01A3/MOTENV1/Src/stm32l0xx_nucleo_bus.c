@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32l0xx_nucleo_bus.c
-  * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @author  System Research & Applications Team - Catania Lab.
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   source file for the BSP BUS IO driver
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,7 +17,8 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */
+*/
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_nucleo_bus.h"
@@ -762,7 +764,7 @@ static void I2C1_MspDeInit(I2C_HandleTypeDef* i2cHandle)
   * @brief  Convert the SPI baudrate into prescaler.
   * @param  clock_src_hz : SPI source clock in HZ.
   * @param  baudrate_mbps : SPI baud rate in mbps.
-  * @retval Prescaler dividor
+  * @retval Prescaler divisor
   */
 static uint32_t SPI_GetPrescaler( uint32_t clock_src_hz, uint32_t baudrate_mbps )
 {

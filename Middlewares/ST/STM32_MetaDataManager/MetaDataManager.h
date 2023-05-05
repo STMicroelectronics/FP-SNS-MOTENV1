@@ -41,20 +41,6 @@
 /* Each application could customize the Max Meta Data Size [Double Words] <=4K bytes */
 #define MDM_MAX_DATASIZE_64 0x200
 
-/* Uncomment the following define for enabling the PRINTF capability if It's supported */
-#define MDM_ENABLE_PRINTF
-
-#ifdef MDM_ENABLE_PRINTF
-
-  /* Each application must declare it's printf implementation in MetaDataManager_Config.h if it wants to use it */
-  /* #define MDM_PRINTF Something */
-
-  /* Uncomment the following define for enabling the DEBUG of Meta Data Manager */
-  //#define MDM_DEBUG_PARSING
-#else /* MDM_ENABLE_PRINTF */
-  #define MDM_PRINTF(...)
-#endif /* MDM_ENABLE_PRINTF */
-
 /* Imported functions for FLASH Management --------------------------*/
 extern uint32_t UserFunctionForErasingFlash(void);
 extern uint32_t UserFunctionForSavingFlash(void *InitMetaDataVector,void *EndMetaDataVector);
@@ -68,7 +54,7 @@ extern uint32_t UserFunctionForSavingFlash(void *InitMetaDataVector,void *EndMet
 
 /* Meta Data Manager Version */
 #define MDM_VERSION_MAJOR 1
-#define MDM_VERSION_MINOR 5
+#define MDM_VERSION_MINOR 6
 #define MDM_VERSION_PATCH 1
 #define MDM_VERSION ((MDM_VERSION_MAJOR<<16) | (MDM_VERSION_MINOR<<8) | (MDM_VERSION_PATCH))
 

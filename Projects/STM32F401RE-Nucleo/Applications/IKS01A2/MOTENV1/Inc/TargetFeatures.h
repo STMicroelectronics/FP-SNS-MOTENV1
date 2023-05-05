@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    TargetFeatures.h 
+  * @file    TargetFeatures.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Specification of the HW Features for each target platform
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,19 +18,18 @@
   *
   ******************************************************************************
   */
-  
-/* Define to prevent recursive inclusion -------------------------------------*/  
+
+/* USER CODE END Header */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _TARGET_FEATURES_H_
 #define _TARGET_FEATURES_H_
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-#include <stdio.h>
-#include <stdlib.h>
-   
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_nucleo.h"
 #include "stm32f4xx_hal_conf.h"
@@ -61,6 +61,44 @@
 #include "motion_id.h"
 
 /* Exported defines ------------------------------------------------------- */
+/* Exported defines for TIMER Led Blinking ------------------------------------*/
+#define TimLedHandle htim2
+#define Led_TIM_INSTANCE TIM2
+/* Exported defines for TIMER ENV ---------------------------------------------*/
+#define TimEnvHandle htim4
+#define ENV_TIM_INSTANCE TIM4
+/* Exported defines for TIMER MOTION ALGO ---------------------------------------------*/
+#define TimCCHandle htim1
+#define MOTION_ALGO_TIM_INSTANCE TIM1
+
+#ifndef ALGO_FREQ_CP_GR_PM
+  #define ALGO_FREQ_CP_GR_PM 50U
+#endif /* ALGO_FREQ_CP_GR_PM */
+
+#ifndef ALGO_FREQ_AR_ID
+  #define ALGO_FREQ_AR_ID 16U
+#endif /* ALGO_FREQ_AR_ID */
+
+#ifndef ALGO_FREQ_FX
+  #define ALGO_FREQ_FX 100U
+#endif /* ALGO_FREQ_FX */
+
+#ifndef FREQ_ACC_GYRO_MAG
+  #define FREQ_ACC_GYRO_MAG 20U
+#endif /* FREQ_ACC_GYRO_MAG */
+
+#ifndef ALGO_PERIOD_LED
+  #define ALGO_PERIOD_LED 1000U
+#endif /* ALGO_PERIOD_LED */
+
+#ifndef ALGO_PERIOD_ENV
+  #define ALGO_PERIOD_ENV 500U
+#endif /* ALGO_PERIOD_ENV */
+
+/* Exported Variables --------------------------------------------------------*/
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim1;
 
 /* Mems Board Type */
 #define _IKS01A2 0
@@ -77,10 +115,9 @@ typedef struct
 {
   int32_t NumTempSensors;
 
-  int32_t HWAdvanceFeatures;
   uint8_t LedStatus;
   uint8_t mems_expansion_board;
-  
+
   uint8_t IKS01Ax_support;
 
   /* Sensor Fusion Library */
@@ -106,6 +143,10 @@ typedef struct
 extern TargetFeatures_t TargetBoardFeatures;
 
 /* Exported functions ------------------------------------------------------- */
+extern void Led_TIM_Init(void);
+extern void Env_TIM_Init(void);
+extern void MotionAlgo_TIM_Init(void);
+
 extern void InitTargetPlatform(void);
 extern void LedOnTargetPlatform(void);
 extern void LedOffTargetPlatform(void);
@@ -115,5 +156,4 @@ extern void LedOffTargetPlatform(void);
 #endif
 
 #endif /* _TARGET_FEATURES_H_ */
-
 

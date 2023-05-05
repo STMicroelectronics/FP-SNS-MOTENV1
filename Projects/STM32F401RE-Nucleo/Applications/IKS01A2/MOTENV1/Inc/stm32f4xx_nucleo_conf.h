@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32f4xx_nucleo_conf.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Configuration file
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,6 +18,7 @@
   *
   ******************************************************************************
 */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32F4XX_NUCLEO_CONF_H
@@ -44,7 +46,7 @@
   * @{
   */
 /* COM Feature define */
-#define USE_BSP_COM_FEATURE                 0U
+#define USE_BSP_COM_FEATURE                 1U
 
 /* COM define */
 #define USE_COM_LOG                         1U
@@ -52,7 +54,7 @@
 /* IRQ priorities */
 #define BSP_BUTTON_USER_IT_PRIORITY         15U
 
-/* I2C1 Frequeny in Hz  */
+/* I2C1 Frequency in Hz  */
 #define BUS_I2C1_FREQUENCY                  100000U /* Frequency of I2C1 = 100 KHz*/
 
 /* SPI1 Baud rate in bps  */

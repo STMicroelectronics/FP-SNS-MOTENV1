@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionFX_Manager.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
-  * @brief   This file includes sensor fusion interface functions
+  * @version 4.3.0
+  * @date    31-January-2023
+  * @brief   Header for MotionFX_Manager.c
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,7 +18,9 @@
   *
   ******************************************************************************
   */
-  
+
+/* USER CODE END Header */
+
 #ifndef _MOTIONFX_MANAGER_H_
 #define _MOTIONFX_MANAGER_H_
 
@@ -49,5 +52,4 @@ extern MFX_output_t* MotionFX_manager_getDataOUT(void);
 extern MFX_input_t* MotionFX_manager_getDataIN(void);
 
 #endif //_MOTIONFX_MANAGER_H_
-
 

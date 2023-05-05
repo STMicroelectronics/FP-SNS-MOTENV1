@@ -17,16 +17,16 @@ echo "/******************************************/"
 echo "/******************************************/"
 echo "              Install BootLoader"
 echo "/******************************************/"
-"${CubeProg}" -c port=swd mode=UR reset=HWrst -d ../../../../../../Utilities/BootLoader/STM32F4xxRE/BootLoaderF401RE-Nucleo.bin 0x08000000 -v
+"${CubeProg}" -c port=swd mode=UR reset=HWrst -d ../../../../../../Utilities/BootLoader/STM32F4xxRE/BootLoader_F401.bin 0x08000000 -v
 echo "/******************************************/"
 echo "          Install FP-SNS-MOTENV1"
 echo "/******************************************/"
-"${CubeProg}" -c port=swd mode=UR reset=HWrst -d ./Release/STM32F401RE-Nucleo_IKS01A3_MOTENV1.bin 0x08004000 -v
+"${CubeProg}" -c port=swd mode=UR reset=HWrst -d ./Release/MOTENV1.bin 0x08004000 -v
 echo "/******************************************/"
 echo "      Dump FP-SNS-MOTENV1 + BootLoader"
 echo "/******************************************/"
-SizeBinBL=`ls -l ./Release/STM32F401RE-Nucleo_IKS01A3_MOTENV1.bin | awk '{print $5+0x4000};'`
-"${CubeProg}" -c port=swd mode=UR reset=HWrst -u 0x08000000 ${SizeBinBL} ./Release/STM32F401RE-Nucleo_IKS01A3_MOTENV1_BL.bin
+SizeBinBL=`ls -l ./Release/MOTENV1.bin | awk '{print $5+0x4000};'`
+"${CubeProg}" -c port=swd mode=UR reset=HWrst -u 0x08000000 ${SizeBinBL} ./Release/MOTENV1_BL.bin
 echo "/******************************************/"
 echo "                Reset STM32"
 echo "/******************************************/"

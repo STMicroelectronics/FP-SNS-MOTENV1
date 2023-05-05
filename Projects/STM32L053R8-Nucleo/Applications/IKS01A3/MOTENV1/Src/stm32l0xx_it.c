@@ -2,14 +2,14 @@
 /**
   ******************************************************************************
   * @file    stm32l0xx_it.c
-  * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @author  System Research & Applications Team - Catania Lab.
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -165,8 +165,8 @@ void EXTI4_15_IRQHandler(void)
   /* USER CODE BEGIN EXTI4_15_IRQn 0 */
 
   /* USER CODE END EXTI4_15_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+  HAL_GPIO_EXTI_IRQHandler(MEMS_ACC_INT_Pin);
+  HAL_EXTI_IRQHandler(&H_EXTI_13);
   /* USER CODE BEGIN EXTI4_15_IRQn 1 */
 
   /* USER CODE END EXTI4_15_IRQn 1 */
@@ -189,4 +189,3 @@ void TIM2_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

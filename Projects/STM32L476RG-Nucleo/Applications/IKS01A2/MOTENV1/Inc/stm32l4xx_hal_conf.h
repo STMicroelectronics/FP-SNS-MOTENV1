@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    stm32l4xx_hal_conf.h
@@ -8,7 +9,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2017 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,6 +18,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32L4xx_HAL_CONF_H
@@ -38,6 +40,7 @@
 /*#define HAL_CRYP_MODULE_ENABLED   */
 /*#define HAL_CAN_MODULE_ENABLED   */
 /*#define HAL_COMP_MODULE_ENABLED   */
+#define HAL_I2C_MODULE_ENABLED
 #define HAL_CRC_MODULE_ENABLED
 /*#define HAL_CRYP_MODULE_ENABLED   */
 /*#define HAL_DAC_MODULE_ENABLED   */
@@ -83,7 +86,6 @@
 /*#define HAL_PSSI_MODULE_ENABLED   */
 #define HAL_GPIO_MODULE_ENABLED
 #define HAL_EXTI_MODULE_ENABLED
-#define HAL_I2C_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_RCC_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED
@@ -478,4 +480,3 @@
 #endif
 
 #endif /* STM32L4xx_HAL_CONF_H */
-

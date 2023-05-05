@@ -1,21 +1,20 @@
 /**
- ******************************************************************************
- * @file    iks01a2_motion_sensors.h
- * @author  MEMS Software Solutions Team
- * @brief   This file provides a set of functions needed to manage the motion sensors
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may not use this file except in compliance with the
- * License. You may obtain a copy of the License at:
- *                        opensource.org/licenses/BSD-3-Clause
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    iks01a2_motion_sensors.h
+  * @author  MEMS Software Solutions Team
+  * @brief   This file provides a set of functions needed to manage the motion sensors
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2016-2018 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef IKS01A2_MOTION_SENSOR_H
@@ -163,20 +162,20 @@ extern "C" {
 
 
 /** @addtogroup BSP BSP
- * @{
- */
+  * @{
+  */
 
 /** @addtogroup IKS01A2 IKS01A2
- * @{
- */
+  * @{
+  */
 
 /** @addtogroup IKS01A2_MOTION_SENSOR IKS01A2 MOTION SENSOR
- * @{
- */
+  * @{
+  */
 
 /** @defgroup IKS01A2_MOTION_SENSOR_Exported_Types IKS01A2 MOTION SENSOR Exported Types
- * @{
- */
+  * @{
+  */
 
 typedef struct
 {
@@ -213,12 +212,12 @@ typedef struct
 } IKS01A2_MOTION_SENSOR_Ctx_t;
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @defgroup IKS01A2_MOTION_SENSOR_Exported_Constants IKS01A2 MOTION SENSOR Exported Constants
- * @{
- */
+  * @{
+  */
 
 #if (USE_IKS01A2_MOTION_SENSOR_LSM6DSL_0 == 1)
 #define IKS01A2_LSM6DSL_0 0
@@ -369,7 +368,7 @@ typedef struct
                             USE_IKS01A2_MOTION_SENSOR_LIS2MDL_0 + \
                             USE_IKS01A2_MOTION_SENSOR_LSM6DSO_0 + \
                             USE_IKS01A2_MOTION_SENSOR_LSM6DSOX_0)
-                            
+
 #endif
 
 #if (USE_IKS01A2_MOTION_SENSOR_LIS3MDL_0 == 1)
@@ -388,7 +387,7 @@ typedef struct
                             USE_IKS01A2_MOTION_SENSOR_LSM6DSO_0 + \
                             USE_IKS01A2_MOTION_SENSOR_LSM6DSOX_0 + \
                             USE_IKS01A2_MOTION_SENSOR_AIS2DW12_0)
-                            
+
 #endif
 
 #if (USE_IKS01A2_MOTION_SENSOR_LSM6DSR_0 == 1)
@@ -408,7 +407,7 @@ typedef struct
                             USE_IKS01A2_MOTION_SENSOR_LSM6DSOX_0 + \
                             USE_IKS01A2_MOTION_SENSOR_AIS2DW12_0 + \
                             USE_IKS01A2_MOTION_SENSOR_LIS3MDL_0)
-                            
+
 #endif
 
 #ifndef MOTION_GYRO
@@ -445,12 +444,12 @@ typedef struct
 #endif
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @addtogroup IKS01A2_MOTION_SENSOR_Exported_Functions IKS01A2_MOTION_SENSOR Exported Functions
- * @{
- */
+  * @{
+  */
 
 int32_t IKS01A2_MOTION_SENSOR_Init(uint32_t Instance, uint32_t Functions);
 int32_t IKS01A2_MOTION_SENSOR_DeInit(uint32_t Instance);
@@ -467,25 +466,23 @@ int32_t IKS01A2_MOTION_SENSOR_GetFullScale(uint32_t Instance, uint32_t Function,
 int32_t IKS01A2_MOTION_SENSOR_SetFullScale(uint32_t Instance, uint32_t Function, int32_t Fullscale);
 
 /**
- * @}
- */
+  * @}
+  */
 
 /**
- * @}
- */
+  * @}
+  */
 
 /**
- * @}
- */
+  * @}
+  */
 
 /**
- * @}
- */
+  * @}
+  */
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* IKS01A2_MOTION_SENSOR_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

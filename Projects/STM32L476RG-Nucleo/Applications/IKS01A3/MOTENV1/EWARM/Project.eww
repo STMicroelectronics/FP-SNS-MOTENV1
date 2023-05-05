@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace>
   <project>
-    <path>$WS_DIR$\STM32L476RG-Nucleo_IKS01A3_MOTENV1.ewp</path>
+    <path>$WS_DIR$\MOTENV1.ewp</path>
   </project>
   <batchBuild />
 </workspace>

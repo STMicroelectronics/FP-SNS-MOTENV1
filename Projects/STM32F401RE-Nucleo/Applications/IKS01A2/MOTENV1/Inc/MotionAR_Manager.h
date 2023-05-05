@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionAR_Manager.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Header for MotionAR_Manager.c
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,7 +18,9 @@
   *
   ******************************************************************************
   */
-  
+
+/* USER CODE END Header */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _MOTIONAR_MANAGER_H_
 #define _MOTIONAR_MANAGER_H_
@@ -29,15 +32,14 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "motion_ar.h"
 
-
 /** @defgroup Drv_Sensor      Drv_Sensor
 * @{
 */
 
 /** @defgroup Drv_MotionAR            Drv_MotionAR
-* @brief    This file includes Activity Recognition interface functions 
+* @brief    This file includes Activity Recognition interface functions
 * @{
-*/ 
+*/
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 extern void MotionAR_manager_init(void);
@@ -45,7 +47,6 @@ extern void MotionAR_manager_run(MOTION_SENSOR_AxesRaw_t ACC_Value_Raw, uint32_t
 
 /* Exported Variables -------------------------------------------------------------*/
 extern MAR_output_t ActivityCode;
-
 
 /**
  * @}

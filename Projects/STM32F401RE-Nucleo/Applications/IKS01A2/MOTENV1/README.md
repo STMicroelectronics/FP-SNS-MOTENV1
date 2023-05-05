@@ -1,29 +1,14 @@
-# MOTENV1 Application Description for STM32F401RE with X-NUCLEO-IKS01A2 expansion board
+## <b>MOTENV1 Application Description</b>
 
-The MOTENV1 is an STM32Cube function pack which lets you connect your IoT node to a smartphone via BLE and use a suitable AndroidT or iOST like the ST BLE Sensor app to view real-time environmental sensor data and motion sensor data.
-The package also enables advanced functionality such as sensor data fusion and accelerometer-based real-time activity recognition, carry position, gesture recognition, pedometer, motion Intensity and campass.  
+Application for NUCLEO-F401RE with X-NUCLEO-BNRG2A1 and X-NUCLEO-IKS01A2 expansion boards.
 
-This firmware package includes Components Device Drivers, Board Support Package and example application for the following STMicroelectronics elements:
- - X-NUCLEO-BNRG2A1 Bluetooth Low energy expansion boards
- - X-NUCLEO-IKS01A2 Expansion board for four MEMS sensor devices:
-   - HTS221, LPS22HB, LSM6DSL, LSM303AGR
- - NUCLEO-F401RE NUCLEO board
- - MotionFX (iNEMOEngine PRO) suite uses advanced algorithms to integrate outputs
- from multiple MEMS sensors in a smartway, independent of environmental conditions,
- to reach optimal performance. Real-time motion-sensor data fusion is set to significantly
- improve the user experience, increasing accuracy, resolution, stability and response time.
- - MotionAR software provides real-time activity recognition data
- using MEMS accelerometer sensor
- - MotionCP software provides carry Position recognition data
- using MEMS accelerometer sensor
- - MotionGR software provides Gesture recognition data
- using MEMS accelerometer sensor
- - MotionPM software provides Pedometer recognition data
- using MEMS accelerometer sensor
- - MotionID software provides real-time Motion Intensity recognition data
- using MEMS accelerometer sensor
- 
+Example Description:
+
+The MOTENV1 is an STM32Cube function pack which lets you connect your IoT node to a smartphone via BLE and use a suitable Android or iOS like the ST BLE Sensor app to view real-time environmental sensor data and motion sensor data.
+The package also enables advanced functionality such as sensor data fusion and accelerometer-based real-time activity recognition, carry position, gesture recognition, pedometer, motion Intensity and compass. 
+
 The Example application initizializes all the Components and Library creating 3 Custom Bluetooth services:
+
  - The first service exposes:
    - the HW characteristics related to MEMS sensor devices: Temperature, Humidity,
      Pressure, Magnetometer, Gyroscope, Accelleromenter and LED status.
@@ -37,22 +22,30 @@ The Example application initizializes all the Components and Library creating 3 
 The example application allows the user to control the initialization phase via UART.
 Launch a terminal application and set the UART port to 115200 bps, 8 bit, No Parity, 1 stop bit.
  
-This example must be used with the related ST BLE Sensor Android (Version 4.13.0 or higher) or iOS (Version 4.11.0 or higher) application available on Play/itune store,
+This example must be used with the related ST BLE Sensor Android (Version 4.17.0 or higher) or iOS (Version 4.17.0 or higher) application available on Play/itune store,
 in order to read the sent information by Bluetooth Low Energy protocol
 
-## Very Important
+### <b>Important Hardware Additional Information</b>
+
+BlueNRG-2 library does not work with the stock firmware that is loaded in the BLE module of X-NUCLEO-BNRG2A1 expansion board.
+For this reason:
+
+- first of all, it is needed to solder on X-NUCLEO-BNRG2A1, if it is not soldered, a 0 Ohm resistor at R117
+- then you can use a standard ST-Link V2-1 with 5 jumper wires female-female together with STSW-BNRGFLASHER software tool
+  (currently available only for Windows PC) in order to update the firmware of the BLE module of X-NUCLEO-BNRG2A1.
+   
+Read user manual for more details.
+
+### <b>Very Important</b>
 
 a) The implementation allow the Firmware-Over-The-Air (FOTA).
  
- 1) The Firmware-Over-The-Air (FOTA) is done using the ST BLE Sensor Android/iOS application (Version 4.13.0 and above)
+ 1) The Firmware-Over-The-Air (FOTA) is done using the ST BLE Sensor Android/iOS application (Version 4.17.0 and above)
  
  2) This example must run starting at address 0x08004000 in memory and works ONLY if the BootLoader 
  is saved at the beginning of the FLASH (address 0x08000000)
  
- 3) The user blue button can be also used to input from terminal the value of gas sensor sensitivity.
-    The parameter can also be set from the contextual menu of the ST BLE Sensor app in the gas sensor page.
- 
- 4) For each IDE (IAR/µVision/STM32CubeIDE) there are some scripts *.bat/*.sh that makes the following operations:
+ 3) For each IDE (IAR/µVision/STM32CubeIDE) there are some scripts *.bat/*.sh that makes the following operations:
     - Full Flash Erase
     - Load the BootLoader on the rigth flash region
     - Load the Program (after the compilation) on the rigth flash region (This could be used for a FOTA)
@@ -63,46 +56,69 @@ a) The implementation allow the Firmware-Over-The-Air (FOTA).
 b) If the user presses the blue user button on Nucleo board 3 times on less that 2 seconds, he forces a new
    Calibration for MotionFX Library (For avoiding accidental erasure of the calibration data).
    The calibration value could be stored on FLASH memory or in RAM for avoiding to do the calibration at each board reset
+  
+c) After code generation from STM32CubeMX software before building:
+   - Replaced in the folder Src the file system_stm32f4xx.c
+   - for IAR and STM32CubeIDE replace the linker scripts with the scripts in the folder LinkerScript
+   - for Keil, open the "Options for Target" and in the tab "Target" set start= 0x8004000 and sixe= 0x3C000. 
 
-## Dependencies
+### <b>Keywords</b>
+
+BLE, BLE_Manager, BlueNRG-2, SPI, UART, MEMS
+
+### <b>Hardware and Software environment</b>
+
+  - This example runs on STM32 Nucleo devices with:
+    - BlueNRG-2 STM32 expansion board (X-NUCLEO-BNRG2A1)
+	- Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS01A2) for four MEMS sensor devices:
+	  - HTS221, LPS22HB, LSM6DSL, LSM303AGR
+  - This example has been tested with STMicroelectronics:
+    - NUCLEO-F401RE RevC board
+	
+ADDITIONAL_BOARD : [X-NUCLEO-BNRG2A1](https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html)
+
+ADDITIONAL_BOARD : [X-NUCLEO-IKS01A2](https://www.st.com/en/ecosystems/x-nucleo-iks01a2.html)
+
+ADDITIONAL_COMP : [BlueNRG-M2SP](https://www.st.com/en/wireless-connectivity/bluenrg-2.html)
+
+### <b>Dependencies</b>
 
 STM32Cube packages:
-  - STM32L4xx drivers from STM32CubeF4 V1.26.0
+
+  - STM32F4xx drivers from STM32CubeF4 V1.27.1
   
 X-CUBE packages:
-  - X-CUBE-BLE2 V3.2.2
-  - X-CUBE-MEMS1 V9.1.0
 
-## Hardware and Software environment
+  - X-CUBE-BLE2 V3.3.0
+  - X-CUBE-BLEMGR V2.0.0
+  - X-CUBE-MEMS1 V9.5.0
 
-- This example runs on Sensor expansion board attached to STM32F401RE devices can be easily tailored to any other supported device and development board.
-- This example must be used with the related ST BLE Sensor Android/iOS application (Version 4.13.0/4.11.0 or higher) available on Play/itune store, in order to read the sent information by Bluetooth Low Energy protocol.
-- Inside the Binary Directory there are the following binaries:
-  - STM32F401RE-Nucleo_IKS01A2_MOTENV1_v4.2.0.bin				(Program without BootLoader. COULD BE USED     for FOTA)
-  - STM32F401RE-Nucleo_IKS01A2_MOTENV1_BL_v4.2.0.bin			(Program with BootLoader.    COULD NOT BE USED for FOTA)
-
-## How to use it ?
+### <b>How to use it?</b>
 
 This package contains projects for 3 IDEs viz. IAR, Keil µVision 5 and Integrated Development Environment for STM32. 
 In order to make the  program work, you must do the following:
+
  - WARNING: before opening the project with any toolchain be sure your folder
    installation path is not too in-depth since the toolchain may report errors
    after building.
 
 For IAR:
- - Open IAR toolchain (this firmware has been successfully tested with Embedded Workbench V8.50.9).
- - Open the IAR project file EWARM\Project.eww
+
+ - Open IAR toolchain (this firmware has been successfully tested with Embedded Workbench V9.20.1).
+ - Open the IAR project file EWARM/Project.eww
  - Rebuild all files and run these script that you find on the same directory:
    - CleanMOTENV1_IAR_IKS01A2_F401.bat
 
 For Keil µVision 5:
- - Open Keil µVision 5 toolchain (this firmware has been successfully tested with MDK-ARM Professional Version: 5.32.0).
- - Open the µVision project file MDK-ARM\STM32F401RE-Nucleo_IKS01A2_MOTENV1.uvprojx
+
+ - Open Keil µVision 5 toolchain (this firmware has been successfully tested with MDK-ARM Professional Version: 5.37.0).
+ - Open the µVision project file MDK-ARM/MOTENV1.uvprojx
  - Rebuild all files and run these script that you find on the same directory:
    - CleanMOTENV1_MDK-ARM_IKS01A2_F401.bat
  
 For Integrated Development Environment for STM32:
- - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.7.0).
+
+ - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.11.0).
  - Set the default workspace proposed by the IDE (please be sure that there are not spaces in the workspace path).
  - Press "File" -> "Import" -> "Existing Projects into Workspace"; press "Browse" in the "Select root directory" and choose the path where the System
    Workbench project is located (it should be STM32CubeIDE). 
@@ -111,3 +127,16 @@ For Integrated Development Environment for STM32:
 	 - CleanMOTENV1_STM32CubeIDE_IKS01A2_F401.bat
    - Otherwise (Linux/iOS or Windows without the STM32 ST-Link Utility):
 	 - CleanMOTENV1_STM32CubeIDE_IKS01A2_F401.sh
+
+### <b>Author</b>
+
+SRA Application Team
+
+### <b>License</b>
+
+Copyright (c) 2023 STMicroelectronics.
+All rights reserved.
+
+This software is licensed under terms that can be found in the LICENSE file
+in the root directory of this software component.
+If no LICENSE file comes with this software, it is provided AS-IS.

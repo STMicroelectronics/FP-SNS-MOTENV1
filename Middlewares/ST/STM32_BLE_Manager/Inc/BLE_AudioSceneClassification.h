@@ -1,14 +1,14 @@
 /**
   ******************************************************************************
-  * @file    BLE_AudioSceneClasssification.h
+  * @file    BLE_AudioSceneClassification.h
   * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version 1.0.0
-  * @date    18-Nov-2021
+  * @version 1.6.0
+  * @date    15-September-2022
   * @brief   Audio Scene Classification info service APIs.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -29,8 +29,6 @@
 /* Exported defines ---------------------------------------------------------*/
 
 /* Exported typedef --------------------------------------------------------- */
-typedef void (*CustomReadRequestAudioSceneClass_t)(void);
-
 typedef enum
 {
   BLE_ASC_HOME      = 0x00,
@@ -41,9 +39,12 @@ typedef enum
   BLE_ASC_UNDEFINED = 0xFF
 } BLE_ASC_output_t;
 
+typedef void (*CustomReadRequestAudioSceneClass_t)(BLE_ASC_output_t *ASC_Code);
+typedef void (*CustomNotifyEventAudioSceneClass_t)(BLE_NotifyEvent_t Event);
+
 /* Exported Variables ------------------------------------------------------- */
-extern BLE_NotifyEnv_t BLE_AudioSceneClass_NotifyEvent;
 extern CustomReadRequestAudioSceneClass_t CustomReadRequestAudioSceneClass;
+extern CustomNotifyEventAudioSceneClass_t CustomNotifyEventAudioSceneClass;
 
 /* Exported functions ------------------------------------------------------- */
 

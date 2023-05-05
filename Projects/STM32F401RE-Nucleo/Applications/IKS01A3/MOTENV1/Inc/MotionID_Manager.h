@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionID_Manager.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Header for MotionID_Manager.c
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,7 +18,9 @@
   *
   ******************************************************************************
   */
-  
+
+/* USER CODE END Header */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _MOTIONID_MANAGER_H_
 #define _MOTIONID_MANAGER_H_
@@ -29,15 +32,14 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "motion_id.h"
 
-
 /** @defgroup Drv_Sensor      Drv_Sensor
 * @{
 */
 
 /** @defgroup Drv_MotionAR            Drv_MotionID
-* @brief    This file includes Motion Intensity Detection interface functions 
+* @brief    This file includes Motion Intensity Detection interface functions
 * @{
-*/ 
+*/
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 extern void MotionID_manager_init(void);
@@ -59,5 +61,4 @@ extern MID_output_t MIDCode;
 #endif
 
 #endif //_MOTIONID_MANAGER_H_
-
 

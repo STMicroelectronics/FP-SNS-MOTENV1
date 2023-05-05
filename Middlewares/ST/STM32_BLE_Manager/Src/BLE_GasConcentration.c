@@ -2,13 +2,13 @@
   ******************************************************************************
   * @file    BLE_GasConcentration.c
   * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version 1.0.0
-  * @date    18-Nov-2021
+  * @version 1.6.0
+  * @date    15-September-2022
   * @brief   Add gas concentration info services using vendor specific profiles.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -26,10 +26,10 @@
 /* Private define ------------------------------------------------------------*/
 #define COPY_GAS_CONCENTRATION_CHAR_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0x00,0x00,0x80,0x00,0x00,0x01,0x11,0xe1,0xac,0x36,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
-#define GAS_CONCENTRATION_ADVERTIZE_DATA_POSITION  17
+#define GAS_CONCENTRATION_ADVERTISE_DATA_POSITION  17
 
 /* Exported variables --------------------------------------------------------*/
-BLE_NotifyEnv_t BLE_GasConcentration_NotifyEvent = BLE_NOTIFY_NOTHING;
+CustomNotifyEventGasConcentration_t CustomNotifyEventGasConcentration=NULL;
 CustomReadRequestGasConcentration_t CustomReadRequestGasConcentration=NULL;
 
 /* Private variables ---------------------------------------------------------*/
@@ -38,7 +38,17 @@ static BleCharTypeDef BleCharGasConcentration;
 
 /* Private functions ---------------------------------------------------------*/
 static void AttrMod_Request_GasConcentration(void *BleCharPointer,uint16_t attr_handle, uint16_t Offset, uint8_t data_length, uint8_t *att_data);
-static void Read_Request_GasConcentration(void *VoidCharPointer,uint16_t handle);
+#if (BLUE_CORE != BLUENRG_LP)
+static void Read_Request_GasConcentration(void *BleCharPointer,uint16_t handle);
+#else /* (BLUE_CORE != BLUENRG_LP) */
+static void Read_Request_GasConcentration(void *BleCharPointer,
+                             uint16_t handle,
+                             uint16_t Connection_Handle,
+                             uint8_t Operation_Type,
+                             uint16_t Attr_Val_Offset,
+                             uint8_t Data_Length,
+                             uint8_t Data[]);
+#endif /* (BLUE_CORE != BLUENRG_LP) */
 
 /**
  * @brief  Init gas concentration info service
@@ -79,10 +89,10 @@ BleCharTypeDef* BLE_InitGasConcentrationService(void)
  * @param  uint8_t *manuf_data: Advertise Data
  * @retval None
  */
-void BLE_SetGasConcentrationAdvertizeData(uint8_t *manuf_data)
+void BLE_SetGasConcentrationAdvertiseData(uint8_t *manuf_data)
 {
   /* Setting Gas Concentration Advertise Data */
-  manuf_data[GAS_CONCENTRATION_ADVERTIZE_DATA_POSITION] |= 0x80U;
+  manuf_data[GAS_CONCENTRATION_ADVERTISE_DATA_POSITION] |= 0x80U;
 }
 #endif /* BLE_MANAGER_SDKV2 */
 
@@ -127,20 +137,25 @@ tBleStatus BLE_GasConcentrationStatusUpdate(uint32_t Gas)
  */
 static void AttrMod_Request_GasConcentration(void *VoidCharPointer, uint16_t attr_handle, uint16_t Offset, uint8_t data_length, uint8_t *att_data)
 {
-  if (att_data[0] == 01U) {
-    BLE_GasConcentration_NotifyEvent= BLE_NOTIFY_SUB;
-  } else if (att_data[0] == 0U){
-    BLE_GasConcentration_NotifyEvent= BLE_NOTIFY_UNSUB;
+  if(CustomNotifyEventGasConcentration!=NULL) {
+    if (att_data[0] == 01U) {
+      CustomNotifyEventGasConcentration(BLE_NOTIFY_SUB);
+    } else if (att_data[0] == 0U){
+      CustomNotifyEventGasConcentration(BLE_NOTIFY_UNSUB);
+    }
   }
- 
 #if (BLE_DEBUG_LEVEL>1)
+  else {
+     BLE_MANAGER_PRINTF("CustomNotifyEventGasConcentration function Not Defined\r\n");
+  }
+  
  if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
-   BytesToWrite = (uint8_t) sprintf((char *)BufferToWrite,"--->Gas Concentration=%s\n", (BLE_GasConcentration_NotifyEvent == BLE_NOTIFY_SUB) ? " ON" : " OFF");
+   BytesToWrite = (uint8_t) sprintf((char *)BufferToWrite,"--->Gas Conc=%s\n", (att_data[0] == 01U) ? " ON" : " OFF");
    Term_Update(BufferToWrite,BytesToWrite);
  } else {
-   BLE_MANAGER_PRINTF("--->Gas Concentration=%s", (BLE_GasConcentration_NotifyEvent == BLE_NOTIFY_SUB) ? " ON\r\n" : " OFF\r\n");
+   BLE_MANAGER_PRINTF("--->Gas Conc=%s", (att_data[0] == 01U) ? " ON\r\n" : " OFF\r\n");
  }
-#endif
+#endif  
 }
 
 /**
@@ -149,10 +164,56 @@ static void AttrMod_Request_GasConcentration(void *VoidCharPointer, uint16_t att
  * @param  uint16_t handle Handle of the attribute
  * @retval None
  */
+#if (BLUE_CORE != BLUENRG_LP)
 static void Read_Request_GasConcentration(void *VoidCharPointer,uint16_t handle)
 {
   if(CustomReadRequestGasConcentration != NULL) {
-    CustomReadRequestGasConcentration();
+    uint32_t Gas;
+    CustomReadRequestGasConcentration(&Gas);
+    BLE_GasConcentrationStatusUpdate(Gas);
+  } else {
+    BLE_MANAGER_PRINTF("\r\n\nRead request Gas Concentration function not defined\r\n\n");
   }
 }
+#else /* (BLUE_CORE != BLUENRG_LP) */
+static void Read_Request_GasConcentration(void *BleCharPointer,
+                                           uint16_t handle,
+                                           uint16_t Connection_Handle,
+                                           uint8_t Operation_Type,
+                                           uint16_t Attr_Val_Offset,
+                                           uint8_t Data_Length,
+                                           uint8_t Data[])
+{
+  tBleStatus ret;
+  if(CustomReadRequestGasConcentration != NULL) {
+    uint32_t Gas;
+    uint8_t buff[2+4];
+
+    CustomReadRequestGasConcentration(&Gas);
+    
+    STORE_LE_16(buff  ,(HAL_GetTick()>>3));
+    STORE_LE_32(buff+2, (Gas));
+    
+    ret = aci_gatt_srv_write_handle_value_nwk(handle, 0, 2+4,buff);
+    if (ret != (tBleStatus)BLE_STATUS_SUCCESS){
+      if(BLE_StdErr_Service==BLE_SERV_ENABLE){
+        BytesToWrite = (uint8_t)sprintf((char *)BufferToWrite, "Error Updating Gas Concentration Char\n");
+        Stderr_Update(BufferToWrite,BytesToWrite);
+      } else {
+        BLE_MANAGER_PRINTF("Error: Updating Gas Concentration Char\r\n");
+      }
+    }
+   
+  } else {
+    BLE_MANAGER_PRINTF("\r\n\nRead request Gas Concentration function not defined\r\n\n");
+  }
+  
+  ret = aci_gatt_srv_authorize_resp_nwk(Connection_Handle, handle,
+                                      Operation_Type, 0, Attr_Val_Offset,
+                                      Data_Length, Data);
+  if( ret != BLE_STATUS_SUCCESS) {
+    BLE_MANAGER_PRINTF("aci_gatt_srv_authorize_resp_nwk() failed: 0x%02x\r\n", ret);
+  }
+}
+#endif /* (BLUE_CORE != BLUENRG_LP) */
 

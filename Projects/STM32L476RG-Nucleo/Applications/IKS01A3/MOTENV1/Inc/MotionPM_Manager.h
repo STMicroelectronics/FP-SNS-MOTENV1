@@ -1,14 +1,15 @@
- /**
+/* USER CODE BEGIN Header */
+/**
   ******************************************************************************
   * @file    MotionPM_Manager.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   Header for MotionPM_Manager.c
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,7 +18,9 @@
   *
   ******************************************************************************
   */
-  
+
+/* USER CODE END Header */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _MOTIONPM_MANAGER_H_
 #define _MOTIONPM_MANAGER_H_
@@ -29,7 +32,6 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "motion_pm.h"
 
-
 /** @defgroup Drv_Sensor      Drv_Sensor
 * @{
 */
@@ -37,7 +39,7 @@ extern "C" {
 /** @defgroup Drv_MotionGR            Drv_MotionPM
 * @brief    This file includes Pedometer interface functions
 * @{
-*/ 
+*/
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 extern void MotionPM_manager_init(void);
@@ -59,5 +61,4 @@ extern MPM_output_t PM_DataOUT;
 #endif
 
 #endif //_MOTIONPM_MANAGER_H_
-
 

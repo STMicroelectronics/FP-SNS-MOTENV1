@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionAR_Manager.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   This file includes activity recognition interface functions
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,7 +19,11 @@
   ******************************************************************************
   */
 
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+
 #include <limits.h>
 #include "TargetFeatures.h"
 
@@ -30,7 +35,6 @@ extern float sensitivity_Mul;
 /* exported Variable -------------------------------------------------------------*/
 MAR_output_t ActivityCode = MAR_NOACTIVITY;
 
-
 /* Private defines -----------------------------------------------------------*/
 
 /** @addtogroup  Drv_Sensor      Drv_Sensor
@@ -39,11 +43,11 @@ MAR_output_t ActivityCode = MAR_NOACTIVITY;
 
 /** @addtogroup Drv_MotionAR    Drv_MotionAR
   * @{
-  */   
+  */
 
 /* Exported Functions --------------------------------------------------------*/
 /**
-* @brief  Run activity recognition algorithm. This function collects and scale data 
+* @brief  Run activity recognition algorithm. This function collects and scale data
 * from accelerometer and calls the Activity Recognition Algo
 * @param  MOTION_SENSOR_AxesRaw_t ACC_Value_Raw Acceleration value (x/y/z)
 * @retval None
@@ -55,7 +59,7 @@ void MotionAR_manager_run(MOTION_SENSOR_AxesRaw_t ACC_Value_Raw, uint32_t TimeSt
   iDataIN.acc_x = ACC_Value_Raw.x * sensitivity_Mul;
   iDataIN.acc_y = ACC_Value_Raw.y * sensitivity_Mul;
   iDataIN.acc_z = ACC_Value_Raw.z * sensitivity_Mul;
-  
+
   MotionAR_Update(&iDataIN, &ActivityCode, (long int)(TimeStamp & LONG_MAX));
 }
 
@@ -68,7 +72,7 @@ void MotionAR_manager_init(void)
 {
   char LibVersion[36];
   char acc_orientation[3];
-  
+
   MotionAR_Initialize();
   MotionAR_GetLibVersion(LibVersion);
 

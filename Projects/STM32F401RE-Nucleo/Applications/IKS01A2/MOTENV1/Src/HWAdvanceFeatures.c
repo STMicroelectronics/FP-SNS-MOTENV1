@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    HWAdvanceFeatures.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   HW Advance Features API
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,9 +18,12 @@
   *
   ******************************************************************************
   */
+
+/* USER CODE END Header */
+
 #include "HWAdvanceFeatures.h"
+#include "BLE_Manager.h"
 #include "TargetFeatures.h"
-//#include "sensor_service.h"
 
 /* Imported Variables -------------------------------------------------------------*/
 extern uint16_t PedometerStepCount;
@@ -51,33 +55,31 @@ void DisableHWFeatures(void)
   if(W2ST_CHECK_HW_FEATURE(W2ST_HWF_PEDOMETER)) {
     DisableHWPedometer();
   }
-  
+
   if(W2ST_CHECK_HW_FEATURE(W2ST_HWF_FREE_FALL)) {
     DisableHWFreeFall();
   }
-  
+
   if(W2ST_CHECK_HW_FEATURE(W2ST_HWF_DOUBLE_TAP)) {
     DisableHWDoubleTap();
   }
-  
+
   if(W2ST_CHECK_HW_FEATURE(W2ST_HWF_SINGLE_TAP)) {
     DisableHWSingleTap();
   }
-  
+
   if(W2ST_CHECK_HW_FEATURE(W2ST_HWF_WAKE_UP)) {
     DisableHWWakeUp();
   }
-  
+
   if(W2ST_CHECK_HW_FEATURE(W2ST_HWF_TILT)) {
     DisableHWTilt();
   }
-  
+
   if(W2ST_CHECK_HW_FEATURE(W2ST_HWF_6DORIENTATION)) {
     DisableHWOrientation6D();
   }
 }
-
-
 
 /**
   * @brief  This function enables the HW's 6D Orientation
@@ -124,16 +126,16 @@ void DisableHWOrientation6D(void)
   * @retval AccEventType 6D Orientation Found
   */
 AccEventType GetHWOrientation6D(void)
-{  
+{
   AccEventType OrientationResult = ACC_NOT_USED;
-  
+
   uint8_t xl = 0;
   uint8_t xh = 0;
   uint8_t yl = 0;
   uint8_t yh = 0;
   uint8_t zl = 0;
   uint8_t zh = 0;
-  
+
   if (MOTION_SENSOR_Get_6D_Orientation_XL( ACCELERO_INSTANCE, &xl ) != BSP_ERROR_NONE ){
     MOTENV1_PRINTF("Error getting 6D orientation XL axis from LSM6DS3\r\n");
   }
@@ -157,7 +159,7 @@ AccEventType GetHWOrientation6D(void)
   if (MOTION_SENSOR_Get_6D_Orientation_ZH( ACCELERO_INSTANCE, &zh ) != BSP_ERROR_NONE ){
     MOTENV1_PRINTF("Error getting 6D orientation ZH axis from LSM6DS3\r\n");
   }
-  
+
   if ( xl == 0 && yl == 0 && zl == 0 && xh == 0 && yh == 1 && zh == 0 ) {
     OrientationResult = ACC_6D_OR_RIGTH;
   } else if ( xl == 1 && yl == 0 && zl == 0 && xh == 0 && yh == 0 && zh == 0 ) {
@@ -173,7 +175,7 @@ AccEventType GetHWOrientation6D(void)
   } else {
     MOTENV1_PRINTF("None of the 6D orientation axes is set in LSM6DS3\r\n");
   }
-    
+
   return OrientationResult;
 }
 /**
@@ -214,7 +216,6 @@ void DisableHWTilt(void)
   /* Set the Output Data Rate to Default value */
   MOTION_SENSOR_SetOutputDataRate(ACCELERO_INSTANCE,MOTION_ACCELERO,DefaultAccODR);
 }
-
 
 /**
   * @brief  This function enables the HW's Wake Up Detection
@@ -274,7 +275,7 @@ void EnableHWFreeFall(void)
     W2ST_ON_HW_FEATURE(W2ST_HWF_FREE_FALL);
   }
 #if 0
-  if(MOTION_SENSOR_Set_Free_Fall_Threshold(ACCELERO_INSTANCE,LSM6DSL_FF_TSH_250mg)!= BSP_ERROR_NONE) {  
+  if(MOTION_SENSOR_Set_Free_Fall_Threshold(ACCELERO_INSTANCE,LSM6DSL_FF_TSH_250mg)!= BSP_ERROR_NONE) {
     MOTENV1_PRINTF("Error setting Free Fall Treshold\r\n");
   }
 #endif
@@ -387,7 +388,7 @@ void EnableHWPedometer(void)
   /* Disable all the HW features before */
   if(!MultipleAccEventEnabled)
     DisableHWFeatures();
-  
+
   if(MOTION_SENSOR_Enable_Pedometer(ACCELERO_INSTANCE)!= BSP_ERROR_NONE) {
     MOTENV1_PRINTF("Error Enabling Pedometer\r\n");
   } else {
@@ -436,7 +437,7 @@ void ResetHWPedometer(void)
 uint16_t GetStepHWPedometer(void)
 {
   uint16_t step_count=0;
-  
+
   if(MOTION_SENSOR_Get_Step_Count( ACCELERO_INSTANCE, &step_count ) != BSP_ERROR_NONE ){
     MOTENV1_PRINTF("Error Reading Pedometer's Counter\r\n");
   } else {
@@ -455,9 +456,9 @@ void EnableHWMultipleEvents(void)
 {
   MOTENV1_PRINTF("EnableHWMultipleEvents\r\n");
   DisableHWFeatures();
-  
+
   MultipleAccEventEnabled= 1;
-  
+
   /* Do not change the enable sequenze of the HW events */
   /* It depends on the ODR value (from minor value to max value) */
   EnableHWPedometer();
@@ -466,10 +467,10 @@ void EnableHWMultipleEvents(void)
   EnableHWSingleTap();
   EnableHWDoubleTap();
   EnableHWOrientation6D();
-  
+
   PedometerStepCount=0;
   BLE_AccEnvUpdate(PedometerStepCount, 3);
-   
+
   W2ST_ON_HW_FEATURE(W2ST_HWF_MULTIPLE_EVENTS);
 }
 

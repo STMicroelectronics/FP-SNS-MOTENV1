@@ -2,13 +2,13 @@
   ******************************************************************************
   * @file    BLE_AudioSceneClasssification.c
   * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version 1.0.0
-  * @date    18-Nov-2021
+  * @version 1.6.0
+  * @date    15-September-2022
   * @brief   Add Audio Scene Classification service using vendor specific profiles.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -28,7 +28,7 @@
 
 /* Exported variables --------------------------------------------------------*/
 
-BLE_NotifyEnv_t BLE_AudioSceneClass_NotifyEvent = BLE_NOTIFY_NOTHING;
+CustomNotifyEventAudioSceneClass_t CustomNotifyEventAudioSceneClass=NULL;
 CustomReadRequestAudioSceneClass_t CustomReadRequestAudioSceneClass=NULL;
 
 /* Private variables ---------------------------------------------------------*/
@@ -37,7 +37,17 @@ static BleCharTypeDef BleCharAudioSceneClass;
 
 /* Private functions ---------------------------------------------------------*/
 static void AttrMod_Request_AudioSceneClass(void *BleCharPointer,uint16_t attr_handle, uint16_t Offset, uint8_t data_length, uint8_t *att_data);
+#if (BLUE_CORE != BLUENRG_LP)
 static void Read_Request_AudioSceneClass(void *BleCharPointer,uint16_t handle);
+#else /* (BLUE_CORE != BLUENRG_LP) */
+static void Read_Request_AudioSceneClass(void *BleCharPointer,
+                             uint16_t handle,
+                             uint16_t Connection_Handle,
+                             uint8_t Operation_Type,
+                             uint16_t Attr_Val_Offset,
+                             uint8_t Data_Length,
+                             uint8_t Data[]);
+#endif /* (BLUE_CORE != BLUENRG_LP) */
 
 /**
  * @brief  Init Audio Scene Classification service
@@ -63,7 +73,7 @@ BleCharTypeDef* BLE_InitAudioSceneClassService(void)
   BleCharPointer->Enc_Key_Size=16;
   BleCharPointer->Is_Variable=0;
   
-  if(CustomReadRequestActRec == NULL) {
+  if(CustomReadRequestAudioSceneClass == NULL) {
     BLE_MANAGER_PRINTF("Error: Read request Audio Scene Classification function not defined\r\n");
   }
   
@@ -88,7 +98,7 @@ tBleStatus BLE_AudioSceneClassUpdate(BLE_ASC_output_t ASC_Code)
 
   ret = ACI_GATT_UPDATE_CHAR_VALUE(&BleCharAudioSceneClass, 0, 2+1,buff);
 
-  if (ret != BLE_STATUS_SUCCESS){
+  if (ret != (tBleStatus)BLE_STATUS_SUCCESS){
     if(BLE_StdErr_Service==BLE_SERV_ENABLE){
       BytesToWrite = (uint8_t)sprintf((char *)BufferToWrite, "Error Updating ASC Char\n");
       Stderr_Update(BufferToWrite,BytesToWrite);
@@ -114,18 +124,23 @@ tBleStatus BLE_AudioSceneClassUpdate(BLE_ASC_output_t ASC_Code)
  */
 static void AttrMod_Request_AudioSceneClass(void *VoidCharPointer, uint16_t attr_handle, uint16_t Offset, uint8_t data_length, uint8_t *att_data)
 {
-  if (att_data[0] == 01U) {
-    BLE_AudioSceneClass_NotifyEvent= BLE_NOTIFY_SUB;
-  } else if (att_data[0] == 0U){
-    BLE_AudioSceneClass_NotifyEvent= BLE_NOTIFY_UNSUB;
+  if(CustomNotifyEventAudioSceneClass!=NULL) {
+    if (att_data[0] == 01U) {
+      CustomNotifyEventAudioSceneClass(BLE_NOTIFY_SUB);
+    } else if (att_data[0] == 0U){
+      CustomNotifyEventAudioSceneClass(BLE_NOTIFY_UNSUB);
+    }
   }
- 
 #if (BLE_DEBUG_LEVEL>1)
+  else {
+     BLE_MANAGER_PRINTF("CustomNotifyEventAudioSceneClass function Not Defined\r\n");
+  }
+  
  if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
-   BytesToWrite =(uint8_t)sprintf((char *)BufferToWrite,"--->ASC=%s\n", (BLE_AudioSceneClass_NotifyEvent == BLE_NOTIFY_SUB) ? " ON" : " OFF");
+   BytesToWrite = (uint8_t) sprintf((char *)BufferToWrite,"--->ASC=%s\n", (att_data[0] == 01U) ? " ON" : " OFF");
    Term_Update(BufferToWrite,BytesToWrite);
  } else {
-   BLE_MANAGER_PRINTF("--->ASC=%s", (BLE_AudioSceneClass_NotifyEvent == BLE_NOTIFY_SUB) ? " ON\r\n" : " OFF\r\n");
+   BLE_MANAGER_PRINTF("--->ASC=%s", (att_data[0] == 01U) ? " ON\r\n" : " OFF\r\n");
  }
 #endif
 }
@@ -136,11 +151,56 @@ static void AttrMod_Request_AudioSceneClass(void *VoidCharPointer, uint16_t attr
  * @param  uint16_t handle Handle of the attribute
  * @retval None
  */
+#if (BLUE_CORE != BLUENRG_LP)
 static void Read_Request_AudioSceneClass(void *VoidCharPointer,uint16_t handle)
 {
   if(CustomReadRequestAudioSceneClass != NULL) {
-    CustomReadRequestAudioSceneClass();
+    BLE_ASC_output_t ASC_Code;
+    CustomReadRequestAudioSceneClass(&ASC_Code);
+    BLE_AudioSceneClassUpdate(ASC_Code);
+  } else {
+    BLE_MANAGER_PRINTF("\r\n\nRead request ASC function not defined\r\n\n");
   }
 }
+#else /* (BLUE_CORE != BLUENRG_LP) */
+static void Read_Request_AudioSceneClass(void *BleCharPointer,
+                                         uint16_t handle,
+                                         uint16_t Connection_Handle,
+                                         uint8_t Operation_Type,
+                                         uint16_t Attr_Val_Offset,
+                                         uint8_t Data_Length,
+                                         uint8_t Data[])
+{
+  tBleStatus ret;
+  if(CustomReadRequestAudioSceneClass != NULL) {
+    BLE_ASC_output_t ASC_Code;
+    uint8_t buff[2+1];
+
+    CustomReadRequestAudioSceneClass(&ASC_Code);
+ 
+    STORE_LE_16(buff  ,(HAL_GetTick()>>3));
+    buff[2] = (uint8_t) ASC_Code;
+    
+    ret = aci_gatt_srv_write_handle_value_nwk(handle, 0, 2+1,buff);
+    if (ret != (tBleStatus)BLE_STATUS_SUCCESS){
+      if(BLE_StdErr_Service==BLE_SERV_ENABLE){
+        BytesToWrite = (uint8_t)sprintf((char *)BufferToWrite, "Error Updating ASC Char\n");
+        Stderr_Update(BufferToWrite,BytesToWrite);
+      } else {
+        BLE_MANAGER_PRINTF("Error: Updating ASC Char\r\n");
+      }
+    }
+  } else {
+    BLE_MANAGER_PRINTF("\r\n\nRead request ASC function not defined\r\n\n");
+  }
+  
+  ret = aci_gatt_srv_authorize_resp_nwk(Connection_Handle, handle,
+                                      Operation_Type, 0, Attr_Val_Offset,
+                                      Data_Length, Data);
+  if( ret != BLE_STATUS_SUCCESS) {
+    BLE_MANAGER_PRINTF("aci_gatt_srv_authorize_resp_nwk() failed: 0x%02x\r\n", ret);
+  }
+}
+#endif /* (BLUE_CORE != BLUENRG_LP) */
 
 

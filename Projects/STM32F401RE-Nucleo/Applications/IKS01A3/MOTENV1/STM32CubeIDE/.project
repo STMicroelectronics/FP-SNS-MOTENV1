@@ -23,13 +23,23 @@
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUCubeIdeServicesRevAev2ProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUNonUnderRootProjectNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUCubeExampleProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUCubeProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCURootProjectNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
 	<linkedResources>
+		<link>
+			<name>MOTENV1.ioc</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/MOTENV1.ioc</locationURI>
+		</link>
+		<link>
+			<name>Application/User/BLE_Function.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/BLE_Function.c</locationURI>
+		</link>
 		<link>
 			<name>Application/User/BLE_Implementation.c</name>
 			<type>1</type>
@@ -79,6 +89,11 @@
 			<name>Application/User/TargetPlatform.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Src/TargetPlatform.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/app_motenv1.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/app_motenv1.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/hci_tl_interface.c</name>
@@ -216,76 +231,6 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BLE_Manager/BLE_AccEvent.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_AccEvent.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_ActivityRecognition.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_ActivityRecognition.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_CarryPosition.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_CarryPosition.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_ECompass.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_ECompass.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_Environmental.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Environmental.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_GestureRecognition.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_GestureRecognition.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_Inertial.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Inertial.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_Led.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Led.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_Manager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_MotionIntensity.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_MotionIntensity.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_PedometerAlgorithm.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_PedometerAlgorithm.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/BLE_Manager/BLE_SensorFusion.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_SensorFusion.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/MetaDataManager/MetaDataManager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_MetaDataManager/MetaDataManager.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/json/parson.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/Third_Party/parson/parson.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/BSP/Components/hts221.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/hts221/hts221.c</locationURI>
@@ -294,6 +239,16 @@
 			<name>Drivers/BSP/Components/hts221_reg.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/hts221/hts221_reg.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/Components/lis2dw12.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/lis2dw12/lis2dw12.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/Components/lis2dw12_reg.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/lis2dw12/lis2dw12_reg.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/Components/lis2mdl.c</name>
@@ -326,6 +281,16 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/lsm6dso/lsm6dso_reg.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/BSP/Components/stts751.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/stts751/stts751.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/Components/stts751_reg.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/stts751/stts751_reg.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/BSP/IKS01A3/iks01a3_env_sensors.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/IKS01A3/iks01a3_env_sensors.c</locationURI>
@@ -346,47 +311,122 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/IKS01A3/iks01a3_motion_sensors_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/Utils/ble_list.c</name>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Manager/BLE_Manager/BLE_Manager.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/utils/ble_list.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Manager.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/Controller/bluenrg1_gap_aci.c</name>
+			<name>Middlewares/STM32_MetaDataManager/Data Exchange/STM32_MetaDataManager/MetaDataManager.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_MetaDataManager/MetaDataManager.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/parson/Data Exchange/parson/parson.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/Third_Party/parson/parson.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/Controller/bluenrg1_gap_aci.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/controller/bluenrg1_gap_aci.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/Controller/bluenrg1_gatt_aci.c</name>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/Controller/bluenrg1_gatt_aci.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/controller/bluenrg1_gatt_aci.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/Controller/bluenrg1_hal_aci.c</name>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/Controller/bluenrg1_hal_aci.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/controller/bluenrg1_hal_aci.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/Controller/bluenrg1_l2cap_aci.c</name>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/Controller/bluenrg1_l2cap_aci.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/controller/bluenrg1_l2cap_aci.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/hci_tl_patterns/bluenrg1_events.c</name>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/Utils/ble_list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/utils/ble_list.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/AccEvent/BLE_AccEvent.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_AccEvent.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Environmental/BLE_Environmental.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Environmental.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Inertial/BLE_Inertial.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Inertial.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Led/BLE_Led.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Led.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/ActivityRecognition/BLE_ActivityRecognition.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_ActivityRecognition.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/CarryPosition/BLE_CarryPosition.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_CarryPosition.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/ECompass/BLE_ECompass.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_ECompass.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/GestureRecognition/BLE_GestureRecognition.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_GestureRecognition.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/MotionIntensity/BLE_MotionIntensity.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_MotionIntensity.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/PedometerAlgorithm/BLE_PedometerAlgorithm.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_PedometerAlgorithm.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/SensorFusion/BLE_SensorFusion.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_SensorFusion.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/HCI_TL/Basic/bluenrg1_devConfig.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/bluenrg1_devConfig.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/HCI_TL/Basic/bluenrg1_events.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/bluenrg1_events.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/hci_tl_patterns/bluenrg1_events_cb.c</name>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/HCI_TL/Basic/bluenrg1_events_cb.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/bluenrg1_events_cb.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/hci_tl_patterns/bluenrg1_hci_le.c</name>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/HCI_TL/Basic/bluenrg1_hci_le.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/bluenrg1_hci_le.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/BlueNRG-2/HCI/hci_tl_patterns/Basic/hci_tl.c</name>
+			<name>Middlewares/BlueNRG-2/Wireless/BlueNRG-2/HCI_TL/Basic/hci_tl.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/BlueNRG-2/hci/hci_tl_patterns/Basic/hci_tl.c</locationURI>
 		</link>

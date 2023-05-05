@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionFX_Manager.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
-  * @brief   Header for MotionFX_Manager.c
+  * @version 4.3.0
+  * @date    31-January-2023
+  * @brief   This file includes sensor fusion interface functions
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,24 +19,15 @@
   ******************************************************************************
   */
 
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+
 #include "TargetFeatures.h"
 #include "main.h"
 
 /* Private defines -----------------------------------------------------------*/
-//#define FROM_MDPS_TO_DPS    0.001
-//#define FROM_MGAUSS_TO_UT50 (0.1f/50.0f)
-//#define SAMPLETODISCARD 15
-//#define GBIAS_ACC_TH_SC_6X (2.0f*0.000765f)
-//#define GBIAS_GYRO_TH_SC_6X (2.0f*0.002f)
-//#define GBIAS_MAG_TH_SC_6X (2.0f*0.001500f)
-//#define GBIAS_ACC_TH_SC_9X (2.0f*0.000765f)
-//#define GBIAS_GYRO_TH_SC_9X (2.0f*0.002f)
-//#define GBIAS_MAG_TH_SC_9X (2.0f*0.001500f)
-//
-///* Delta time mSec for Deltafusion */
-//#define MOTIONFX_ENGINE_DELTATIME       0.01f
-
 #define STATE_SIZE                      (size_t)(2432)
 
 #define SAMPLETODISCARD                 15
@@ -53,8 +45,6 @@ MFX_input_t iDataIN;
 /* Imported Variables -------------------------------------------------------------*/
 extern float sensitivity_Mul;
 
-extern MOTION_SENSOR_Axes_t MAG_Offset;
-
 /* Private Variables -------------------------------------------------------------*/
 static MFX_knobs_t iKnobs;
 static MFX_knobs_t *ipKnobs = &iKnobs;
@@ -66,7 +56,6 @@ static uint8_t mfxstate[STATE_SIZE];
 
 /* Private function prototypes -----------------------------------------------*/
 
-
 /**
   * @brief  Initialize MotionFX engine
   * @retval None
@@ -74,7 +63,7 @@ static uint8_t mfxstate[STATE_SIZE];
 void MotionFX_manager_init(void)
 {
   char LibVersion[36];
-  
+
   if (STATE_SIZE < MotionFX_GetStateSize())
     Error_Handler();
 
@@ -86,10 +75,10 @@ void MotionFX_manager_init(void)
   ipKnobs->gbias_acc_th_sc = GBIAS_ACC_TH_SC;
   ipKnobs->gbias_gyro_th_sc = GBIAS_GYRO_TH_SC;
   ipKnobs->gbias_mag_th_sc = GBIAS_MAG_TH_SC;
-  
-  ipKnobs->acc_orientation[0] = 's';
-  ipKnobs->acc_orientation[1] = 'e';
-  ipKnobs->acc_orientation[2] = 'u';
+
+  ipKnobs->acc_orientation[0] ='s';
+  ipKnobs->acc_orientation[1] ='e';
+  ipKnobs->acc_orientation[2] ='u';
 
   ipKnobs->gyro_orientation[0] = 's';
   ipKnobs->gyro_orientation[1] = 'e';
@@ -98,13 +87,13 @@ void MotionFX_manager_init(void)
   ipKnobs->mag_orientation[0] = 'n';
   ipKnobs->mag_orientation[1] = 'e';
   ipKnobs->mag_orientation[2] = 'u';
-  
+
   ipKnobs->output_type = MFX_ENGINE_OUTPUT_ENU;
   ipKnobs->LMode = 1;
   ipKnobs->modx  = DECIMATION;
 
   MotionFX_setKnobs(mfxstate, ipKnobs);
-  
+
   MotionFX_enable_6X(mfxstate, MFX_ENGINE_DISABLE);
   MotionFX_enable_9X(mfxstate, MFX_ENGINE_DISABLE);
 
@@ -214,7 +203,6 @@ void MotionFX_manager_MagCal_run(MFX_MagCal_input_t *data_in, MFX_MagCal_output_
    MotionFX_MagCal_getParams(data_out);
 }
 
-
 /**
  * @brief  Start magnetometer calibration
  * @param  None
@@ -224,7 +212,6 @@ void MotionFX_manager_MagCal_start(int sampletime)
 {
   MotionFX_MagCal_init(sampletime, 1);
 }
-
 
 /**
  * @brief  Stop magnetometer calibration

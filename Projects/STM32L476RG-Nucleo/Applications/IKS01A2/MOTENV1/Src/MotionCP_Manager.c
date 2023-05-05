@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    MotionCP_Manager.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
+  * @version 4.3.0
+  * @date    31-January-2023
   * @brief   This file includes carry position recognition interface functions
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,7 +19,11 @@
   ******************************************************************************
   */
 
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+
 #include "TargetFeatures.h"
 
 /* Code for MotionCP integration - Start Section */
@@ -29,7 +34,6 @@ extern float sensitivity_Mul;
 /* exported Variable -------------------------------------------------------------*/
 MCP_output_t CarryPositionCode = MCP_UNKNOWN;
 
-
 /* Private defines -----------------------------------------------------------*/
 
 /** @addtogroup  Drv_Sensor      Drv_Sensor
@@ -38,11 +42,11 @@ MCP_output_t CarryPositionCode = MCP_UNKNOWN;
 
 /** @addtogroup Drv_MotionCP    Drv_MotionCP
   * @{
-  */   
+  */
 
 /* Exported Functions --------------------------------------------------------*/
 /**
-* @brief  Run carry position algorithm. This function collects and scale data 
+* @brief  Run carry position algorithm. This function collects and scale data
 * from accelerometer and calls the Carry Position Algo
 * @param  MOTION_SENSOR_AxesRaw_t ACC_Value_Raw Acceleration values (x,y,z)
 * @retval None
@@ -54,7 +58,7 @@ void MotionCP_manager_run(MOTION_SENSOR_AxesRaw_t ACC_Value_Raw)
   iDataIN.AccX = ACC_Value_Raw.x * sensitivity_Mul;
   iDataIN.AccY = ACC_Value_Raw.y * sensitivity_Mul;
   iDataIN.AccZ = ACC_Value_Raw.z * sensitivity_Mul;
-  
+
   MotionCP_Update(&iDataIN, &CarryPositionCode);
 }
 
@@ -67,7 +71,7 @@ void MotionCP_manager_init(void)
 {
   char LibVersion[36];
   char acc_orientation[3];
-  
+
   MotionCP_Initialize();
   MotionCP_GetLibVersion(LibVersion);
 

@@ -1,16 +1,17 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    BLE_Implementation.c
-  * @author  System Research & Applications Team - Agrate/Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
-  * @brief   BLE Implementation template file.
+  * @author  System Research & Applications Team - Catania Lab.
+  * @version 4.3.0
+  * @date    31-January-2023
+  * @brief   BLE Implementation header template file.
   *          This file should be copied to the application folder and renamed
   *          to BLE_Implementation.c.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,37 +21,48 @@
   ******************************************************************************
   */
 
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
-#include "HWAdvanceFeatures.h"
 #include "BLE_Manager.h"
-#include "MOTENV1_config.h"
+#include "main.h"
 
-/* Exported Variables --------------------------------------------------------*/
-uint8_t connected= FALSE;
-int32_t  NeedToClearSecureDB=0;
-uint32_t ConnectionBleStatus  =0;
+__weak void BLE_SetCustomAdvertiseData(uint8_t *manuf_data);
+__weak void DisconnectionCompletedFunction(void);
+__weak void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Address_Type, uint8_t addr[6]);
+__weak void SetBoardName(void);
+
+__weak void AttrModConfigFunction(uint8_t * att_data, uint8_t data_length);
+__weak void PairingCompletedFunction(uint8_t PairingStatus);
+__weak void SetConnectableFunction(uint8_t *ManufData);
+__weak void AciGattTxPoolAvailableEventFunction(void);
+__weak void HardwareErrorEventHandlerFunction(uint8_t Hardware_Code);
+
+__weak uint32_t DebugConsoleParsing(uint8_t * att_data, uint8_t data_length);
+__weak void WriteRequestConfigFunction(uint8_t * att_data, uint8_t data_length);
+
+__weak void ReadRequestEnvFunction(int32_t *Press,uint16_t *Hum,int16_t *Temp1,int16_t *Temp2);
+
+/*************************************************************
+ * Callback functions prototypes to manage the notify events *
+ *************************************************************/
+
+__weak void NotifyEventAccEvent(BLE_NotifyEvent_t Event);
+
+__weak void NotifyEventEnv(BLE_NotifyEvent_t Event);
+
+__weak void NotifyEventInertial(BLE_NotifyEvent_t Event);
+
+__weak void NotifyEventLed(BLE_NotifyEvent_t Event);
 
 /* Private variables ------------------------------------------------------------*/
-volatile uint32_t FeatureMask;
-      
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Private functions ---------------------------------------------------------*/
-static uint8_t getBlueNRG2_Version(uint8_t *hwVersion, uint16_t *fwVersion);
-static uint32_t DebugConsoleParsing(uint8_t * att_data, uint8_t data_length);
-static void ReadRequestEnvFunction(void);
-static void DisconnectionCompletedFunction(void);
-static void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Addr[6]);
-static void WriteRequestConfigFunction(uint8_t * att_data, uint8_t data_length);
-
-static uint32_t DebugConsoleCommandParsing(uint8_t * att_data, uint8_t data_length);
-
-/**********************************************************************************************
- * Callback functions prototypes to manage the extended configuration characteristic commands *
- **********************************************************************************************/
-//static void ExtExtConfigUidCommandCallback(uint8_t **UID);
-//static void ExtConfigInfoCommandCallback(uint8_t *Answer);
-//static void ExtConfigHelpCommandCallback(uint8_t *Answer);
-//static void ExtConfigVersionFwCommandCallback(uint8_t *Answer);
 
 /** @brief Initialize the BlueNRG stack and services
   * @param  None
@@ -59,42 +71,66 @@ static uint32_t DebugConsoleCommandParsing(uint8_t * att_data, uint8_t data_leng
 void BluetoothInit(void)
 {
   /* BlueNRG stack setting */
-  BlueNRG_StackValue.ConfigValueOffsets                   = CONFIG_DATA_PUBADDR_OFFSET;
-  BlueNRG_StackValue.ConfigValuelength                    = CONFIG_DATA_PUBADDR_LEN;
-  BlueNRG_StackValue.GAP_Roles                            = GAP_PERIPHERAL_ROLE;
-  BlueNRG_StackValue.IO_capabilities                      = IO_CAP_DISPLAY_ONLY;
-  BlueNRG_StackValue.AuthenticationRequirements           = BONDING;
-  BlueNRG_StackValue.MITM_ProtectionRequirements          = MITM_PROTECTION_REQUIRED;
-  BlueNRG_StackValue.SecureConnectionSupportOptionCode    = SC_IS_SUPPORTED;
-  BlueNRG_StackValue.SecureConnectionKeypressNotification = KEYPRESS_IS_NOT_SUPPORTED;
+  BLE_StackValue.ConfigValueOffsets                   = CONFIG_VALUE_OFFSETS;
+  BLE_StackValue.ConfigValuelength                    = CONFIG_VALUE_LENGTH;
+  BLE_StackValue.GAP_Roles                            = GAP_ROLES;
+  BLE_StackValue.IO_capabilities                      = IO_CAPABILITIES;
+  BLE_StackValue.AuthenticationRequirements           = BONDING;
+  BLE_StackValue.MITM_ProtectionRequirements          = AUTHENTICATION_REQUIREMENTS;
+  BLE_StackValue.SecureConnectionSupportOptionCode    = SECURE_CONNECTION_SUPPORT_OPTION_CODE;
+  BLE_StackValue.SecureConnectionKeypressNotification = SECURE_CONNECTION_KEYPRESS_NOTIFICATION;
 
-  /* To set the TX power level of the bluetooth device ( -2,1 dBm )*/
-  BlueNRG_StackValue.EnableHighPowerMode= 1; /*  High Power */
-  
+  /* Use BLE Random Address */
+  BLE_StackValue.OwnAddressType = ADDRESS_TYPE;
+
+  /* Set the BLE Board Name */
+  SetBoardName();
+
+  /* En_High_Power Enable High Power mode.
+     High power mode should be enabled only to reach the maximum output power.
+     Values:
+     - 0x00: Normal Power
+     - 0x01: High Power */
+  BLE_StackValue.EnableHighPowerMode= ENABLE_HIGH_POWER_MODE;
+
   /* Values: 0x00 ... 0x31 - The value depends on the device */
-  BlueNRG_StackValue.PowerAmplifierOutputLevel =4;
-  
+  BLE_StackValue.PowerAmplifierOutputLevel = POWER_AMPLIFIER_OUTPUT_LEVEL;
+
   /* BlueNRG services setting */
-  BlueNRG_StackValue.EnableConfig    = 1;
-  BlueNRG_StackValue.EnableConsole   = 1;
-  
+  BLE_StackValue.EnableConfig    = ENABLE_CONFIG;
+  BLE_StackValue.EnableConsole   = ENABLE_CONSOLE;
+
   /* For Enabling the Secure Connection */
-  BlueNRG_StackValue.EnableSecureConnection=0;
+  BLE_StackValue.EnableSecureConnection = ENABLE_SECURE_CONNECTION;
   /* Default Secure PIN */
-  BlueNRG_StackValue.SecurePIN=123456;
+  BLE_StackValue.SecurePIN = SECURE_PIN;
   /* For creating a Random Secure PIN */
-  BlueNRG_StackValue.EnableRandomSecurePIN = 0;
-  
-  BlueNRG_StackValue.AdvertisingFilter    = NO_WHITE_LIST_USE;
-  
-  if(BlueNRG_StackValue.EnableSecureConnection) {
-    /* Using the Secure Connection, the Rescan should be done by BLE chip */    
-    BlueNRG_StackValue.ForceRescan =0;
+  BLE_StackValue.EnableRandomSecurePIN = ENABLE_RANDOM_SECURE_PIN;
+
+  /* Advertising policy for filtering (white list related) */
+  BLE_StackValue.AdvertisingFilter = ADVERTISING_FILTER;
+
+  if(BLE_StackValue.EnableSecureConnection) {
+    /* Using the Secure Connection, the Rescan should be done by BLE chip */
+    BLE_StackValue.ForceRescan =0;
   } else {
-    BlueNRG_StackValue.ForceRescan =1;
+    BLE_StackValue.ForceRescan =1;
   }
-  
+
   InitBleManager();
+}
+
+/**
+ * @brief  Set Board Name.
+ * @param  None
+ * @retval None
+ */
+__weak void SetBoardName(void)
+{
+  sprintf(BLE_StackValue.BoardName,"%s%c%c%c","BLEM",
+          BLE_VERSION_FW_MAJOR,
+          BLE_VERSION_FW_MINOR,
+          BLE_VERSION_FW_PATCH);
 }
 
 /**
@@ -103,69 +139,82 @@ void BluetoothInit(void)
  * @retval None
  */
 void BLE_InitCustomService(void) {
-  /* Define Custom Function for Debug Console Command parsing */
-  CustomDebugConsoleParsingCallback = &DebugConsoleParsing;
-  
+
   /* Define Custom Function for Connection Completed */
-  CustomConnectionCompleted = &ConnectionCompletedFunction;
-  
+  CustomConnectionCompleted = ConnectionCompletedFunction;
+
   /* Define Custom Function for Disconnection Completed */
-  CustomDisconnectionCompleted = &DisconnectionCompletedFunction;
-  
+  CustomDisconnectionCompleted = DisconnectionCompletedFunction;
+
+  /* Define Custom Function for Attribute Modify Config */
+  CustomAttrModConfigCallback = AttrModConfigFunction;
+
+  /* Define Custom Function for Pairing Completed */
+  CustomPairingCompleted = PairingCompletedFunction;
+
+  /* Define Custom Function for Set Connectable */
+  CustomSetConnectable = SetConnectableFunction;
+
+  /* Define Custom Function for Aci Gatt Tx Pool Available Event */
+  CustomAciGattTxPoolAvailableEvent = AciGattTxPoolAvailableEventFunction;
+
+  /* Define Custom Function for Hardware Error Event Handler */
+  CustomHardwareErrorEventHandler = HardwareErrorEventHandlerFunction;
+
+  /* Define Custom Function for Debug Console Command parsing */
+  CustomDebugConsoleParsingCallback = DebugConsoleParsing;
+
   /* Define Custom Command for Parsing Write on Config Char */
-  CustomWriteRequestConfigCallback = &WriteRequestConfigFunction;
-  
-  /***********************************************************************************
-   * Callback functions to manage the extended configuration characteristic commands *
-   ***********************************************************************************/
-//  CustomExtConfigUidCommandCallback  = &ExtExtConfigUidCommandCallback;
-//  CustomExtConfigInfoCommandCallback = &ExtConfigInfoCommandCallback;
-//  CustomExtConfigHelpCommandCallback = &ExtConfigHelpCommandCallback;
-//  CustomExtConfigVersionFwCommandCallback = &ExtConfigVersionFwCommandCallback;
-  
+  CustomWriteRequestConfigCallback = WriteRequestConfigFunction;
+
+  /**************************************************************************************
+   * Callback functions to manage the notify events and write request for each features *
+   **************************************************************************************/
+
+  CustomNotifyEventAccEvent=                    NotifyEventAccEvent;
+
+  CustomNotifyEventEnv=                         NotifyEventEnv;
+
+  CustomNotifyEventInertial=                    NotifyEventInertial;
+
+  CustomNotifyEventLed=                         NotifyEventLed;
+
   /**
   * For each features, user can assign here the pointer at the function for the read request data.
   * For example for the environmental features:
-  * 
-  * CustomReadRequestEnv = &ReadRequestEnvFunction;
-  * 
+  *
+  * CustomReadRequestEnv = ReadRequestEnvFunction;
+  *
   * User can define and insert in the BLE_Implementation.c source code the functions for the read request data
   * ReadRequestEnvFunction function is already defined.
   *
   */
-  
+
   /* Define Custom Function for Read Request Environmental Data */
-  CustomReadRequestEnv = &ReadRequestEnvFunction;
-  
-  /*******************
-   * User code begin *
-   *******************/
-  
+  CustomReadRequestEnv = ReadRequestEnvFunction;
+
   /**
   * User can added here the custom service initialization for the selected BLE features.
   * For example for the environmental features:
-  * 
+  *
   * //BLE_InitEnvService(PressEnable,HumEnable,NumTempEnabled)
   * BleManagerAddChar(BleCharPointer= BLE_InitEnvService(1, 1, 1));
   */
-  
-  /* Service initialization and adding for the environmental features */
-  /* BLE_InitEnvService(PressEnable,HumEnable,NumTempEnabled) */
-  BleManagerAddChar(BLE_InitEnvService(1, 1, 2));
-  
-  /* Service initialization and adding  for the inertial features */
-  /* BLE_InitInertialService(AccEnable,GyroEnable,MagEnabled) */
-  BleManagerAddChar(BLE_InitInertialService(1,1,1));
-  
-  /* Service initialization and adding for the accelerometer events features */
+
+  /* Characteristc allocation for accelerometer events features */
   BleManagerAddChar(BLE_InitAccEnvService());
-  
-  /* Service initialization and adding for the Led features */
+
+  /* Characteristc allocation for environmental features */
+  /* BLE_InitEnvService(PressEnable,HumEnable,NumTempEnabled) */
+  BleManagerAddChar(BLE_InitEnvService(ENABLE_ENV_PRESSURE_DATA, ENABLE_ENV_HUMIDITY_DATA, ENABLE_ENV_TEMPERATURE_DATA));
+
+  /* Characteristc allocation for inertial features */
+  /* BLE_InitInertialService(AccEnable,GyroEnable,MagEnabled) */
+  BleManagerAddChar(BLE_InitInertialService(ENABLE_ACC_DATA,ENABLE_GYRO_DATA,ENABLE_MAG_DATA));
+
+  /* Characteristc allocation for the led features */
   BleManagerAddChar(BLE_InitLedService());
-  
-  /*****************
-   * User code end *
-   *****************/
+
 }
 
 /**
@@ -173,85 +222,22 @@ void BLE_InitCustomService(void) {
  * @param  uint8_t *manuf_data: Advertize Data
  * @retval None
  */
-void BLE_SetCustomAdvertizeData(uint8_t *manuf_data)
+__weak void BLE_SetCustomAdvertiseData(uint8_t *manuf_data)
 {
+#ifndef BLE_MANAGER_SDKV2
   /**
-  * User can add here the custom advertize data setting  for the selected BLE features.
+  * For only SDKV1, user can add here the custom advertize data setting for the selected BLE features.
   * For example for the environmental features:
-  * 
+  *
   * BLE_SetCustomEnvAdvertizeData(manuf_data);
   */
-  
-#ifndef BLE_MANAGER_SDKV2
-  /* Custom advertize data setting for the environmental features */
-  BLE_SetEnvAdvertizeData(manuf_data);
-  
-  /* Custom advertize data setting for the inertial features */
-  BLE_SetInertialAdvertizeData(manuf_data);
-  
-  /* Custom advertize data setting for the accelerometer events features */
-  BLE_SetAccEnvAdvertizeData(manuf_data);
-  
-  /* Custom advertize data setting for the led features */
-  BLE_SetLedAdvertizeData(manuf_data);
+
 #else /* BLE_MANAGER_SDKV2 */
-  manuf_data[BLE_MANAGER_CUSTOM_FIELD1]=0x01; /* TMP Code BLE_PROPOSAL */
-  manuf_data[BLE_MANAGER_CUSTOM_FIELD2]=0x03; /* Dummy */
-  manuf_data[BLE_MANAGER_CUSTOM_FIELD3]=0x33; /* Dummy */
-  manuf_data[BLE_MANAGER_CUSTOM_FIELD4]=0x44; /* Dummy */
+  manuf_data[BLE_MANAGER_CUSTOM_FIELD1]=0xFF; /* Custom Firmware */
+  manuf_data[BLE_MANAGER_CUSTOM_FIELD2]=0x00;
+  manuf_data[BLE_MANAGER_CUSTOM_FIELD3]=0x00;
+  manuf_data[BLE_MANAGER_CUSTOM_FIELD4]=0x00;
 #endif /* BLE_MANAGER_SDKV2 */
-}
-
-/**
- * @brief  Get hardware and firmware version
- *
- * @param  Hardware version
- * @param  Firmware version
- * @retval Status
- */
-static uint8_t getBlueNRG2_Version(uint8_t *hwVersion, uint16_t *fwVersion)
-{
-  uint8_t status;
-  uint8_t hci_version, lmp_pal_version;
-  uint16_t hci_revision, manufacturer_name, lmp_pal_subversion;
-  uint8_t DTM_version_major, DTM_version_minor, DTM_version_patch, DTM_variant, BTLE_Stack_version_major, BTLE_Stack_version_minor, BTLE_Stack_version_patch, BTLE_Stack_development;
-  uint16_t DTM_Build_Number, BTLE_Stack_variant, BTLE_Stack_Build_Number;
-
-
-  status = hci_read_local_version_information(&hci_version, &hci_revision, &lmp_pal_version, 
-				                              &manufacturer_name, &lmp_pal_subversion);
-
-  if (status == BLE_STATUS_SUCCESS) {
-    *hwVersion = hci_revision >> 8;
-  }
-  else {
-    BLE_MANAGER_PRINTF("Error= %x \r\n", status);
-  }
-  
-  
-  status = aci_hal_get_firmware_details(&DTM_version_major,
-                                        &DTM_version_minor,
-                                        &DTM_version_patch,
-                                        &DTM_variant,
-                                        &DTM_Build_Number,
-                                        &BTLE_Stack_version_major,
-                                        &BTLE_Stack_version_minor,
-                                        &BTLE_Stack_version_patch,
-                                        &BTLE_Stack_development,
-                                        &BTLE_Stack_variant,
-                                        &BTLE_Stack_Build_Number);
-  
-  if (status == BLE_STATUS_SUCCESS) {
-    *fwVersion = BTLE_Stack_version_major  << 8;  // Major Version Number
-    *fwVersion |= BTLE_Stack_version_minor << 4;  // Minor Version Number
-    *fwVersion |= BTLE_Stack_version_patch;       // Patch Version Number
-  }
-  else {
-    BLE_MANAGER_PRINTF("Error= %x \r\n", status);
-  }
-  
-    
-  return status;
 }
 
 /**
@@ -260,27 +246,11 @@ static uint8_t getBlueNRG2_Version(uint8_t *hwVersion, uint16_t *fwVersion)
 * @param  uint8_t data_length length of the data
 * @retval uint32_t SendBackData true/false
 */
-static uint32_t DebugConsoleParsing(uint8_t * att_data, uint8_t data_length)
+__weak uint32_t DebugConsoleParsing(uint8_t * att_data, uint8_t data_length)
 {
   /* By default Answer with the same message received */
-  uint32_t SendBackData =1; 
- 
-  /* Received one write from Client on Terminal characteristc */
-  SendBackData = DebugConsoleCommandParsing(att_data,data_length);
-  
-  return SendBackData;
-}
+  uint32_t SendBackData =1;
 
-/**
- * @brief  This function makes the parsing of the Debug Console Commands
- * @param  uint8_t *att_data attribute data
- * @param  uint8_t data_length length of the data
- * @retval uint32_t SendBackData true/false
- */
-static uint32_t DebugConsoleCommandParsing(uint8_t * att_data, uint8_t data_length)
-{
-  uint32_t SendBackData = 1;
-  
   /* Help Command */
   if(!strncmp("help",(char *)(att_data),4))
   {
@@ -288,49 +258,28 @@ static uint32_t DebugConsoleCommandParsing(uint8_t * att_data, uint8_t data_leng
     SendBackData=0;
 
     BytesToWrite =sprintf((char *)BufferToWrite,"Command:\r\n"
-      "pr->HW pedometer reset\r\n"
       "info-> System Info\r\n"
-      "versionFw-> FW Version\r\n"
-      "versionBle-> Ble Version\r\n");   
+      "uid-> STM32 UID value\r\n");
     Term_Update(BufferToWrite,BytesToWrite);
-  }
-  else if((att_data[0]=='p') & (att_data[1]=='r'))
-  {
-    /* Reset the pedometer DS3 HW counter */
-    ResetHWPedometer();
-    SendBackData=0;
-    BytesToWrite =sprintf((char *)BufferToWrite,"Pedometer HW counter resetted\r\n");
-    Term_Update(BufferToWrite,BytesToWrite);
-  }
-  else if(!strncmp("versionFw",(char *)(att_data),9))
-  {
-    BytesToWrite =sprintf((char *)BufferToWrite,"%s_%s_%c.%c.%c\r\n",
-                          BLE_STM32_MICRO,
-                          MOTENV1_PACKAGENAME,
-                          MOTENV1_VERSION_MAJOR,
-                          MOTENV1_VERSION_MINOR,
-                          MOTENV1_VERSION_PATCH);
-    Term_Update(BufferToWrite,BytesToWrite);
-    SendBackData=0;
   }
   else if(!strncmp("info",(char *)(att_data),4))
   {
     SendBackData=0;
-      
+
     BytesToWrite =sprintf((char *)BufferToWrite,"\r\nSTMicroelectronics %s:\r\n"
         "\tVersion %c.%c.%c\r\n"
-        "\tSTM32L053R8-Nucleo board"
+        "\tSTM32L0xx MCU Family Name"
          "\r\n",
-         MOTENV1_PACKAGENAME,
-         MOTENV1_VERSION_MAJOR,MOTENV1_VERSION_MINOR,MOTENV1_VERSION_PATCH);
-    
+         BLE_FW_PACKAGENAME,
+         BLE_VERSION_FW_MAJOR,BLE_VERSION_FW_MINOR,BLE_VERSION_FW_PATCH);
+
     Term_Update(BufferToWrite,BytesToWrite);
 
     BytesToWrite =sprintf((char *)BufferToWrite,"\t(HAL %ld.%ld.%ld_%ld)\r\n"
         "\tCompiled %s %s"
 #if defined (__IAR_SYSTEMS_ICC__)
         " (IAR)\r\n",
-#elif defined (__CC_ARM)
+#elif defined (__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)) /* For ARM Compiler 5 and 6 */
         " (KEIL)\r\n",
 #elif defined (__GNUC__)
         " (STM32CubeIDE)\r\n",
@@ -342,37 +291,12 @@ static uint32_t DebugConsoleCommandParsing(uint8_t * att_data, uint8_t data_leng
         __DATE__,__TIME__);
 
     Term_Update(BufferToWrite,BytesToWrite);
-
-    if(TargetBoardFeatures.IKS01Ax_support)
-    {
-      BytesToWrite =sprintf((char *)BufferToWrite,"Code compiled for X-NUCLEO-IKS01A2\r\n");
-    }
-    else
-    {
-      BytesToWrite =sprintf((char *)BufferToWrite,"\tX-NUCLEO-IKS01Ax Board not present\r\n");
-    }
-    Term_Update(BufferToWrite,BytesToWrite);
   }
-  else if(!strncmp("versionBle",(char *)(att_data),10))
-  {
-    uint8_t  hwVersion;
-    uint16_t fwVersion= 0;
-    /* get the BlueNRG HW and FW versions */
-    //getBlueNRGVersion(&hwVersion, &fwVersion);
-    getBlueNRG2_Version(&hwVersion, &fwVersion);
-      BytesToWrite =sprintf((char *)BufferToWrite,"%s_%d.%d.%c\r\n",
-                            "BlueNRG2",
-                            (fwVersion>>8)&0xF,
-                            (fwVersion>>4)&0xF,
-                            ('a' + (fwVersion&0xF)));
-    Term_Update(BufferToWrite,BytesToWrite);
-    SendBackData=0;
-  } 
   else if((att_data[0]=='u') & (att_data[1]=='i') & (att_data[2]=='d'))
   {
     /* Write back the STM32 UID */
-    uint8_t *uid = (uint8_t *)STM32_UUID;
-    uint32_t MCU_ID = STM32_MCU_ID[0]&0xFFF;
+    uint8_t *uid = (uint8_t *)BLE_STM32_UUID;
+    uint32_t MCU_ID = BLE_STM32_MCU_ID[0]&0xFFF;
     BytesToWrite =sprintf((char *)BufferToWrite,"%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X_%.3lX\r\n",
                           uid[ 3],uid[ 2],uid[ 1],uid[ 0],
                           uid[ 7],uid[ 6],uid[ 5],uid[ 4],
@@ -382,350 +306,213 @@ static uint32_t DebugConsoleCommandParsing(uint8_t * att_data, uint8_t data_leng
     SendBackData=0;
   }
 
-#if 1
-  /* If it's something not yet recognized... only for testing.. This must be removed*/
-  if(SendBackData) {
-    if(att_data[0]=='@') {
-      if(att_data[1]=='T') {
-        uint8_t loc_att_data[6];
-        uint8_t loc_data_length=6;
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the DebugConsoleParsing could be implemented in the user file
+   */
 
-        loc_att_data[0] = (FEATURE_MASK_TEMP1>>24)&0xFF;
-        loc_att_data[1] = (FEATURE_MASK_TEMP1>>16)&0xFF;
-        loc_att_data[2] = (FEATURE_MASK_TEMP1>>8 )&0xFF;
-        loc_att_data[3] = (FEATURE_MASK_TEMP1    )&0xFF;
-        loc_att_data[4] = 255;
-
-        switch(att_data[2]) {
-          case 'L':
-            loc_att_data[5] = 50; /* @5S */
-          break;
-          case 'M':
-            loc_att_data[5] = 10; /* @1S */
-          break;
-          case 'H':
-            loc_att_data[5] = 1; /* @100mS */
-          break;
-          case 'D':
-            loc_att_data[5] = 0; /* Default */
-          break;
-        }
-        WriteRequestConfigFunction(loc_att_data,loc_data_length);
-        SendBackData = 0;
-      } else if(att_data[1]=='A') {
-        uint8_t loc_att_data[6];
-        uint8_t loc_data_length=6;
-
-        loc_att_data[0] = (FEATURE_MASK_ACC>>24)&0xFF;
-        loc_att_data[1] = (FEATURE_MASK_ACC>>16)&0xFF;
-        loc_att_data[2] = (FEATURE_MASK_ACC>>8 )&0xFF;
-        loc_att_data[3] = (FEATURE_MASK_ACC    )&0xFF;
-        loc_att_data[4] = 255;
-
-        switch(att_data[2]) {
-          case 'L':
-            loc_att_data[5] = 50; /* @5S */
-          break;
-          case 'M':
-            loc_att_data[5] = 10; /* @1S */
-          break;
-          case 'H':
-            loc_att_data[5] = 1; /* @100mS */
-          break;
-          case 'D':
-            loc_att_data[5] = 0; /* Default */
-          break;
-        }
-        WriteRequestConfigFunction(loc_att_data,loc_data_length);
-        SendBackData = 0;
-      }
-    }
-  }
-#endif
   return SendBackData;
 }
 
 /**
- * @brief  This function is called when there is a Bluetooth Read request.
- * @param  None 
+ * @brief  Callback Function for Environmental read request.
+ * @param  int32_t *Press Pressure Value
+ * @param  uint16_t *Hum Humidity Value
+ * @param  int16_t *Temp1 Temperature Number 1
+ * @param  int16_t *Temp2 Temperature Number 2
  * @retval None
  */
-static void ReadRequestEnvFunction(void)
+__weak void ReadRequestEnvFunction(int32_t *Press,uint16_t *Hum,int16_t *Temp1,int16_t *Temp2)
 {
-  /* Read Request for Pressure,Humidity, and Temperatures*/
-  int32_t PressToSend;
-  uint16_t HumToSend;
-  int16_t Temp1ToSend;
-  int16_t Temp2ToSend;
-
-  /* Read all the Environmental Sensors */
-  ReadEnvironmentalData(&PressToSend,&HumToSend, &Temp1ToSend,&Temp2ToSend);
-  
-  /* Send the Data with BLE */
-  BLE_EnvironmentalUpdate(PressToSend,HumToSend,Temp2ToSend,Temp1ToSend);
-  
-  BLE_MANAGER_PRINTF("Read for Env\r\n");
+  /* NOTE: Insert here the function to read the environmental data */
 }
 
 /**
  * @brief  This function is called when the peer device get disconnected.
- * @param  None 
+ * @param  None
  * @retval None
  */
-static void DisconnectionCompletedFunction(void)
+__weak void DisconnectionCompletedFunction(void)
 {
-  connected = FALSE;
-  
-  AccEventEnabled= 0;
-  LedEnabled= 0;
-  
-  /* Disable all timer */
-  if(TIM2_CHANNEL_1_Enabled) {
-    /* Stop the TIM Base generation in interrupt mode (for mic audio level) */
-    if(HAL_TIM_OC_Stop_IT(&TimCCHandle, TIM_CHANNEL_1) != HAL_OK){
-      /* Stopping Error */
-      Error_Handler();
-    }  
-    
-    TIM2_CHANNEL_1_Enabled= 0;
-    EnvironmentalTimerEnabled= 0;
-  }
-  
-  if(TIM2_CHANNEL_4_Enabled){
-    /* Stop the TIM Base generation in interrupt mode (for Acc/Gyro/Mag sensor) */
-    if(HAL_TIM_OC_Stop_IT(&TimCCHandle, TIM_CHANNEL_4) != HAL_OK){
-      /* Stopping Error */
-      Error_Handler();
-    }
-    
-    TIM2_CHANNEL_4_Enabled= 0;
-    InertialTimerEnabled= 0;
-  }
-
   BLE_MANAGER_PRINTF("Call to DisconnectionCompletedFunction\r\n");
   BLE_MANAGER_DELAY(100);
+
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the DisconnectionCompletedFunction could be implemented in the user file
+   */
 }
 
 /**
  * @brief  This function is called when there is a LE Connection Complete event.
- * @param  None 
+ * @param  uint16_t ConnectionHandle
+ * @param  uint8_t Address_Type
+ * @param  uint8_t addr[6]
  * @retval None
  */
-static void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Addr[6])
+__weak void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Address_Type, uint8_t addr[6])
 {
-  connected = TRUE;
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(Address_Type);
+  UNUSED(ConnectionHandle);
+  UNUSED(addr);
+
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the ConnectionCompletedFunction could be implemented in the user file
+   */
+
   BLE_MANAGER_PRINTF("Call to ConnectionCompletedFunction\r\n");
   BLE_MANAGER_DELAY(100);
 }
 
 /**
-* @brief  This function makes the parsing of the Configuration Commands
+ * @brief  This function is called when there is a change on the gatt attribute.
+ * @param  None
+ * @retval None
+ */
+__weak void AttrModConfigFunction(uint8_t * att_data, uint8_t data_length)
+{
+  BLE_MANAGER_PRINTF("Call to AttrModConfigFunction\r\n");
+  BLE_MANAGER_DELAY(100);
+
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the AttrModConfigFunction could be implemented in the user file
+   */
+}
+
+/**
+ * @brief  This function is called when the pairing process has completed successfully
+ *         or a pairing procedure timeout has occurred or the pairing has failed.
+ * @param  uint8_t PairingStatus
+ * @retval None
+ */
+__weak void PairingCompletedFunction(uint8_t PairingStatus)
+{
+  BLE_MANAGER_PRINTF("Call to PairingCompletedFunction\r\n");
+  BLE_MANAGER_DELAY(100);
+
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the PairingCompletedFunction could be implemented in the user file
+   */
+}
+
+/**
+ * @brief  This function is called when the device is put in connectable mode.
+ * @param  uint8_t *ManufData Filling Manufacter Advertise data
+ * @retval None
+ */
+__weak void SetConnectableFunction(uint8_t *ManufData)
+{
+  BLE_MANAGER_PRINTF("Call to SetConnectableFunction\r\n");
+  BLE_MANAGER_DELAY(100);
+
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the SetConnectableFunction could be implemented in the user file
+   */
+}
+
+/**
+ * @brief  This function is called when bluetooth congestion buffer occurs
+ *         or a pairing procedure timeout has occurred or the pairing has failed.
+ * @param  None
+ * @retval None
+ */
+__weak void AciGattTxPoolAvailableEventFunction(void)
+{
+  BLE_MANAGER_PRINTF("Call to AciGattTxPoolAvailableEventFunction\r\n");
+  BLE_MANAGER_DELAY(100);
+
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the AciGattTxPoolAvailableEventFunction could be implemented in the user file
+   */
+}
+
+/**
+ * @brief  This event is used to notify the Host that a hardware failure has occurred in the Controller.
+ * @param  uint8_t Hardware_Code Hardware Error Event code.
+ * @retval None
+ */
+__weak void HardwareErrorEventHandlerFunction(uint8_t Hardware_Code)
+{
+  BLE_MANAGER_PRINTF("Call to HardwareErrorEventHandlerFunction\r\n");
+  BLE_MANAGER_DELAY(100);
+
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the HardwareErrorEventHandlerFunction could be implemented in the user file
+   */
+}
+
+/**
+* @brief  Callback Function for Config write request.
 * @param uint8_t *att_data attribute data
 * @param uint8_t data_length length of the data
 * @retval None
 */
-static void WriteRequestConfigFunction(uint8_t * att_data, uint8_t data_length)
+__weak void WriteRequestConfigFunction(uint8_t * att_data, uint8_t data_length)
 {
-  uint32_t FeatureMask = (att_data[3]) | (att_data[2]<<8) | (att_data[1]<<16) | (att_data[0]<<24);
-  uint8_t Command = att_data[4];
-  uint8_t Data    = att_data[5];
-  
-  switch (FeatureMask) {  
-  case FEATURE_MASK_ACC_EVENTS:
-    /* Acc events */
-#ifdef MOTENV1_DEBUG_CONNECTION
-    if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
-      BytesToWrite =sprintf((char *)BufferToWrite,"Conf Sig F=%lx C=%c D=%x\r\n",FeatureMask,Command,Data);
-      Term_Update(BufferToWrite,BytesToWrite);
-    } else {
-      BLE_MANAGER_PRINTF("Conf Sig F=%lx C=%c D=%x\r\n",FeatureMask,Command,Data);
-    }
-#endif /* MOTENV1_DEBUG_CONNECTION */      
-    switch(Command) {
-      case 'm':
-        /* Multiple Events */
-        switch(Data) {
-          case 1:
-            EnableHWMultipleEvents();
-            ResetHWPedometer();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-          case 0:
-            DisableHWMultipleEvents();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-         }
-        break;
-      case 'f':
-        /* FreeFall */
-        switch(Data) {
-          case 1:
-            EnableHWFreeFall();
-             Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-          case 0:
-            DisableHWFreeFall();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-         }
-      break;
-      case 'd':
-        /* Double Tap */
-        switch(Data) {
-          case 1:
-            EnableHWDoubleTap();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-          case 0:
-            DisableHWDoubleTap();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-        }
-      break;
-      case 's':
-        /* Single Tap */
-        switch(Data) {
-          case 1:
-            EnableHWSingleTap();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-          case 0:
-            DisableHWSingleTap();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-        }
-      break;
-      case 'p':
-        /* Pedometer */
-        switch(Data) {
-          case 1:
-            EnableHWPedometer();
-            ResetHWPedometer();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-          case 0:
-            DisableHWPedometer();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-        }
-       break;
-      case 'w':
-        /* Wake UP */
-        switch(Data) {
-          case 1:
-            EnableHWWakeUp();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-          case 0:
-            DisableHWWakeUp();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-        }
-       break;
-       case 't':
-         /* Tilt */
-        switch(Data) {
-          case 1:
-            EnableHWTilt();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-          case 0:
-            DisableHWTilt();
-            Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-            break;
-        }
-      break;
-      case 'o' :
-        /* Tilt */
-        switch(Data) {
-        case 1:
-          EnableHWOrientation6D();
-          Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-          break;
-        case 0:
-          DisableHWOrientation6D();
-          Config_Update(FEATURE_MASK_ACC_EVENTS,Command,Data);
-          break;
-        }
-      break;
-    }
-    break;
-    case FEATURE_MASK_LED:
-      /* Led events */
-#ifdef MOTENV1_DEBUG_CONNECTION
-      if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
-        BytesToWrite = sprintf((char *)BufferToWrite,"Conf Sig F=%lx C=%2x\n\r",FeatureMask,Command);
-        Term_Update(BufferToWrite,BytesToWrite);
-      } else {
-        BLE_MANAGER_PRINTF("Conf Sig F=%lx C=%2x\r\n",FeatureMask,Command);
-      }
-#endif /* MOTENV1_DEBUG_CONNECTION */
-     switch(Command) {
-      case 1:
-        LedOnTargetPlatform();
-        Config_Update(FEATURE_MASK_LED,Command,Data);
-        break;
-      case 0:
-        LedOffTargetPlatform();
-        Config_Update(FEATURE_MASK_LED,Command,Data);
-        break;
-     }
-     /* Update the LED feature */
-     if(LedEnabled) {
-       BLE_LedStatusUpdate(TargetBoardFeatures.LedStatus);
-     }
-    break;
-    /* Environmental features */
-    case FEATURE_MASK_TEMP1:
-    case FEATURE_MASK_TEMP2:
-    case FEATURE_MASK_PRESS:
-    case FEATURE_MASK_HUM:
-      switch(Command) {
-        case 255:
-          /* Change the Sending interval */
-          if(Data!=0) {
-            /* Multiple of 100mS */
-            uhCCR1_Val  = 1000*Data;
-          } else {
-            /* Default Values */
-            uhCCR1_Val  = DEFAULT_uhCCR1_Val;
-          }
-#ifdef MOTENV1_DEBUG_CONNECTION
-          if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
-            BytesToWrite = sprintf((char *)BufferToWrite,"Conf Sig F=%lx C=%2x Data=%2x\n\r",FeatureMask,Command,Data);
-            Term_Update(BufferToWrite,BytesToWrite);
-          } else {
-            BLE_MANAGER_PRINTF("Conf Sig F=%lx C=%2x Data=%2x\n\r",FeatureMask,Command,Data);
-          }
-#endif /* MOTENV1_DEBUG_CONNECTION */
-        break;
-      }
-    break;
-    /* Inertial features */
-    case FEATURE_MASK_ACC:
-    case FEATURE_MASK_GRYO:
-    case FEATURE_MASK_MAG:
-      switch(Command) {
-        case 255:
-          /* Change the Sending interval */
-          if(Data!=0) {
-            /* Multiple of 100mS */
-            uhCCR4_Val  = 1000*Data;
-          } else {
-            /* Default Value */
-            uhCCR4_Val  = DEFAULT_uhCCR4_Val;
-          }
-#ifdef MOTENV1_DEBUG_CONNECTION
-          if(BLE_StdTerm_Service==BLE_SERV_ENABLE) {
-            BytesToWrite = sprintf((char *)BufferToWrite,"Conf Sig F=%lx C=%2x Data=%2x\n\r",FeatureMask,Command,Data);
-            Term_Update(BufferToWrite,BytesToWrite);
-          } else {
-            BLE_MANAGER_PRINTF("Conf Sig F=%lx C=%2x Data=%2x\n\r",FeatureMask,Command,Data);
-          }
-#endif /* MOTENV1_DEBUG_CONNECTION */
-        break;
-      }
-    break;
-  }
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(att_data);
+  UNUSED(data_length);
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the WriteRequestConfigFunction could be implemented in the user file
+   */
+}
+
+/**************************************************
+ * Callback functions to manage the notify events *
+ **************************************************/
+
+/**
+ * @brief  Callback Function for Un/Subscription Feature
+ * @param  BLE_NotifyEvent_t Event Sub/Unsub
+ * @retval None
+ */
+__weak void NotifyEventAccEvent(BLE_NotifyEvent_t Event)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(Event);
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the NotifyEventAccEvent could be implemented in the user file
+   */
+}
+
+/**
+ * @brief  Callback Function for Un/Subscription Feature
+ * @param  BLE_NotifyEvent_t Event Sub/Unsub
+ * @retval None
+ */
+__weak void NotifyEventEnv(BLE_NotifyEvent_t Event)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(Event);
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the NotifyEventEnv could be implemented in the user file
+   */
+}
+
+/**
+ * @brief  Callback Function for Un/Subscription Feature
+ * @param  BLE_NotifyEvent_t Event Sub/Unsub
+ * @retval None
+ */
+__weak void NotifyEventInertial(BLE_NotifyEvent_t Event)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(Event);
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the NotifyEventInertial could be implemented in the user file
+   */
+}
+
+/**
+ * @brief  Callback Function for Un/Subscription Feature
+ * @param  BLE_NotifyEvent_t Event Sub/Unsub
+ * @retval None
+ */
+__weak void NotifyEventLed(BLE_NotifyEvent_t Event)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(Event);
+  /* NOTE: This function Should not be modified, when the callback is needed,
+           the NotifyEventLed could be implemented in the user file
+   */
 }
 

@@ -1,14 +1,15 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    HWAdvanceFeatures.h 
+  * @file    HWAdvanceFeatures.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version V4.2.0
-  * @date    03-Nov-2021
-  * @brief   HW Advance Features API
+  * @version 4.3.0
+  * @date    31-January-2023
+  * @brief   HW Advance Features API prototype
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,21 +18,21 @@
   *
   ******************************************************************************
   */
-  
-/* Define to prevent recursive inclusion -------------------------------------*/  
+
+/* USER CODE END Header */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _HW_ADVANCE_FEATURES_H_
 #define _HW_ADVANCE_FEATURES_H_
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
 #include "TargetFeatures.h"
 
 #include <stdlib.h>
-#include "main.h"
-
 
 /* Exported types ------------------------------------------------------- */
 typedef enum
@@ -95,11 +96,9 @@ extern uint32_t HWAdvanceFeaturesStatus;
 #define W2ST_HWF_6DORIENTATION    (1<<6)
 #define W2ST_HWF_MULTIPLE_EVENTS  (1<<7)
 
-
 #define W2ST_CHECK_HW_FEATURE(Feature) ((HWAdvanceFeaturesStatus&(Feature)) ? 1 : 0)
 #define W2ST_ON_HW_FEATURE(Feature)    (HWAdvanceFeaturesStatus|=(Feature))
 #define W2ST_OFF_HW_FEATURE(Feature)   (HWAdvanceFeaturesStatus&=(~Feature))
-
 
 #ifdef __cplusplus
 }
