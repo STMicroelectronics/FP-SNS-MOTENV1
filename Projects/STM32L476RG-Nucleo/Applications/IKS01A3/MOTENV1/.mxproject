@@ -24,12 +24,12 @@ SourceFiles=MotionAR_Manager.c;MotionCP_Manager.c;MotionFX_Manager.c;MotionGR_Ma
 
 [ThirdPartyIp]
 ThirdPartyIpNumber=4
-ThirdPartyIpName#0=STMicroelectronics.FP-SNS-MOTENV1.4.3.0
+ThirdPartyIpName#0=STMicroelectronics.FP-SNS-MOTENV1.4.3.1
 ThirdPartyIpName#1=STMicroelectronics.X-CUBE-BLE2.3.3.0
 ThirdPartyIpName#2=STMicroelectronics.X-CUBE-BLEMGR.2.0.0
 ThirdPartyIpName#3=STMicroelectronics.X-CUBE-MEMS1.9.5.0
 
-[ThirdPartyIp#STMicroelectronics.FP-SNS-MOTENV1.4.3.0]
+[ThirdPartyIp#STMicroelectronics.FP-SNS-MOTENV1.4.3.1]
 header=..\Middlewares\ST\STM32_MetaDataManager\MetaDataManager.h;
 source=..\Middlewares\ST\STM32_MetaDataManager\MetaDataManager.c;
 

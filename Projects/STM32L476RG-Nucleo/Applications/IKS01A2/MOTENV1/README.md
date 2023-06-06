@@ -75,11 +75,11 @@ BLE, BLE_Manager, BlueNRG-2, SPI, UART, MEMS
   - This example has been tested with STMicroelectronics:
     - NUCLEO-L476RG RevC board
 	
-ADDITIONAL_BOARD : [X-NUCLEO-BNRG2A1](https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html)
+ADDITIONAL_BOARD : X-NUCLEO-BNRG2A1 https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html
 
-ADDITIONAL_BOARD : [X-NUCLEO-IKS01A2](https://www.st.com/en/ecosystems/x-nucleo-iks01a2.html)
+ADDITIONAL_BOARD : X-NUCLEO-IKS01A2 https://www.st.com/en/ecosystems/x-nucleo-iks01a2.html
 
-ADDITIONAL_COMP : [BlueNRG-M2SP](https://www.st.com/en/wireless-connectivity/bluenrg-2.html)
+ADDITIONAL_COMP : BlueNRG-M2SP https://www.st.com/en/wireless-connectivity/bluenrg-2.html
 
 ### <b>Dependencies</b>
 

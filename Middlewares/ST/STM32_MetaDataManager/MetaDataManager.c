@@ -2,13 +2,13 @@
   ******************************************************************************
   * @file    MetaDataManager.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 1.5.0
-  * @date    18-Nov-2021
+  * @version 1.7.0
+  * @date    10-February-2023
   * @brief   Meta Data Manager APIs implementation
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,6 +22,33 @@
 #include <stdio.h>
 #include <string.h>
 #include "MetaDataManager.h"
+
+/* Local defines -------------------------------------------------------------*/
+/*---------------------------------- STM32F401xE/STM32F411xE/STM32F446xx ------------------------------*/
+#if defined(STM32F401xE) || defined(STM32F411xE) || defined(STM32F446xx)
+#define NUMBER_FLASH_SECTOR FLASH_SECTOR_7
+#endif /* STM32F401xE || STM32F411xE || STM32F446xx */
+/*-----------------------------------------------------------------------------------------------------*/
+   
+/*--------------------------------------- STM32F40xxx/STM32F41xxx -------------------------------------*/ 
+#if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F407xx) || defined(STM32F417xx) || defined(STM32F412Zx) ||\
+    defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F412Cx)
+#define NUMBER_FLASH_SECTOR FLASH_SECTOR_11
+#endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx || STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F412Cx */
+/*-----------------------------------------------------------------------------------------------------*/
+
+/*-------------------------------------- STM32F413xx/STM32F423xx --------------------------------------*/   
+#if defined(STM32F413xx) || defined(STM32F423xx)
+#define NUMBER_FLASH_SECTOR FLASH_SECTOR_15
+#endif /* STM32F413xx || STM32F423xx */
+/*-----------------------------------------------------------------------------------------------------*/ 
+      
+/*-------------------------------------- STM32F42xxx/STM32F43xxx/STM32F469xx ------------------------------------*/   
+#if defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx)|| defined(STM32F439xx) ||\
+    defined(STM32F469xx) || defined(STM32F479xx)
+#define NUMBER_FLASH_SECTOR FLASH_SECTOR_23
+#endif /* STM32F427xx || STM32F437xx || STM32F429xx|| STM32F439xx || STM32F469xx || STM32F479xx */
+/*-----------------------------------------------------------------------------------------------------*/
 
 /* Local variables --------------------------------------------------*/
 /* We move to the first MetaData position after the Meta Data Manager header */
@@ -37,10 +64,10 @@ static uint32_t NumberOfKnownLic=0;
 static uint32_t NumberOfKnownGMD=0;
 
 /* Private function prototypes -----------------------------------------------*/
-#if (defined(USE_STM32L4XX_NUCLEO) || defined (STM32L476xx) || (defined STM32L475xx) || (defined STM32L4R9xx))
+#ifdef STM32L4xx
 static uint32_t GetPage(uint32_t Address);
 static uint32_t GetBank(uint32_t Address);
-#endif /* (defined(USE_STM32L4XX_NUCLEO) || defined (STM32L476xx) || (defined STM32L475xx) || (defined STM32L4R9xx)) */
+#endif /* STM32L4xx */
 
 MDM_knownOsxLicense_t known_OsxLic[]={
   {OSX_END,"LAST",""}/* THIS MUST BE THE LAST ONE */
@@ -441,9 +468,9 @@ static uint32_t ReCallMetaDataManager(void)
     *((uint32_t *) puint8_RW_MetaData)     = MDM_DATA_TYPE_END;
     *(((uint32_t *) puint8_RW_MetaData)+4) = 0; /* No Payload */
 
-    MDM_PRINTF("Meta Data Manager read from Flash\r\n");
+    MDM_PRINTF("Meta Data Manager read from Flash (Address: 0x%lx)\r\n", MDM_FLASH_ADD);
   } else {
-    MDM_PRINTF("Meta Data Manager not present in FLASH\r\n");
+    MDM_PRINTF("Meta Data Manager not present in FLASH (Address: 0x%lx)\r\n", MDM_FLASH_ADD);
   }
   return RetValue;
 }
@@ -660,7 +687,7 @@ uint32_t MDM_ReCallGMD(MDM_GenericMetaDataType_t GMDType,void *GMD)
   return RetValue;
 }
 
-#ifdef USE_STM32F4XX_NUCLEO
+#ifdef STM32F4xx
 /**
  * @brief User function for Erasing the Flash data for MDM
  * @param None
@@ -673,7 +700,7 @@ uint32_t UserFunctionForErasingFlash(void) {
 
   EraseInitStruct.TypeErase = TYPEERASE_SECTORS;
   EraseInitStruct.VoltageRange = VOLTAGE_RANGE_3;
-  EraseInitStruct.Sector = FLASH_SECTOR_7;
+  EraseInitStruct.Sector = NUMBER_FLASH_SECTOR;
   EraseInitStruct.NbSectors = 1;
 
   /* Unlock the Flash to enable the flash control register access *************/
@@ -731,9 +758,9 @@ uint32_t UserFunctionForSavingFlash(void *InitMetaDataVector,void *EndMetaDataVe
  
   return Success;
 }
-#endif /* USE_STM32F4XX_NUCLEO */
+#endif /* STM32F4xx */
 
-#if (defined(USE_STM32L4XX_NUCLEO) || defined (STM32L476xx) || (defined STM32L475xx) || (defined STM32L4R9xx))
+#ifdef STM32L4xx
 /**
   * @brief  Gets the page of a given address
   * @param  Addr: Address of the FLASH Memory
@@ -763,6 +790,9 @@ uint32_t GetBank(uint32_t Addr)
 {
   uint32_t bank = 0;
   
+#if defined (STM32L471xx) || defined (STM32L475xx) || defined (STM32L476xx) || defined (STM32L485xx) || defined (STM32L486xx) || \
+    defined (STM32L496xx) || defined (STM32L4A6xx) || defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || \
+    defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)  
   if (READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_FB_MODE) == 0){
     /* No Bank swap */
     if (Addr < (FLASH_BASE + FLASH_BANK_SIZE)) {
@@ -778,6 +808,9 @@ uint32_t GetBank(uint32_t Addr)
       bank = FLASH_BANK_1;
     }
   }
+#else
+  bank = FLASH_BANK_1;
+#endif
   
   return bank;
 }
@@ -851,5 +884,5 @@ uint32_t UserFunctionForSavingFlash(void *InitMetaDataVector,void *EndMetaDataVe
  
   return Success;
 }
-#endif /* (defined(USE_STM32L4XX_NUCLEO) || defined (STM32L476xx) || (defined STM32L475xx) || (defined STM32L4R9xx)) */
+#endif /* STM32L4xx */
 

@@ -22,7 +22,7 @@
 #define  __RTE_COMPONENTS_H__
 
 /* Defines ------------------------------------------------------------------*/
-/* STMicroelectronics.FP-SNS-MOTENV1.4.3.0 */
+/* STMicroelectronics.FP-SNS-MOTENV1.4.3.1 */
 #define MOTENV1_IKS01A3_FOTA_ALL_FEATURES
 #define META_DATA_MANAGER
 /* STMicroelectronics.X-CUBE-BLE2.3.3.0 */

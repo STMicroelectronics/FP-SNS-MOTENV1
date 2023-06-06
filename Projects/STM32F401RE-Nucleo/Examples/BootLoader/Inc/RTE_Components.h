@@ -22,7 +22,7 @@
 #define  __RTE_COMPONENTS_H__
 
 /* Defines ------------------------------------------------------------------*/
-/* STMicroelectronics.FP-SNS-MOTENV1.4.3.0 */
+/* STMicroelectronics.FP-SNS-MOTENV1.4.3.1 */
 #define BOOT_LOADER
 
 #endif /* __RTE_COMPONENTS_H__ */

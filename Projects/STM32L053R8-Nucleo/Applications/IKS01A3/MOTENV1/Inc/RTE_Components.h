@@ -22,7 +22,7 @@
 #define  __RTE_COMPONENTS_H__
 
 /* Defines ------------------------------------------------------------------*/
-/* STMicroelectronics.FP-SNS-MOTENV1.4.3.0 */
+/* STMicroelectronics.FP-SNS-MOTENV1.4.3.1 */
 #define MOTENV1_IKS01A3_ONLY_HW
 /* STMicroelectronics.X-CUBE-BLE2.3.3.0 */
 #define HCI_TL

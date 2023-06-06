@@ -41,11 +41,11 @@ BLE, BLE_Manager, BlueNRG-2, SPI, I2C, MEMS, IKS01A3
   - This example has been tested with STMicroelectronics:
     - NUCLEO-L053R8 RevC board
  
-ADDITIONAL_BOARD : [X-NUCLEO-BNRG2A1](https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html)
+ADDITIONAL_BOARD : X-NUCLEO-BNRG2A1 https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html
 
-ADDITIONAL_BOARD : [X-NUCLEO-IKS01A3](https://www.st.com/en/ecosystems/x-nucleo-iks01a3.html)
+ADDITIONAL_BOARD : X-NUCLEO-IKS01A3 https://www.st.com/en/ecosystems/x-nucleo-iks01a3.html
 
-ADDITIONAL_COMP : [BlueNRG-M2SP](https://www.st.com/en/wireless-connectivity/bluenrg-2.html)
+ADDITIONAL_COMP : BlueNRG-M2SP https://www.st.com/en/wireless-connectivity/bluenrg-2.html
 
 ### <b>Known Issues</b>
 
