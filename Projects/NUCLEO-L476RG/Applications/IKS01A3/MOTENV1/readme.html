@@ -61,7 +61,7 @@ stdin/stdout and stderr capabilities</li>
 phase via UART. Launch a terminal application and set the UART port to
 115200 bps, 8 bit, No Parity, 1 stop bit.</p>
 <p>This example must be used with the related ST BLE Sensor Android
-(Version 4.20.0 or higher) or iOS (Version 4.20.0 or higher) application
+(Version 5.0.0 or higher) or iOS (Version 5.0.0 or higher) application
 available on Play/itune store, in order to read the sent information by
 Bluetooth Low Energy protocol</p>
 <h3 id="important-hardware-additional-information"><b>Important Hardware
@@ -84,12 +84,12 @@ BLE module of X-NUCLEO-BNRG2A1.</li>
 </ol>
 <ol type="1">
 <li><p>The Firmware-Over-The-Air (FOTA) is done using the ST BLE Sensor
-Android/iOS application (Version 4.20.0 and above)</p></li>
+Android/iOS application</p></li>
 <li><p>This example must run starting at address 0x08004000 in memory
 and works ONLY if the BootLoader is saved at the beginning of the FLASH
 (address 0x08000000)</p></li>
-<li><p>In the folder Utilities there is a scripts
-<em>*.sh</em> that makes the following operations:</p>
+<li><p>In the folder Utilities there is a scripts *.sh that makes the
+following operations:</p>
 <ul>
 <li>Full Flash Erase</li>
 <li>Load the BootLoader on the rigth flash region</li>
@@ -98,10 +98,11 @@ and works ONLY if the BootLoader is saved at the beginning of the FLASH
 <li>Dump back one single binary that contain BootLoader+Program that
 could be flashed at the flash beginning (address 0x08000000) (This COULD
 BE NOT used for FOTA)</li>
-<li>Reset the board</li>
-</ul>
-<p>Before to execute the *.sh script, it is necessary to edit it to set the installation path for STM32CubeProgrammer.</p>
-<p>BootLoaderPath BinaryPath as input are required when execute *.sh script</p></li>
+<li>Reset the board Before to execute the <em>.sh script, it is
+necessary to edit it to set the installation path for
+STM32CubeProgrammer. BootLoaderPath BinaryPath as input are required
+when execute </em>.sh script</li>
+</ul></li>
 </ol>
 <ol start="2" type="a">
 <li><p>If the user presses the blue user button on Nucleo board 3 times
@@ -128,7 +129,7 @@ environment</b></h3>
 <ul>
 <li>BlueNRG-2 STM32 expansion board (X-NUCLEO-BNRG2A1)</li>
 <li>Motion MEMS and environmental sensor expansion board
-(X-NUCLEO-IKS01A3) for four MEMS sensor devices:
+(X-NUCLEO-IKS01A3) for six MEMS sensor devices:
 <ul>
 <li>HTS221, LPS22HH, STTS751, LSM6DSO, LIS2MDL, LIS2DW12</li>
 </ul></li>
@@ -150,13 +151,13 @@ environment</b></h3>
 <h3 id="dependencies"><b>Dependencies</b></h3>
 <p>STM32Cube packages:</p>
 <ul>
-<li>STM32L4xx drivers from STM32CubeL4 V1.17.2</li>
+<li>STM32L4xx drivers from STM32CubeL4 V1.18.0</li>
 </ul>
 <p>X-CUBE packages:</p>
 <ul>
 <li>X-CUBE-BLE2 V3.3.0</li>
-<li>X-CUBE-BLEMGR V2.0.0</li>
-<li>X-CUBE-MEMS1 V9.5.0</li>
+<li>X-CUBE-BLEMGR V3.0.0</li>
+<li>X-CUBE-MEMS1 V10.0.0</li>
 </ul>
 <h3 id="how-to-use-it"><b>How to use it?</b></h3>
 <p>This package contains projects for 3 IDEs viz. IAR, Keil µVision 5
@@ -172,7 +173,8 @@ report errors after building.</li>
 <li>Open IAR toolchain (this firmware has been successfully tested with
 Embedded Workbench V9.20.1).</li>
 <li>Open the IAR project file EWARM/Project.eww</li>
-<li>Rebuild all files and run these script that you find on the directory Utilities and you had installed STM32CubeProgrammer tool:
+<li>Rebuild all files and run these script that you find on the
+directory Utilities and you had installed STM32CubeProgrammer tool:
 <ul>
 <li>CleanMOTENV1.sh</li>
 </ul></li>
@@ -182,7 +184,8 @@ Embedded Workbench V9.20.1).</li>
 <li>Open Keil µVision 5 toolchain (this firmware has been successfully
 tested with MDK-ARM Professional Version: 5.37.0).</li>
 <li>Open the µVision project file MDK-ARM/MOTENV1.uvprojx</li>
-<li>Rebuild all files and run these script that you find on the directory Utilities and you had installed STM32CubeProgrammer tool:
+<li>Rebuild all files and run these script that you find on the
+directory Utilities and you had installed STM32CubeProgrammer tool:
 <ul>
 <li>CleanMOTENV1.sh</li>
 </ul></li>
@@ -190,14 +193,15 @@ tested with MDK-ARM Professional Version: 5.37.0).</li>
 <p>For Integrated Development Environment for STM32:</p>
 <ul>
 <li>Open STM32CubeIDE (this firmware has been successfully tested with
-Version 1.12.0).</li>
+Version 1.14.0).</li>
 <li>Set the default workspace proposed by the IDE (please be sure that
 there are not spaces in the workspace path).</li>
 <li>Press “File” -&gt; “Import” -&gt; “Existing Projects into
 Workspace”; press “Browse” in the “Select root directory” and choose the
 path where the System Workbench project is located (it should be
 STM32CubeIDE).</li>
-<li>Rebuild all files and run these script that you find on the directory Utilities and you had installed STM32CubeProgrammer tool:
+<li>Rebuild all files and run these script that you find on the
+directory Utilities and you had installed STM32CubeProgrammer tool:
 <ul>
 <li>CleanMOTENV1.sh</li>
 </ul></li>
@@ -205,7 +209,7 @@ STM32CubeIDE).</li>
 <h3 id="author"><b>Author</b></h3>
 <p>SRA Application Team</p>
 <h3 id="license"><b>License</b></h3>
-<p>Copyright (c) 2023 STMicroelectronics. All rights reserved.</p>
+<p>Copyright (c) 2024 STMicroelectronics. All rights reserved.</p>
 <p>This software is licensed under terms that can be found in the
 LICENSE file in the root directory of this software component. If no
 LICENSE file comes with this software, it is provided AS-IS.</p>

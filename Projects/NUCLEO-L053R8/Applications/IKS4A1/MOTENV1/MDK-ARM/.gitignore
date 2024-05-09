@@ -1,0 +1,6 @@
+DebugConfig/
+RTE/
+MOTENV1/
+startup_stm32l053xx.lst
+MOTENV1.bin
+MOTENV1.uvguix.*

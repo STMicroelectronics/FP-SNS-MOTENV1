@@ -64,7 +64,7 @@ typedef struct
 /* Middle dimension of the flash memory */
 #define MIDDLE_FLASH_DIM (((FLASH_END - FLASH_BASE) + 0x1) / 0x2)
 
-/* Maximun dimension for the firmware binary for the FOTA */
+/* Maximum dimension for the firmware binary for the FOTA */
 #define MAX_PROG_SIZE (MIDDLE_FLASH_DIM - 0x4000 - 0x10)
 
 /* OTA Position - Board  FW OTA Magic Number Position */
@@ -82,43 +82,55 @@ typedef struct
 /* Private variables ---------------------------------------------------------*/
 #if defined (__IAR_SYSTEMS_ICC__)
 #pragma location=".version"
-__root const BootLoaderFeatures_t BootLoaderFeatures={((BL_VERSION_MAJOR<<16) | (BL_VERSION_MINOR<<8) | BL_VERSION_PATCH),
-                                                      OTA_MAGIC_NUM,
-                                                      (FLASH_END - FLASH_BASE),
-                                                      OTA_ADDRESS_START,
-                                                      OTA_MAGIC_DONE_NUM_POS,
-                                                      MAX_PROG_SIZE,
-                                                      PROG_ADDRESS_START,
-                                                      0};
+__root const BootLoaderFeatures_t BootLoaderFeatures =
+{
+  ((BL_VERSION_MAJOR << 16) | (BL_VERSION_MINOR << 8) | BL_VERSION_PATCH),
+  OTA_MAGIC_NUM,
+  (FLASH_END - FLASH_BASE),
+  OTA_ADDRESS_START,
+  OTA_MAGIC_DONE_NUM_POS,
+  MAX_PROG_SIZE,
+  PROG_ADDRESS_START,
+  0
+};
 #elif defined (__CC_ARM)
-const BootLoaderFeatures_t BootLoaderFeatures __attribute__( (at(0x08003F00) ) ) ={((BL_VERSION_MAJOR<<16) | (BL_VERSION_MINOR<<8) | BL_VERSION_PATCH),
-                                                      OTA_MAGIC_NUM,
-                                                      (FLASH_END - FLASH_BASE),
-                                                      OTA_ADDRESS_START,
-                                                      OTA_MAGIC_DONE_NUM_POS,
-                                                      MAX_PROG_SIZE,
-                                                      PROG_ADDRESS_START,
-                                                      1};
+const BootLoaderFeatures_t BootLoaderFeatures __attribute__((at(0x08003F00))) =
+{
+  ((BL_VERSION_MAJOR << 16) | (BL_VERSION_MINOR << 8) | BL_VERSION_PATCH),
+  OTA_MAGIC_NUM,
+  (FLASH_END - FLASH_BASE),
+  OTA_ADDRESS_START,
+  OTA_MAGIC_DONE_NUM_POS,
+  MAX_PROG_SIZE,
+  PROG_ADDRESS_START,
+  1
+};
 #elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) /* For ARM Compiler 5 and 6 */
-const BootLoaderFeatures_t BootLoaderFeatures __attribute__( (section(".ARM.__at_0x08003F00") ) ) ={((BL_VERSION_MAJOR<<16) | (BL_VERSION_MINOR<<8) | BL_VERSION_PATCH),
-                                                      OTA_MAGIC_NUM,
-                                                      (FLASH_END - FLASH_BASE),
-                                                      OTA_ADDRESS_START,
-                                                      OTA_MAGIC_DONE_NUM_POS,
-                                                      MAX_PROG_SIZE,
-                                                      PROG_ADDRESS_START,
-                                                      1};
+const BootLoaderFeatures_t BootLoaderFeatures __attribute__((section(".ARM.__at_0x08003F00"))) =
+{
+  ((BL_VERSION_MAJOR << 16) | (BL_VERSION_MINOR << 8) | BL_VERSION_PATCH),
+  OTA_MAGIC_NUM,
+  (FLASH_END - FLASH_BASE),
+  OTA_ADDRESS_START,
+  OTA_MAGIC_DONE_NUM_POS,
+  MAX_PROG_SIZE,
+  PROG_ADDRESS_START,
+  1
+};
 #elif defined (__GNUC__)
-const BootLoaderFeatures_t __attribute__( (section (".bootinfo") ) ) BootLoaderFeatures ={((BL_VERSION_MAJOR<<16) | (BL_VERSION_MINOR<<8) | BL_VERSION_PATCH),
-                                                      OTA_MAGIC_NUM,
-                                                      (FLASH_END - FLASH_BASE),
-                                                      OTA_ADDRESS_START,
-                                                      OTA_MAGIC_DONE_NUM_POS,
-                                                      MAX_PROG_SIZE,
-                                                      PROG_ADDRESS_START,
-                                                      2};
+const BootLoaderFeatures_t __attribute__((section(".bootinfo"))) BootLoaderFeatures =
+{
+  ((BL_VERSION_MAJOR << 16) | (BL_VERSION_MINOR << 8) | BL_VERSION_PATCH),
+  OTA_MAGIC_NUM,
+  (FLASH_END - FLASH_BASE),
+  OTA_ADDRESS_START,
+  OTA_MAGIC_DONE_NUM_POS,
+  MAX_PROG_SIZE,
+  PROG_ADDRESS_START,
+  2
+};
 
-#endif
+#endif /* IDE */
 
 /* Imported function prototypes ----------------------------------------------*/
 extern void SystemClock_Config(void);
@@ -170,10 +182,11 @@ void MX_BootLoader_Process(void)
 static void BootLoader(void)
 {
   uint32_t SourceAddress = OTA_ADDRESS_START;
-  uint32_t data32 = *(uint32_t*) SourceAddress;
+  uint32_t data32 = *(uint32_t *) SourceAddress;
 
   /* Check if there is Full/Partial Firmware Update */
-  if(data32==OTA_MAGIC_NUM){
+  if (data32 == OTA_MAGIC_NUM)
+  {
     /* Make the Firmware Update*/
 
     /* Update Size */
@@ -182,7 +195,7 @@ static void BootLoader(void)
     /* Firmware Update Header Size */
     uint32_t FwHeaderSize;
 
-    /* First Destination Addres to change */
+    /* First Destination Address to change */
     uint32_t FwDestAddress;
 
     /* This is the last Address to change */
@@ -193,32 +206,37 @@ static void BootLoader(void)
     /* TmpBuffer for storing one Flash Page :
      * 0x1000 == 4096 for L4R9
      * 0x800  == 2048 for L47x */
-    uint64_t FlashPageBuffer[FLASH_PAGE_SIZE>>3];
+    uint64_t FlashPageBuffer[FLASH_PAGE_SIZE >> 3];
     uint8_t *FlashPageBuffer8Bit = (uint8_t *)FlashPageBuffer;
 
     /* Configure the System clock */
     SystemClock_Config();
 
     /* Update Size */
-    SizeOfUpdate = *(uint32_t*) (SourceAddress+4);
+    SizeOfUpdate = *(uint32_t *)(SourceAddress + 4);
 
     /* Dimension of Update header */
-    FwHeaderSize = *(uint32_t*) (SourceAddress+8);
+    FwHeaderSize = *(uint32_t *)(SourceAddress + 8);
 
     /* Address of the Flash region that we need to update */
-    FwDestAddress = *(uint32_t*) (SourceAddress+12);
+    FwDestAddress = *(uint32_t *)(SourceAddress + 12);
 
-    if(SizeOfUpdate==0) {
+    if (SizeOfUpdate == 0)
+    {
       /* If there is not the dimension of the Update... we set the Full program Size */
       SizeOfUpdate = MAX_PROG_SIZE;
-    } else {
+    }
+    else
+    {
       /* This is the Real Size the Partial Firmware Update */
-      SizeOfUpdate -=FwHeaderSize;
+      SizeOfUpdate -= FwHeaderSize;
     }
 
-    if(FwDestAddress==PROG_ADDRESS_START) {
+    if (FwDestAddress == PROG_ADDRESS_START)
+    {
       /* if the Size of Update is not present */
-      if(SizeOfUpdate==0x0) {
+      if (SizeOfUpdate == 0x0)
+      {
         SizeOfUpdate  = MAX_PROG_SIZE;
       }
     }
@@ -227,21 +245,23 @@ static void BootLoader(void)
     LastFwDestAddress = FwDestAddress + SizeOfUpdate;
 
     /* Source Address */
-    SourceAddress +=16+FwHeaderSize;
+    SourceAddress += 16 + FwHeaderSize;
 
-    /* Loop Cycle for writing the Firmare Update  */
-    while(FwDestAddress<LastFwDestAddress) {
+    /* Loop Cycle for writing the Firmware Update  */
+    while (FwDestAddress < LastFwDestAddress)
+    {
       uint32_t Counter;
       FLASH_EraseInitTypeDef EraseInitStruct;
       uint32_t SectorError = 0;
 
       /* These are the Address of the Current Flash page */
-      CurrentPageAddress = FwDestAddress  & (~(FLASH_PAGE_SIZE-1));
+      CurrentPageAddress = FwDestAddress  & (~(FLASH_PAGE_SIZE - 1));
 
       /******************* 1) Copy Data in memory *****************************/
       /* Copy the Content of the Flash page in the Tmp Buffer */
-      for(Counter=0; Counter<(FLASH_PAGE_SIZE);Counter++) {
-        FlashPageBuffer8Bit[Counter] =  *(((uint8_t*) CurrentPageAddress) + Counter);
+      for (Counter = 0; Counter < (FLASH_PAGE_SIZE); Counter++)
+      {
+        FlashPageBuffer8Bit[Counter] =  *(((uint8_t *) CurrentPageAddress) + Counter);
       }
 
       /*********************** 2) Erase Flash *********************************/
@@ -254,36 +274,42 @@ static void BootLoader(void)
       /* Unlock the Flash */
       HAL_FLASH_Unlock();
 #ifdef STM32L4R9xx
-       /* Clear OPTVERR bit set on virgin samples */
+      /* Clear OPTVERR bit set on virgin samples */
       __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
       /* Clear PEMPTY bit set (as the code is executed from Flash which is not empty) */
-      if (__HAL_FLASH_GET_FLAG(FLASH_FLAG_PEMPTY) != 0) {
+      if (__HAL_FLASH_GET_FLAG(FLASH_FLAG_PEMPTY) != 0)
+      {
         __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_PEMPTY);
       }
 #endif /* STM32L4R9xx */
 
-      if(HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK){
+      if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK)
+      {
         /* Error occurred during erase section */
-        //uint32_t errorcode = HAL_FLASH_GetError();
-        while(1);
+        /* uint32_t errorcode = HAL_FLASH_GetError(); */
+        while (1);
       }
 
       /*********************** 3) Update Data in memory ***********************/
 
-      Counter = FwDestAddress & (FLASH_PAGE_SIZE-1);
-      for(;((Counter<(FLASH_PAGE_SIZE)) & (FwDestAddress<LastFwDestAddress)); Counter++) {
-        FlashPageBuffer8Bit[Counter] = *((uint8_t *) (SourceAddress));
+      Counter = FwDestAddress & (FLASH_PAGE_SIZE - 1);
+      for (; ((Counter < (FLASH_PAGE_SIZE)) & (FwDestAddress < LastFwDestAddress)); Counter++)
+      {
+        FlashPageBuffer8Bit[Counter] = *((uint8_t *)(SourceAddress));
         FwDestAddress++;
         SourceAddress++;
       }
 
       /*********************** 4) Write Data in Flash**************************/
 
-      for(Counter=0; Counter<(FLASH_PAGE_SIZE);Counter+=8) {
-        if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, CurrentPageAddress+Counter,FlashPageBuffer[Counter>>3]) != HAL_OK){
+      for (Counter = 0; Counter < (FLASH_PAGE_SIZE); Counter += 8)
+      {
+        if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, CurrentPageAddress + Counter,
+                              FlashPageBuffer[Counter >> 3]) != HAL_OK)
+        {
           /* Error occurred during writing */
-          //uint32_t errorcode = HAL_FLASH_GetError();
-          while(1);
+          /* uint32_t errorcode = HAL_FLASH_GetError(); */
+          while (1);
         }
       }
 
@@ -308,16 +334,18 @@ static void BootLoader(void)
       /* Clear OPTVERR bit set on virgin samples */
       __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
       /* Clear PEMPTY bit */
-      if (__HAL_FLASH_GET_FLAG(FLASH_FLAG_PEMPTY) != 0) {
+      if (__HAL_FLASH_GET_FLAG(FLASH_FLAG_PEMPTY) != 0)
+      {
         __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_PEMPTY);
       }
 #endif /* STM32L4R9xx */
 
       /* Delete the Magic Number Used for FOTA */
-      if(HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK) {
+      if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK)
+      {
         /* Error occurred during erase section */
-        //uint32_t errorcode = HAL_FLASH_GetError();
-        while(1);
+        /* uint32_t errorcode = HAL_FLASH_GetError(); */
+        while (1);
       }
 
       /* Lock the Flash */
@@ -326,7 +354,9 @@ static void BootLoader(void)
 
     /* System Reboot */
     HAL_NVIC_SystemReset();
-  } else {
+  }
+  else
+  {
     /* Jump To Normal boot */
     typedef  void (*pFunction)(void);
 
@@ -334,13 +364,13 @@ static void BootLoader(void)
     uint32_t JumpAddress;
 
     /* reset all interrupts to default */
-    // __disable_irq();
+    /*  __disable_irq(); */
 
     /* Jump to system memory */
-    JumpAddress = *(__IO uint32_t*) (PROG_ADDRESS_START + 4);
+    JumpAddress = *(__IO uint32_t *)(PROG_ADDRESS_START + 4);
     JumpToApplication = (pFunction) JumpAddress;
     /* Initialize user application's Stack Pointer */
-    __set_MSP(*(__IO uint32_t*) PROG_ADDRESS_START);
+    __set_MSP(*(__IO uint32_t *) PROG_ADDRESS_START);
     JumpToApplication();
   }
 }
@@ -354,10 +384,13 @@ static uint32_t GetPage(uint32_t Addr)
 {
   uint32_t page = 0;
 
-  if (Addr < (FLASH_BASE + FLASH_BANK_SIZE)) {
+  if (Addr < (FLASH_BASE + FLASH_BANK_SIZE))
+  {
     /* Bank 1 */
     page = (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
-  } else {
+  }
+  else
+  {
     /* Bank 2 */
     page = (Addr - (FLASH_BASE + FLASH_BANK_SIZE)) / FLASH_PAGE_SIZE;
   }

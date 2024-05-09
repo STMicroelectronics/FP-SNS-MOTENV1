@@ -29,7 +29,7 @@ BootLoader
 
 STM32Cube packages:
 
-  - STM32L4xx drivers from STM32CubeL4 v1.17.2
+  - STM32L4xx drivers from STM32CubeL4 v1.18.0
 
 ### <b>How to use it?</b>
 
@@ -56,7 +56,7 @@ For Keil µVision 5:
  
 For Integrated Development Environment for STM32:
 
- - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.12.0).
+ - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.14.0).
  - Set the default workspace proposed by the IDE (please be sure that there are not spaces in the workspace path).
  - Press "File" -> "Import" -> "Existing Projects into Workspace"; press "Browse" in the "Select root directory" and choose the path where the System
    Workbench project is located (it should be STM32CubeIDE). 
@@ -69,7 +69,7 @@ SRA Application Team
 
 ### <b>License</b>
 
-Copyright (c) 2023 STMicroelectronics.
+Copyright (c) 2024 STMicroelectronics.
 All rights reserved.
 
 This software is licensed under terms that can be found in the LICENSE file

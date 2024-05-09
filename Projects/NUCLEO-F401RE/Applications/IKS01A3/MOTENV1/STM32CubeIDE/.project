@@ -36,59 +36,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/MOTENV1.ioc</locationURI>
 		</link>
 		<link>
-			<name>Application/User/BLE_Function.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/BLE_Function.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/BLE_Implementation.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Src/BLE_Implementation.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/HWAdvanceFeatures.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/HWAdvanceFeatures.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/MotionAR_Manager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/MotionAR_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/MotionCP_Manager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/MotionCP_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/MotionFX_Manager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/MotionFX_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/MotionGR_Manager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/MotionGR_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/MotionID_Manager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/MotionID_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/MotionPM_Manager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/MotionPM_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/OTA.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/OTA.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/TargetPlatform.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Src/TargetPlatform.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/app_motenv1.c</name>
@@ -96,14 +46,59 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Src/app_motenv1.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/ble_function.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/ble_function.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/hci_tl_interface.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Src/hci_tl_interface.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/hw_advance_features.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/hw_advance_features.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Src/main.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/motion_ar_manager.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/motion_ar_manager.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/motion_cp_manager.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/motion_cp_manager.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/motion_fx_manager.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/motion_fx_manager.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/motion_gr_manager.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/motion_gr_manager.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/motion_id_manager.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/motion_id_manager.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/motion_pm_manager.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/motion_pm_manager.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/ota.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/ota.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/stm32f4xx_hal_msp.c</name>
@@ -124,6 +119,11 @@
 			<name>Application/User/stm32f4xx_nucleo_bus.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Src/stm32f4xx_nucleo_bus.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/target_platform.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/target_platform.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/CMSIS/system_stm32f4xx.c</name>
@@ -314,11 +314,6 @@
 			<name>Middlewares/STM32_BLE_Manager/BLE_Manager/BLE_Manager/BLE_Manager.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_BLE_Manager/Src/BLE_Manager.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_MetaDataManager/Data Exchange/STM32_MetaDataManager/MetaDataManager.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_MetaDataManager/MetaDataManager.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/parson/Data Exchange/parson/parson.c</name>

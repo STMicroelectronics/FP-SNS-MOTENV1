@@ -27,7 +27,7 @@
 #define __APP_FP_SNS_MOTENV1_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/

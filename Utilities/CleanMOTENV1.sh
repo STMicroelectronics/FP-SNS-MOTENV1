@@ -1,17 +1,16 @@
-$ cat CleanMOTENV1.sh
 #!/bin/bash
 
 # control section
-  : ${1?"Usage $0 BootLoaderPath BinaryPath"}
-  : ${2?"Usage $0 BootLoaderPath BinaryPath"}
+  : ${1?"Usage $0 BootLoaderPath/BootLoader.bin BinaryPath"}
+  : ${2?"Usage $0 BootLoaderPath/BootLoader.bin BinaryPath"}
 
 echo "CleanMOTENV1.sh " $1 $2
 
 ######## Modify this Section:
 # 1) Set the Installation path for STM32CubeProgrammer
 # example:
-#CubeProg="/c/Program Files/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI"
-CubeProg="STM32_Programmer_CLI"
+CubeProg="/c/Program Files/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI"
+#CubeProg="STM32_Programmer_CLI"
 
 ## Run section
 
@@ -24,7 +23,7 @@ echo "/******************************************/"
 echo "/******************************************/"
 echo "              Install BootLoader"
 echo "/******************************************/"
-"${CubeProg}" -c port=swd mode=UR reset=HWrst -d $1/BootLoader.bin 0x08000000 -v
+"${CubeProg}" -c port=swd mode=UR reset=HWrst -d $1 0x08000000 -v
 echo "/******************************************/"
 echo "          Install FP-SNS-MOTENV1"
 echo "/******************************************/"

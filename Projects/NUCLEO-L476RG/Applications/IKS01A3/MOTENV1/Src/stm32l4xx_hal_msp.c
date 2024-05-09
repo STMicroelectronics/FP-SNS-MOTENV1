@@ -3,14 +3,14 @@
   ******************************************************************************
   * @file    stm32l4xx_hal_msp.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 4.3.2
-  * @date    19-June-2023
+  * @version 5.0.0
+  * @date    12-February-2024
   * @brief   This file provides code for the MSP Initialization
   *          and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2024 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file

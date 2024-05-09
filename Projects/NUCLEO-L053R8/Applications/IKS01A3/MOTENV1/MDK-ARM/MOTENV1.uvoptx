@@ -203,7 +203,7 @@
 
   <Group>
     <GroupName>Application/User</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -226,8 +226,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>../Src/TargetPlatform.c</PathWithFileName>
-      <FilenameWithoutPath>TargetPlatform.c</FilenameWithoutPath>
+      <PathWithFileName>../Src/target_platform.c</PathWithFileName>
+      <FilenameWithoutPath>target_platform.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -238,8 +238,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>../Src/HWAdvanceFeatures.c</PathWithFileName>
-      <FilenameWithoutPath>HWAdvanceFeatures.c</FilenameWithoutPath>
+      <PathWithFileName>../Src/hw_advance_features.c</PathWithFileName>
+      <FilenameWithoutPath>hw_advance_features.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -250,8 +250,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>../Src/BLE_Function.c</PathWithFileName>
-      <FilenameWithoutPath>BLE_Function.c</FilenameWithoutPath>
+      <PathWithFileName>../Src/ble_function.c</PathWithFileName>
+      <FilenameWithoutPath>ble_function.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

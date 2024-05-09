@@ -9,7 +9,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -26,17 +26,17 @@
 #define _BLE_IMPLEMENTATION_H_
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 
 /**
-* User can added here the header file for the selected BLE features.
-* For example:
-* #include "BLE_Environmental.h"
-* #include "BLE_Inertial.h"
-*/
+  * User can added here the header file for the selected BLE features.
+  * For example:
+  * #include "BLE_Environmental.h"
+  * #include "BLE_Inertial.h"
+  */
 
 #include "BLE_AudioSceneClassification.h"
 
@@ -114,82 +114,91 @@
 
 #include "BLE_NeaiNClassClassification.h"
 
+#include "BLE_Normalization.h"
+
+#include "BLE_GestureNavigation.h"
+
+#include "BLE_BinaryContent.h"
+
+#include "BLE_QVAR.h"
+
 /* Exported Defines --------------------------------------------------------*/
 #define STM32L4xx
 
-/* For Help Command */
-#define Help      1
+/* For Set Certificate Command */
+#define SET_CERT      1
+/* For Custom Command */
+#define READ_CUSTOM_COMMANDS      1
 /* Enable/Disable BlueNRG config extend services */
 #define ENABLE_EXT_CONFIG      1
-/* For Set Certificate Commnad */
-#define SetCert      1
 /* Enable/Disable BlueNRG config services */
 #define ENABLE_CONFIG      1
-/* For Change Secure PIN Command */
-#define ChangePin      1
+/* For Set Date Command */
+#define SET_DATE      1
 /* Enable/Disable Secure Connection */
 #define ENABLE_SECURE_CONNECTION      0
-/* For Power off Command */
-#define PowerOff      1
-/* For Set sensor config */
-#define SensorConfig      1
-/* For Set Date Command */
-#define SetDate      1
-/* For PowerStatus Command */
-#define PowerStatus      1
+/* For Version Fw Command */
+#define VERSION_FW      1
+/* For Info Command */
+#define INFO      1
+/* For Change Secure PIN Command */
+#define CHANGE_PIN      1
+/* For Clear Secure Data Base Command */
+#define CLEAR_DB      1
+/* For UID Command */
+#define UID_COMMAND      1
+/* For Read Certificate Command */
+#define READ_CERT      1
+/* For Swapping the Flash Banks */
+#define BANKS_SWAP      1
 /* Number of audio channels (Max audio channels 4) */
 #define AUDIO_CHANNELS_NUMBER      1
-/* For Reading the Flash Banks Fw Ids */
-#define ReadBanksFwId      1
-/* For Set Wi-Fi Command */
-#define SetWiFi      1
 /* Number of the general purpose features to use */
 #define NUM_GENERAL_PURPOSE      1
+/* For Help Command */
+#define HELP      1
+/* For Reading the Flash Banks Fw Ids */
+#define READ_BANKS_FW_ID      1
 /* Enable/Disable magnetometer data (Disable= 0- Enable=1) */
 #define ENABLE_MAG_DATA      1
-/* For Clear Secure Data Base Command */
-#define ClearDB      1
+/* For Reboot on DFU Command */
+#define REBOOT_ON_DFU_MODE      1
+/* For Set Time Command */
+#define SET_TIME      1
+/* For Power Status Command */
+#define POWER_STATUS      1
 /* Secure PIN */
 #define SECURE_PIN      123456
-/* For Set Time Command */
-#define SetTime      1
-/* For Reboot on DFU Command */
-#define RebootOnDFUMode      1
-/* For Read Certificate Command */
-#define ReadCert      1
+/* Audio Scene Classificatio algorithm code */
+#define ALGORITHM_CODE      0
 /* Enable/Disable pressure data (Disable= 0- Enable=1) */
 #define ENABLE_ENV_PRESSURE_DATA      1
-/* For Set board Name Command */
-#define SetName      1
 /* Enable/Disable Random Secure PIN */
 #define ENABLE_RANDOM_SECURE_PIN      0
-/* For Info Command */
-#define Info      1
+/* For Set board Name Command */
+#define SET_NAME      1
 /* Enable/Disable BlueNRG console services */
 #define ENABLE_CONSOLE      1
-/* For Custom Command */
-#define ReadCustomCommands      1
 /* Enable/Disable giroscope data (Disable= 0- Enable=1) */
 #define ENABLE_GYRO_DATA      1
-/* For UID Command */
-#define UidCommand      1
 /* Enable/Disable humidity data (Disable= 0- Enable=1) */
 #define ENABLE_ENV_HUMIDITY_DATA      1
 /* Size of the general purpose feature */
 #define GENERAL_PURPOSE_SIZE_1      3
 /* Number of quaternion to send (max value 3) */
 #define NUMBER_OF_QUATERNION      1
-/* For VersionFw Command */
-#define VersionFw      1
 /* Enable/Disable number of temperature (0, 1, 2) */
 #define ENABLE_ENV_TEMPERATURE_DATA      1
-/* For Swapping the Flash Banks */
-#define BanksSwap      1
+/* For Set Wi-Fi Command */
+#define SET_WIFI      1
+/* For Set sensor config */
+#define SENSOR_CONFIG      1
+/* Supported hardware platform */
+#define USED_PLATFORM      0x7EU
+/* For Power off Command */
+#define POWER_OFF      1
 /* Enable/Disable accelerometer data (Disable= 0- Enable=1) */
 #define ENABLE_ACC_DATA      1
-
-/* USER CODE BEGIN 1 */
-
 /* Select the used hardware platform
  *
  * STEVAL-WESU1                         --> BLE_MANAGER_STEVAL_WESU1_PLATFORM
@@ -209,32 +218,34 @@
  * STM32L053R8_NUCLEO Board             --> BLE_MANAGER_STM32L053R8_NUCLEO_PLATFORM
  * STM32L476RG_NUCLEO Board             --> BLE_MANAGER_STM32L476RG_NUCLEO_PLATFORM
  * STM32F401RE_NUCLEO Board             --> BLE_MANAGER_STM32F401RE_NUCLEO_PLATFORM
- * Not defined platform					--> BLE_MANAGER_UNDEF_PLATFORM
+ * Not defined platform                 --> BLE_MANAGER_UNDEF_PLATFORM
  *
  * For example:
- * #define BLE_MANAGER_USED_PLATFORM	BLE_MANAGER_NUCLEO_PLATFORM
+ * #define BLE_MANAGER_USED_PLATFORM  BLE_MANAGER_NUCLEO_PLATFORM
  *
 */
 
 /* Used platform */
-#define BLE_MANAGER_USED_PLATFORM       BLE_MANAGER_STM32L476RG_NUCLEO_PLATFORM
+#define BLE_MANAGER_USED_PLATFORM       USED_PLATFORM
 
 /* STM32 Unique ID */
 #define BLE_STM32_UUID          UID_BASE
 
 /* STM32 MCU_ID */
 #ifdef DBGMCU_BASE
-	#define BLE_STM32_MCU_ID        ((uint32_t *)DBGMCU_BASE)
-#else
-	#define BLE_STM32_MCU_ID        ((uint32_t *)0x00000000UL)
-#endif
+#define BLE_STM32_MCU_ID        ((uint32_t *)DBGMCU_BASE)
+#else /* DBGMCU_BASE */
+#define BLE_STM32_MCU_ID        ((uint32_t *)0x00000000UL)
+#endif /* DBGMCU_BASE */
 
 /* STM32  Microcontrolles type */
 #define BLE_STM32_MICRO "STM32L4xx"
 
+/* USER CODE BEGIN 1 */
+
 /* Package Version firmware */
-#define BLE_VERSION_FW_MAJOR  '1'
-#define BLE_VERSION_FW_MINOR  '3'
+#define BLE_VERSION_FW_MAJOR  '3'
+#define BLE_VERSION_FW_MINOR  '0'
 #define BLE_VERSION_FW_PATCH  '0'
 
 /* Firmware Package Name */
@@ -288,21 +299,30 @@ extern void BLE_InitCustomService(void);
 extern void BLE_SetCustomAdvertiseData(uint8_t *manuf_data);
 extern void BluetoothInit(void);
 extern void DisconnectionCompletedFunction(void);
+#ifdef BLUENRG_1_2
+extern void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Address_Type, uint8_t addr[6]);
+#endif /* BLUENRG_1_2 */
+#ifdef BLUENRG_MS
 extern void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t addr[6]);
-extern void AttrModConfigFunction(uint8_t * att_data, uint8_t data_length);
+#endif /* BLUENRG_MS */
+#ifdef BLUENRG_LP
+extern void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Address_Type, uint8_t addr[6]);
+#endif /* BLUENRG_LP */
+extern void SetBoardName(void);
+extern void AttrModConfigFunction(uint8_t *att_data, uint8_t data_length);
 extern void PairingCompletedFunction(uint8_t PairingStatus);
 extern void SetConnectableFunction(uint8_t *ManufData);
 extern void AciGattTxPoolAvailableEventFunction(void);
 extern void HardwareErrorEventHandlerFunction(uint8_t Hardware_Code);
-extern uint32_t DebugConsoleParsing(uint8_t * att_data, uint8_t data_length);
-extern void WriteRequestConfigFunction(uint8_t * att_data, uint8_t data_length);
+extern uint32_t DebugConsoleParsing(uint8_t *att_data, uint8_t data_length);
+extern void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length);
 
-extern void ReadRequestEnvFunction(int32_t *Press,uint16_t *Hum,int16_t *Temp1,int16_t *Temp2);
+extern void ReadRequestEnvFunction(int32_t *Press, uint16_t *Hum, int16_t *Temp1, int16_t *Temp2);
 
 #ifdef BLE_MANAGER_USE_PARSON
-/**********************************************************************************************
- * Callback functions prototypes to manage the extended configuration characteristic commands *
- **********************************************************************************************/
+/***********************************************************************************************
+  * Callback functions prototypes to manage the extended configuration characteristic commands *
+  **********************************************************************************************/
 extern void ExtExtConfigUidCommandCallback(uint8_t **UID);
 extern void ExtConfigVersionFwCommandCallback(uint8_t *Answer);
 extern void ExtConfigInfoCommandCallback(uint8_t *Answer);
@@ -316,7 +336,7 @@ extern void ExtConfigSetCertCommandCallback(uint8_t *Certificate);
 
 extern void ExtConfigRebootOnDFUModeCommandCallback(void);
 extern void ExtConfigPowerOffCommandCallback(void);
-extern void ExtConfigReadBanksFwIdCommandCallback (uint8_t *CurBank,uint16_t *FwId1,uint16_t *FwId2);
+extern void ExtConfigReadBanksFwIdCommandCallback(uint8_t *CurBank, uint16_t *FwId1, uint16_t *FwId2);
 extern void ExtConfigBanksSwapCommandCallback(void);
 
 extern void ExtConfigSetNameCommandCallback(uint8_t *NewName);
@@ -329,9 +349,9 @@ extern void ExtConfigReadSensorConfigCommandCallback(JSON_Array *JSON_SensorArra
 extern void ExtConfigSetSensorConfigCommandCallback(uint8_t *configuration);
 #endif /* BLE_MANAGER_USE_PARSON */
 
-/*************************************************************
- * Callback functions prototypes to manage the notify events *
- *************************************************************/
+/**************************************************************
+  * Callback functions prototypes to manage the notify events *
+  *************************************************************/
 
 extern void NotifyEventAudioSceneClassification(BLE_NotifyEvent_t Event);
 
@@ -370,10 +390,12 @@ extern void NotifyEventCarryPosition(BLE_NotifyEvent_t Event);
 extern void NotifyEventECompass(BLE_NotifyEvent_t Event);
 
 extern void NotifyEventFitnessActivities(BLE_NotifyEvent_t Event);
+extern void WriteRequestFitnessActivities(uint8_t FitnessActivitie);
 
 extern void NotifyEventGestureRecognition(BLE_NotifyEvent_t Event);
 
 extern void NotifyEventMotionAlgorithms(BLE_NotifyEvent_t Event, BLE_MotionAlgorithmsType_t Algorithm);
+extern void WriteRequestMotionAlgorithms(BLE_MotionAlgorithmsType_t Algorithm);
 
 extern void NotifyEventMotionIntensity(BLE_NotifyEvent_t Event);
 
@@ -400,21 +422,30 @@ extern void WriteRequestSDLog(uint8_t *att_data, uint8_t data_length);
 
 #ifdef BLE_MANAGER_USE_PARSON
 extern void NotifyEventPnpLike(BLE_NotifyEvent_t Event);
-extern void WriteRequestPnPLikeFunctionPointer(uint8_t* received_msg, uint8_t msg_length);
+extern void WriteRequestPnPLikeFunctionPointer(uint8_t *received_msg, uint8_t msg_length);
 #endif /* BLE_MANAGER_USE_PARSON */
 
 extern void NotifyEventEventCounter(BLE_NotifyEvent_t Event);
 
 #ifdef BLE_MANAGER_USE_PARSON
 extern void NotifyEventJson(BLE_NotifyEvent_t Event);
-extern void WriteRequestJson(uint8_t* received_msg, uint8_t msg_length);
+extern void WriteRequestJson(uint8_t *received_msg, uint8_t msg_length);
 #endif /* BLE_MANAGER_USE_PARSON */
 
 extern void NotifyEventNeaiAnomalyDetection(BLE_NotifyEvent_t Event);
-extern void WriteRequestNeaiAnomalyDetection(uint8_t * att_data, uint8_t data_length);
+extern void WriteRequestNeaiAnomalyDetection(uint8_t *att_data, uint8_t data_length);
 
 extern void NotifyEventNeaiNClassClassification(BLE_NotifyEvent_t Event);
-extern void WriteRequestNeaiNClassClassification(uint8_t * att_data, uint8_t data_length);
+extern void WriteRequestNeaiNClassClassification(uint8_t *att_data, uint8_t data_length);
+
+extern void NotifyEventNormalization(BLE_NotifyEvent_t Event);
+
+extern void NotifyEventGestureNavigation(BLE_NotifyEvent_t Event);
+
+extern void NotifyEventBinaryContent(BLE_NotifyEvent_t Event);
+extern void WriteRequestBinaryContent(uint8_t *received_msg, uint32_t msg_length);
+
+extern void NotifyEventQVAR(BLE_NotifyEvent_t Event);
 
 /* USER CODE BEGIN 3 */
 

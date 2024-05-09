@@ -22,7 +22,7 @@ The Example application initizializes all the Components and Library creating 3 
 The example application allows the user to control the initialization phase via UART.
 Launch a terminal application and set the UART port to 115200 bps, 8 bit, No Parity, 1 stop bit.
  
-This example must be used with the related ST BLE Sensor Android (Version 4.20.0 or higher) or iOS (Version 4.20.0 or higher) application available on Play/itune store,
+This example must be used with the related ST BLE Sensor Android (Version 5.0.0 or higher) or iOS (Version 5.0.0 or higher) application available on Play/itune store,
 in order to read the sent information by Bluetooth Low Energy protocol
 
 ### <b>Important Hardware Additional Information</b>
@@ -40,7 +40,7 @@ Read user manual for more details.
 
 a) The implementation allow the Firmware-Over-The-Air (FOTA).
  
- 1) The Firmware-Over-The-Air (FOTA) is done using the ST BLE Sensor Android/iOS application (Version 4.20.0 and above)
+ 1) The Firmware-Over-The-Air (FOTA) is done using the ST BLE Sensor Android/iOS application
  
  2) This example must run starting at address 0x08004000 in memory and works ONLY if the BootLoader 
  is saved at the beginning of the FLASH (address 0x08000000)
@@ -72,33 +72,40 @@ BLE, BLE_Manager, BlueNRG-2, SPI, UART, MEMS
 
   - This example runs on STM32 Nucleo devices with:
     - BlueNRG-2 STM32 expansion board (X-NUCLEO-BNRG2A1)
-	- Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS01A3) for four MEMS sensor devices:
+	- Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS01A3) for six MEMS sensor devices:
 	  - HTS221, LPS22HH, STTS751, LSM6DSO, LIS2MDL, LIS2DW12
   - This example has been tested with STMicroelectronics:
     - NUCLEO-L476RG RevC board
 	
 ADDITIONAL_BOARD : X-NUCLEO-BNRG2A1 https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html
+
 ADDITIONAL_COMP : BlueNRG-M2SP https://www.st.com/en/wireless-connectivity/bluenrg-2.html
 
 ADDITIONAL_BOARD : X-NUCLEO-IKS01A3 https://www.st.com/en/ecosystems/x-nucleo-iks01a3.html
+
 ADDITIONAL_COMP : LSM6DSO https://www.st.com/content/st_com/en/products/mems-and-sensors/inemo-inertial-modules/lsm6dso.html
+
 ADDITIONAL_COMP : LIS2DW12 https://www.st.com/content/st_com/en/products/mems-and-sensors/accelerometers/lis2dw12.html
+
 ADDITIONAL_COMP : LIS2MDL https://www.st.com/content/st_com/en/products/mems-and-sensors/e-compasses/lis2mdl.html
+
 ADDITIONAL_COMP : LPS22HH https://www.st.com/content/st_com/en/products/mems-and-sensors/pressure-sensors/lps22hh.html
+
 ADDITIONAL_COMP : HTS221 https://www.st.com/content/st_com/en/products/mems-and-sensors/humidity-sensors/hts221.html
+
 ADDITIONAL_COMP : STTS751 https://www.st.com/content/st_com/en/products/mems-and-sensors/temperature-sensors/stts751.html
 
 ### <b>Dependencies</b>
 
 STM32Cube packages:
 
-  - STM32L4xx drivers from STM32CubeL4 V1.17.2
+  - STM32L4xx drivers from STM32CubeL4 V1.18.0
   
 X-CUBE packages:
 
   - X-CUBE-BLE2 V3.3.0
-  - X-CUBE-BLEMGR V2.0.0
-  - X-CUBE-MEMS1 V9.5.0
+  - X-CUBE-BLEMGR V3.0.0
+  - X-CUBE-MEMS1 V10.0.0
 
 ### <b>How to use it?</b>
 
@@ -125,7 +132,7 @@ For Keil µVision 5:
  
 For Integrated Development Environment for STM32:
 
- - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.12.0).
+ - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.14.0).
  - Set the default workspace proposed by the IDE (please be sure that there are not spaces in the workspace path).
  - Press "File" -> "Import" -> "Existing Projects into Workspace"; press "Browse" in the "Select root directory" and choose the path where the System
    Workbench project is located (it should be STM32CubeIDE). 
@@ -138,7 +145,7 @@ SRA Application Team
 
 ### <b>License</b>
 
-Copyright (c) 2023 STMicroelectronics.
+Copyright (c) 2024 STMicroelectronics.
 All rights reserved.
 
 This software is licensed under terms that can be found in the LICENSE file
