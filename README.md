@@ -30,29 +30,21 @@ This firmware package includes Components Device Drivers, Board Support Package 
   - X-NUCLEO-BNRG2A1 Bluetooth Low energy expansion boards
   - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS4A1) for seven MEMS sensor devices:
 	   - STTS22H, SHT40AD1B, LPS22DF, LSM6DSV16X, LIS2MDL, LSM6DSO16IS, LIS2DUXS12
-  - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS01A3) for six MEMS sensor devices:
-	   - HTS221, LPS22HH, STTS751, LSM6DSO, LIS2MDL, LIS2DW12
   
 - NUCLEO-L476RG nucleo development board and expansion boards:
   - X-NUCLEO-BNRG2A1 Bluetooth Low energy expansion boards
   - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS4A1) for seven MEMS sensor devices:
 	   - STTS22H, SHT40AD1B, LPS22DF, LSM6DSV16X, LIS2MDL, LSM6DSO16IS, LIS2DUXS12
-  - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS01A3) for six MEMS sensor devices:
-	   - HTS221, LPS22HH, STTS751, LSM6DSO, LIS2MDL, LIS2DW12
   
 - NUCLEO-L053R8 nucleo development board and expansion boards:
   - X-NUCLEO-BNRG2A1 Bluetooth Low energy expansion boards
   - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS4A1) for seven MEMS sensor devices:
 	   - STTS22H, SHT40AD1B, LPS22DF, LSM6DSV16X, LIS2MDL, LSM6DSO16IS, LIS2DUXS12
-  - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS01A3) for six MEMS sensor devices:
-	   - HTS221, LPS22HH, STTS751, LSM6DSO, LIS2MDL, LIS2DW12
 	   
 - NUCLEO-U575ZI-Q nucleo development board and expansion boards:
   - X-NUCLEO-BNRG2A1 Bluetooth Low energy expansion boards
   - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS4A1) for seven MEMS sensor devices:
 	   - STTS22H, SHT40AD1B, LPS22DF, LSM6DSV16X, LIS2MDL, LSM6DSO16IS, LIS2DUXS12
-  - Motion MEMS and environmental sensor expansion board (X-NUCLEO-IKS01A3) for six MEMS sensor devices:
-	   - HTS221, LPS22HH, STTS751, LSM6DSO, LIS2MDL, LIS2DW12
 
 [![The FP-SNS-MOTENV1 package contents](_htmresc/FP-SNS-MOTENV1_Software_Architecture.png)]()
 
@@ -70,18 +62,17 @@ Here is the list of references to user documents:
 - NUCLEO-U575ZI-Q STM32 Nucleo-144 development board with STM32U575ZIT6Q MCU, supports Arduino, ST Zio and morpho connectivity connectivity \[[NUCLEO-U575ZI-Q](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-u575zi-q.html)\]
 - X-NUCLEO-BNRG2A1 Bluetooth Low Energy expansion board based on the BLUENRG-M2SP module for STM32 Nucleo \[[X-NUCLEO-BNRG2A1](https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html)]
 - X-NUCLEO-IKS4A1 Motion MEMS and environmental sensor expansion board for STM32 Nucleo \[[X-NUCLEO-IKS4A1](https://www.st.com/en/ecosystems/x-nucleo-iks4a1.html)]
-- X-NUCLEO-IKS01A3 Motion MEMS and environmental sensor expansion board for STM32 Nucleo \[[X-NUCLEO-IKS01A3](https://www.st.com/en/ecosystems/x-nucleo-iks01a3.html)]
 
 ## Known Issues
 
-- Flash Download fails with MDK-ARM Professional Version 5.37.0 on NUCLEO-L053R8 Board.
+- Flash Download fails with MDK-ARM Professional Version 5.38.0 on NUCLEO-L053R8 Board.
 - For NUCLEO-L053R8 Board, due to flash size constraints, initialization control phase via UART is not available.
 	
 ## Development Toolchains and Compilers
 
--   IAR Embedded Workbench for ARM (EWARM) toolchain V9.20.1 + STLink/V2
--   RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.37.0 + ST-LINK/V2
--   Integrated Development Environment for STM32 (STM32CubeIDE) V1.14.0 + ST-LINK
+-   IAR Embedded Workbench for ARM (EWARM) toolchain V9.60.3 + STLink/V2
+-   RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.38.0 + ST-LINK/V2
+-   Integrated Development Environment for STM32 (STM32CubeIDE) V1.19.0 + ST-LINK
 	
 ## Dependencies 
 

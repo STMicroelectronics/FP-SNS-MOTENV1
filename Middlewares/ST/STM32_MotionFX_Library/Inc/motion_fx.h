@@ -2,13 +2,11 @@
   ******************************************************************************
   * @file    motion_fx.h
   * @author  MEMS Application Team
-  * @version V2.7.1
-  * @date    03-March-2023
   * @brief   Header for motion_fx module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2015-2023 STMicroelectronics.
+  * Copyright (c) 2015-2017 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file

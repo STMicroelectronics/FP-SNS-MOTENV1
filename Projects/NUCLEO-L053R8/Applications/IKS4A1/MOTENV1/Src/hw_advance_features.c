@@ -3,13 +3,13 @@
   ******************************************************************************
   * @file    hw_advance_features.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   HW Advance Features API
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,7 +22,6 @@
 /* USER CODE END Header */
 
 #include "hw_advance_features.h"
-#include "BLE_Manager.h"
 #include "target_features.h"
 
 /* Imported Variables -------------------------------------------------------------*/
@@ -146,11 +145,11 @@ void DisableHWOrientation6D(void)
 /**
   * @brief  This function eturns the HW's 6D Orientation result
   * @param  None
-  * @retval AccEventType 6D Orientation Found
+  * @retval acc_event_type_t 6D Orientation Found
   */
-AccEventType GetHWOrientation6D(void)
+acc_event_type_t GetHWOrientation6D(void)
 {
-  AccEventType OrientationResult = ACC_NOT_USED;
+  acc_event_type_t OrientationResult = ACC_NOT_USED;
 
   uint8_t xl = 0;
   uint8_t xh = 0;
@@ -566,7 +565,7 @@ void EnableHWMultipleEvents(void)
   EnableHWOrientation6D();
 
   PedometerStepCount = 0;
-  BLE_AccEnvUpdate(PedometerStepCount, 3);
+  ble_acc_env_update(PedometerStepCount, 3);
 
   W2ST_ON_HW_FEATURE(W2ST_HWF_MULTIPLE_EVENTS);
 }

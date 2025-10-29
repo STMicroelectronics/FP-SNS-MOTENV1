@@ -43,6 +43,15 @@ extern "C" {
 void MX_BootLoader_Init(void);
 void MX_BootLoader_Process(void);
 
+/* Update Node Name on to Meta Data */
+extern void UpdateNodeNameMetaData(void);
+/* User function for Erasing the Flash data */
+extern uint32_t EraseMetaData(void);
+/* User function for Saving the Meta Data on the Flash */
+extern void SaveMetaData(void);
+
+extern unsigned char ReCallNodeNameFromMemory(void);
+
 #ifdef __cplusplus
 }
 #endif

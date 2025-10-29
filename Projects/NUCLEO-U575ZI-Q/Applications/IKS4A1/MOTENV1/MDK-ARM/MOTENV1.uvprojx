@@ -10,13 +10,13 @@
       <TargetName>MOTENV1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6180000::V6.18::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32U575ZITx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32U5xx_DFP.2.0.0</PackID>
+          <PackID>Keil.STM32U5xx_DFP.2.2.4</PackID>
           <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x200BFFFF) IROM(0x08000000-0x80FDFFF) CLOCK(8000000) FPU3(SFPU) CPUTYPE("Cortex-M33") ELITTLE TZ DSP</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32U575ZITx$CMSIS\SVD\STM32U5xx.svd</SFDFile>
+          <SFDFile>$$Device:STM32U575ZITx$CMSIS\SVD\STM32U575.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -340,7 +340,7 @@
               <MiscControls>-Wno-format</MiscControls>
               <Define>USE_HAL_DRIVER,STM32U575xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../../../../../../Drivers/STM32U5xx_HAL_Driver/Inc;../../../../../../Drivers/STM32U5xx_HAL_Driver/Inc/Legacy;../../../../../../Drivers/CMSIS/Device/ST/STM32U5xx/Include;../../../../../../Drivers/CMSIS/Include;../../../../../../Middlewares/ST/STM32_MotionID_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionGR_Library/Inc;../../../../../../Drivers/BSP/Components/lsm6dsv16x;../../../../../../Drivers/BSP/Components/lis2duxs12;../../../../../../Drivers/BSP/Components/lis2mdl;../../../../../../Drivers/BSP/Components/lsm6dso16is;../../../../../../Drivers/BSP/Components/sht40ad1b;../../../../../../Drivers/BSP/Components/lps22df;../../../../../../Drivers/BSP/Components/stts22h;../../../../../../Drivers/BSP/IKS4A1;../../../../../../Drivers/BSP/Components/Common;../../../../../../Middlewares/ST/STM32_MotionCP_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionFX_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionPM_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionAR_Library/Inc;../../../../../../Middlewares/ST/BlueNRG-2/hci/hci_tl_patterns/Basic;../../../../../../Middlewares/ST/BlueNRG-2/utils;../../../../../../Middlewares/ST/BlueNRG-2/includes;../../../../../../Middlewares/Third_Party/parson;../../../../../../Middlewares/ST/STM32_BLE_Manager/Inc</IncludePath>
+              <IncludePath>../Inc;../../../../../../Drivers/STM32U5xx_HAL_Driver/Inc;../../../../../../Drivers/STM32U5xx_HAL_Driver/Inc/Legacy;../../../../../../Drivers/CMSIS/Device/ST/STM32U5xx/Include;../../../../../../Drivers/CMSIS/Include;../../../../../../Middlewares/Third_Party/parson;../../../../../../Middlewares/ST/STM32_BLE_Manager/Inc;../../../../../../Middlewares/ST/BlueNRG-2/hci/hci_tl_patterns/Basic;../../../../../../Middlewares/ST/BlueNRG-2/utils;../../../../../../Middlewares/ST/BlueNRG-2/includes;../../../../../../Middlewares/ST/STM32_MotionID_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionGR_Library/Inc;../../../../../../Drivers/BSP/Components/lsm6dsv16x;../../../../../../Drivers/BSP/Components/lis2duxs12;../../../../../../Drivers/BSP/Components/lis2mdl;../../../../../../Drivers/BSP/Components/lsm6dso16is;../../../../../../Drivers/BSP/Components/sht40ad1b;../../../../../../Drivers/BSP/Components/lps22df;../../../../../../Drivers/BSP/Components/stts22h;../../../../../../Drivers/BSP/IKS4A1;../../../../../../Drivers/BSP/Components/Common;../../../../../../Middlewares/ST/STM32_MotionCP_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionFX_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionPM_Library/Inc;../../../../../../Middlewares/ST/STM32_MotionAR_Library/Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -371,7 +371,7 @@
             <TextAddressRange></TextAddressRange>
             <DataAddressRange></DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>stm32u575zxx_flash.sct</ScatterFile>
+            <ScatterFile>stm32u575xx_flash.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -460,9 +460,9 @@
               <FilePath>../Src/hci_tl_interface.c</FilePath>
             </File>
             <File>
-              <FileName>BLE_Implementation.c</FileName>
+              <FileName>ble_implementation.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Src/BLE_Implementation.c</FilePath>
+              <FilePath>../Src/ble_implementation.c</FilePath>
             </File>
             <File>
               <FileName>stm32u5xx_nucleo_bus.c</FileName>
@@ -747,62 +747,132 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionID_Library/Core</GroupName>
+          <GroupName>Middlewares/parson/Data Exchange/parson</GroupName>
           <Files>
             <File>
-              <FileName>MotionID_CM33F_wc16_ot.a</FileName>
-              <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_MotionID_Library/Lib/MotionID_CM33F_wc16_ot.a</FilePath>
+              <FileName>parson.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/Third_Party/parson/parson.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionGR_Library/Core</GroupName>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/AccEvent</GroupName>
           <Files>
             <File>
-              <FileName>MotionGR_CM33F_wc16_ot.a</FileName>
-              <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_MotionGR_Library/Lib/MotionGR_CM33F_wc16_ot.a</FilePath>
+              <FileName>ble_acc_event.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_acc_event.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionCP_Library/Core</GroupName>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Led</GroupName>
           <Files>
             <File>
-              <FileName>MotionCP_CM33F_wc16_ot.a</FileName>
-              <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_MotionCP_Library/Lib/MotionCP_CM33F_wc16_ot.a</FilePath>
+              <FileName>ble_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_led.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionFX_Library/Core</GroupName>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Environmental</GroupName>
           <Files>
             <File>
-              <FileName>MotionFX_CM33F_wc16_ot.a</FileName>
-              <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_MotionFX_Library/Lib/MotionFX_CM33F_wc16_ot.a</FilePath>
+              <FileName>ble_environmental.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_environmental.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionPM_Library/Core</GroupName>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Inertial</GroupName>
           <Files>
             <File>
-              <FileName>MotionPM_CM33F_wc16_ot.a</FileName>
-              <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_MotionPM_Library/Lib/MotionPM_CM33F_wc16_ot.a</FilePath>
+              <FileName>ble_inertial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_inertial.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionAR_Library/Core</GroupName>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/CarryPosition</GroupName>
           <Files>
             <File>
-              <FileName>MotionAR_CM33F_wc16_ot.a</FileName>
-              <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_MotionAR_Library/Lib/MotionAR_CM33F_wc16_ot.a</FilePath>
+              <FileName>ble_carry_position.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_carry_position.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/ECompass</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_e_compass.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_e_compass.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/GestureRecognition</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_gesture_recognition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_gesture_recognition.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/PedometerAlgorithm</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_pedometer_algorithm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_pedometer_algorithm.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/SensorFusion</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_sensor_fusion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_sensor_fusion.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/ActivityRecognition</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_activity_recognition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_activity_recognition.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/MotionIntensity</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_motion_intensity.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_motion_intensity.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/BLE_Manager</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/ble_manager.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -872,132 +942,62 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/parson/Data Exchange/parson</GroupName>
+          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionID_Library/Core</GroupName>
           <Files>
             <File>
-              <FileName>parson.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/Third_Party/parson/parson.c</FilePath>
+              <FileName>MotionID_CM33F_wc16_ot.a</FileName>
+              <FileType>4</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_MotionID_Library/Lib/MotionID_CM33F_wc16_ot.a</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/AccEvent</GroupName>
+          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionGR_Library/Core</GroupName>
           <Files>
             <File>
-              <FileName>BLE_AccEvent.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_AccEvent.c</FilePath>
+              <FileName>MotionGR_CM33F_wc16_ot.a</FileName>
+              <FileType>4</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_MotionGR_Library/Lib/MotionGR_CM33F_wc16_ot.a</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Led</GroupName>
+          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionCP_Library/Core</GroupName>
           <Files>
             <File>
-              <FileName>BLE_Led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_Led.c</FilePath>
+              <FileName>MotionCP_CM33F_wc16_ot.a</FileName>
+              <FileType>4</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_MotionCP_Library/Lib/MotionCP_CM33F_wc16_ot.a</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Environmental</GroupName>
+          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionFX_Library/Core</GroupName>
           <Files>
             <File>
-              <FileName>BLE_Environmental.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_Environmental.c</FilePath>
+              <FileName>MotionFX_CM33F_wc16_ot.a</FileName>
+              <FileType>4</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_MotionFX_Library/Lib/MotionFX_CM33F_wc16_ot.a</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/HardwareSensors/Inertial</GroupName>
+          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionPM_Library/Core</GroupName>
           <Files>
             <File>
-              <FileName>BLE_Inertial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_Inertial.c</FilePath>
+              <FileName>MotionPM_CM33F_wc16_ot.a</FileName>
+              <FileType>4</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_MotionPM_Library/Lib/MotionPM_CM33F_wc16_ot.a</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/CarryPosition</GroupName>
+          <GroupName>Middlewares/X-CUBE-MEMS1/Sensors/STM32_MotionAR_Library/Core</GroupName>
           <Files>
             <File>
-              <FileName>BLE_CarryPosition.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_CarryPosition.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/ECompass</GroupName>
-          <Files>
-            <File>
-              <FileName>BLE_ECompass.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_ECompass.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/GestureRecognition</GroupName>
-          <Files>
-            <File>
-              <FileName>BLE_GestureRecognition.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_GestureRecognition.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/PedometerAlgorithm</GroupName>
-          <Files>
-            <File>
-              <FileName>BLE_PedometerAlgorithm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_PedometerAlgorithm.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/SensorFusion</GroupName>
-          <Files>
-            <File>
-              <FileName>BLE_SensorFusion.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_SensorFusion.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/ActivityRecognition</GroupName>
-          <Files>
-            <File>
-              <FileName>BLE_ActivityRecognition.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_ActivityRecognition.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Features/SoftwareLibraries/MotionIntensity</GroupName>
-          <Files>
-            <File>
-              <FileName>BLE_MotionIntensity.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_MotionIntensity.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_BLE_Manager/BLE_Manager/BLE_Manager</GroupName>
-          <Files>
-            <File>
-              <FileName>BLE_Manager.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_BLE_Manager/Src/BLE_Manager.c</FilePath>
+              <FileName>MotionAR_CM33F_wc16_ot.a</FileName>
+              <FileType>4</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_MotionAR_Library/Lib/MotionAR_CM33F_wc16_ot.a</FilePath>
             </File>
           </Files>
         </Group>

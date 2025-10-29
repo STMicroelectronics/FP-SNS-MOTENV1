@@ -3,13 +3,13 @@
   ******************************************************************************
   * @file    hw_advance_features.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   HW Advance Features API prototype
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -31,25 +31,9 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "target_features.h"
+#include "ble_manager.h"
 
 #include <stdlib.h>
-
-/* Exported types ------------------------------------------------------- */
-typedef enum
-{
-  ACC_NOT_USED     = 0x00,
-  ACC_6D_OR_TOP    = 0x01,
-  ACC_6D_OR_LEFT   = 0x02,
-  ACC_6D_OR_BOTTOM = 0x03,
-  ACC_6D_OR_RIGTH  = 0x04,
-  ACC_6D_OR_UP     = 0x05,
-  ACC_6D_OR_DOWN   = 0x06,
-  ACC_TILT         = 0x08,
-  ACC_FREE_FALL    = 0x10,
-  ACC_SINGLE_TAP   = 0x20,
-  ACC_DOUBLE_TAP   = 0x40,
-  ACC_WAKE_UP      = 0x80
-} AccEventType;
 
 /* Exported functions ------------------------------------------------------- */
 extern void InitHWFeatures(void);
@@ -78,7 +62,7 @@ extern void DisableHWTilt(void);
 
 extern void EnableHWOrientation6D(void);
 extern void DisableHWOrientation6D(void);
-extern AccEventType GetHWOrientation6D(void);
+extern acc_event_type_t GetHWOrientation6D(void);
 
 extern void EnableHWMultipleEvents(void);
 extern void DisableHWMultipleEvents(void);

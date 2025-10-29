@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-    <fileVersion>3</fileVersion>
+    <fileVersion>4</fileVersion>
     <configuration>
         <name>MOTENV1</name>
         <toolchain>
@@ -11,7 +11,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>32</version>
+                <version>33</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32L476RG.ddf</state>
+                    <state>$TOOLKIT_DIR$\config\debugger\ST\STM32L476RG.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.32.3.20186</state>
+                    <state>7.50.3.10745</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -88,7 +88,7 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>9.20.1.43525</state>
+                    <state>9.60.3.7274</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -112,11 +112,11 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32L4AxxG.board</state>
+                    <state>$TOOLKIT_DIR$/config/flashloader/ST/FlashSTM32L4AxxG.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCImagesPath1</name>
@@ -144,7 +144,7 @@
                 </option>
                 <option>
                     <name>OCImagesOffset1</name>
-                    <state>0</state>
+                    <state />
                 </option>
                 <option>
                     <name>OCImagesOffset2</name>
@@ -222,6 +222,38 @@
                     <name>OCTpiuBaseOption</name>
                     <state>1</state>
                 </option>
+                <option>
+                    <name>OCOverrideSlave</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OCOverrideSlavePath</name>
+                    <state />
+                </option>
+                <option>
+                    <name>C_32_64Device</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>AuthEnable</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>AuthSdmSelection</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>AuthSdmManifest</name>
+                    <state />
+                </option>
+                <option>
+                    <name>AuthSdmExplicitLib</name>
+                    <state />
+                </option>
+                <option>
+                    <name>AuthEnforce</name>
+                    <state>0</state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -285,6 +317,10 @@
                 <version>4</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
+                <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -404,10 +440,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -458,6 +490,39 @@
             </data>
         </settings>
         <settings>
+            <name>E2_ID</name>
+            <archiveVersion>2</archiveVersion>
+            <data>
+                <version>0</version>
+                <wantNonLocal>1</wantNonLocal>
+                <debug>1</debug>
+                <option>
+                    <name>E2PowerFromProbe</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>CE2UsbSerialNo</name>
+                    <state />
+                </option>
+                <option>
+                    <name>CE2IdCodeEditB</name>
+                    <state>0xFFFF'FFFF'FFFF'FFFF'FFFF'FFFF'FFFF'FFFF</state>
+                </option>
+                <option>
+                    <name>CE2LogFileCheck</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CE2LogFileEditB</name>
+                    <state>$PROJ_DIR$\cspycomm.log</state>
+                </option>
+                <option>
+                    <name>OCDriverInfo</name>
+                    <state>1</state>
+                </option>
+            </data>
+        </settings>
+        <settings>
             <name>GDBSERVER_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
@@ -495,12 +560,37 @@
             </data>
         </settings>
         <settings>
+            <name>GPLINK_ID</name>
+            <archiveVersion>2</archiveVersion>
+            <data>
+                <version>0</version>
+                <wantNonLocal>1</wantNonLocal>
+                <debug>1</debug>
+                <option>
+                    <name>OCDriverInfo</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>DoLogfile</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>LogFile</name>
+                    <state>$PROJ_DIR$\cspycomm.log</state>
+                </option>
+            </data>
+        </settings>
+        <settings>
             <name>IJET_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>9</version>
+                <version>10</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
+                <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -577,7 +667,7 @@
                 </option>
                 <option>
                     <name>IjetCpuClockEdit</name>
-                    <state />
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>IjetSwoPrescalerList</name>
@@ -653,10 +743,6 @@
                     <state>1</state>
                 </option>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -708,7 +794,7 @@
                 <option>
                     <name>IjetTraceSizeList</name>
                     <version>0</version>
-                    <state>4</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>FlashBoardPathSlave</name>
@@ -774,6 +860,10 @@
                     <name>CatchV8ARREL3S</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>IjetHWResetTimingOverride</name>
+                    <state>1</state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -783,6 +873,10 @@
                 <version>16</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
+                <option>
+                    <name>CCCatchSFERR</name>
+                    <state>0</state>
+                </option>
                 <option>
                     <name>JLinkSpeed</name>
                     <state>1000</state>
@@ -922,10 +1016,6 @@
                     <state>0</state>
                 </option>
                 <option>
-                    <name>CCCatchSFERR</name>
-                    <state>0</state>
-                </option>
-                <option>
                     <name>CCCatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -952,7 +1042,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state />
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -1072,9 +1162,17 @@
             <name>STLINK_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>7</version>
+                <version>8</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
+                <option>
+                    <name>CCSTLinkCatchSFERR</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CCSTLinkDAPNumber</name>
+                    <state />
+                </option>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1149,10 +1247,6 @@
                     <state>0</state>
                 </option>
                 <option>
-                    <name>CCSTLinkCatchSFERR</name>
-                    <state>0</state>
-                </option>
-                <option>
                     <name>CCSTLinkCatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -1174,10 +1268,6 @@
                     <state>0</state>
                 </option>
                 <option>
-                    <name>CCSTLinkDAPNumber</name>
-                    <state />
-                </option>
-                <option>
                     <name>CCSTLinkDebugAccessPortRadio</name>
                     <state>0</state>
                 </option>
@@ -1187,8 +1277,16 @@
                 </option>
                 <option>
                     <name>CCSTLinkProbeList</name>
-                    <version>1</version>
-                    <state>2</state>
+                    <version>2</version>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CCSTLinkTargetVccEnable</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>CCSTLinkTargetVoltage</name>
+                    <state>3.3</state>
                 </option>
             </data>
         </settings>
@@ -1296,6 +1394,10 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
+                    <name>CCXds100CatchSFERR</name>
+                    <state>0</state>
+                </option>
+                <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
                 </option>
@@ -1388,10 +1490,6 @@
                     <state>0</state>
                 </option>
                 <option>
-                    <name>CCXds100CatchSFERR</name>
-                    <state>0</state>
-                </option>
-                <option>
                     <name>CCXds100CatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -1401,7 +1499,7 @@
                 </option>
                 <option>
                     <name>CCXds100CpuClockEdit</name>
-                    <state />
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCXds100SwoClockAuto</name>
@@ -1417,7 +1515,7 @@
                 </option>
                 <option>
                     <name>CCXds100ResetList</name>
-                    <version>0</version>
+                    <version>1</version>
                     <state>0</state>
                 </option>
                 <option>
@@ -1444,7 +1542,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>3</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
@@ -1473,6 +1571,10 @@
             </data>
         </settings>
         <debuggerPlugins>
+            <plugin>
+                <file>$TOOLKIT_DIR$\plugins\rtos\Azure\AzureArmPlugin.ENU.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\CMX\CmxArmPlugin.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
@@ -1506,15 +1608,23 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm9.ewplugin</file>
-                <loadFlag>0</loadFlag>
-            </plugin>
-            <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm9BE.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm9a.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\ThreadX\ThreadXArmPlugin.ENU.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-286-KA-CSpy.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-II\uCOS-II-KA-CSpy.ewplugin</file>
+                <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-III\uCOS-III-KA-CSpy.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>

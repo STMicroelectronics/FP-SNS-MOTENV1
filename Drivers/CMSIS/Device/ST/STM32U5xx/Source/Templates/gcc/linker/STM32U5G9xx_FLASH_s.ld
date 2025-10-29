@@ -45,8 +45,8 @@ _Min_Stack_Size = 0x400 ; /* required amount of stack */
 /* Memories definition */
 MEMORY
 {
-  RAM (xrw)      : ORIGIN = 0x30000000, LENGTH = 768K     /* Memory is divided. Actual start is 0x30000000 and actual length is 2512K */
-  FLASH (rx)     : ORIGIN = 0x0C000000, LENGTH = 2040K    /* Memory is divided. Actual start is 0x0C000000 and actual length is 4096K */
+  RAM (xrw)      : ORIGIN = 0x30000000, LENGTH = 832K     /* Memory is divided. Actual start is 0x30000000 and actual length is 832K */
+  FLASH (rx)     : ORIGIN = 0x0C000000, LENGTH = 2040K    /* Memory is divided. Actual start is 0x0C000000 and actual length is 2040K */
   FLASH_NSC (rx) : ORIGIN = 0x0C1FE000, LENGTH = 8K       /* Non-Secure Call-able region */
   SRAM4 (xrw)    : ORIGIN = 0x38000000, LENGTH = 16K      /* Secure SRAM4 */ 
 }
@@ -82,26 +82,26 @@ SECTIONS
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
   } >FLASH
 
-  .ARM.extab :
+  .ARM.extab (READONLY) : /* The READONLY keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
     *(.ARM.extab* .gnu.linkonce.armextab.*)
   } >FLASH
 
-  .ARM :
+  .ARM (READONLY) : /* The READONLY keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
   } >FLASH
 
-  .preinit_array :
+  .preinit_array (READONLY) : /* The READONLY keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
   } >FLASH
 
-  .init_array :
+  .init_array (READONLY) : /* The READONLY keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT(.init_array.*)))
@@ -109,7 +109,7 @@ SECTIONS
     PROVIDE_HIDDEN (__init_array_end = .);
   } >FLASH
 
-  .fini_array :
+  .fini_array (READONLY) : /* The READONLY keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT(.fini_array.*)))

@@ -77,37 +77,37 @@ BLE, BLE_Manager, BlueNRG-2, SPI, UART, MEMS
   - This example has been tested with STMicroelectronics:
     - NUCLEO-F401RE RevC board
 	
-ADDITIONAL_BOARD : X-NUCLEO-BNRG2A1 https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html
+ADDITIONAL_BOARD : [X-NUCLEO-BNRG2A1](https://www.st.com/en/ecosystems/x-nucleo-bnrg2a1.html)
 
-ADDITIONAL_COMP : BlueNRG-M2SP https://www.st.com/en/wireless-connectivity/bluenrg-2.html
+ADDITIONAL_COMP : [BlueNRG-M2SP](https://www.st.com/en/wireless-connectivity/bluenrg-2.html)
 
-ADDITIONAL_BOARD : X-NUCLEO-IKS4A1 https://www.st.com/en/ecosystems/x-nucleo-iks4a1.html
+ADDITIONAL_BOARD : [X-NUCLEO-IKS4A1](https://www.st.com/en/ecosystems/x-nucleo-iks4a1.html)
 
-ADDITIONAL_COMP : STTS22H https://www.st.com/en/mems-and-sensors/stts22h.html
+ADDITIONAL_COMP : [STTS22H](https://www.st.com/en/mems-and-sensors/stts22h.html)
 
-ADDITIONAL_COMP : SHT40AD1B https://www.soselectronic.com/en/products/sensirion/sht40-ad1b-r3-358587?_gl=1*12yjica*_up*MQ..&gclid=CjwKCAiAzJOtBhALEiwAtwj8tgO6sA9AHOiK-vJST1oi05qBQlng9UB9TxW9kUeC503dwLf6oZNJxhoC348QAvD_BwE
+ADDITIONAL_COMP : [SHT40AD1B](https://www.soselectronic.com/en/products/sensirion/sht40-ad1b-r3-358587?_gl=1*12yjica*_up*MQ..&gclid=CjwKCAiAzJOtBhALEiwAtwj8tgO6sA9AHOiK-vJST1oi05qBQlng9UB9TxW9kUeC503dwLf6oZNJxhoC348QAvD_BwE)
 
-ADDITIONAL_COMP : LPS22DF https://www.st.com/en/mems-and-sensors/lps22df.html
+ADDITIONAL_COMP : [LPS22DF](https://www.st.com/en/mems-and-sensors/lps22df.html)
 
-ADDITIONAL_COMP : LSM6DSV16X https://www.st.com/en/mems-and-sensors/lsm6dsv16x.html
+ADDITIONAL_COMP : [LSM6DSV16X](https://www.st.com/en/mems-and-sensors/lsm6dsv16x.html)
 
-ADDITIONAL_COMP : LIS2MDL https://www.st.com/en/mems-and-sensors/lis2mdl.html
+ADDITIONAL_COMP : [LIS2MDL](https://www.st.com/en/mems-and-sensors/lis2mdl.html)
 
-ADDITIONAL_COMP : LSM6DSO16IS https://www.st.com/en/mems-and-sensors/lsm6dso16is.html
+ADDITIONAL_COMP : [LSM6DSO16IS](https://www.st.com/en/mems-and-sensors/lsm6dso16is.html)
 
-ADDITIONAL_COMP : LIS2DUXS12 https://www.st.com/en/mems-and-sensors/lis2dux12.html
+ADDITIONAL_COMP : [LIS2DUXS12](https://www.st.com/en/mems-and-sensors/lis2dux12.html)
 
 ### <b>Dependencies</b>
 
 STM32Cube packages:
 
-  - STM32F4xx drivers from STM32CubeF4 V1.28.0
+  - STM32F4xx drivers from STM32CubeF4 V1.28.3
   
 X-CUBE packages:
 
   - X-CUBE-BLE2 V3.3.0
-  - X-CUBE-BLEMGR V3.0.0
-  - X-CUBE-MEMS1 V10.0.0
+  - X-CUBE-BLEMGR V4.1.0
+  - X-CUBE-MEMS1 V11.3.0
 
 ### <b>How to use it?</b>
 
@@ -120,21 +120,21 @@ In order to make the  program work, you must do the following:
 
 For IAR:
 
- - Open IAR toolchain (this firmware has been successfully tested with Embedded Workbench V9.20.1).
+ - Open IAR toolchain (this firmware has been successfully tested with Embedded Workbench V9.60.3).
  - Open the IAR project file EWARM/Project.eww
  - Rebuild all files and run these script that you find on the directory Utilities and you had installed STM32CubeProgrammer tool:
    - CleanMOTENV1.sh
 
 For Keil µVision 5:
 
- - Open Keil µVision 5 toolchain (this firmware has been successfully tested with MDK-ARM Professional Version: 5.37.0).
+ - Open Keil µVision 5 toolchain (this firmware has been successfully tested with MDK-ARM Professional Version: 5.38.0).
  - Open the µVision project file MDK-ARM/MOTENV1.uvprojx
  - Rebuild all files and run these script that you find on the directory Utilities and you had installed STM32CubeProgrammer tool:
    - CleanMOTENV1.sh
  
 For Integrated Development Environment for STM32:
 
- - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.14.0).
+ - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.19.0).
  - Set the default workspace proposed by the IDE (please be sure that there are not spaces in the workspace path).
  - Press "File" -> "Import" -> "Existing Projects into Workspace"; press "Browse" in the "Select root directory" and choose the path where the System
    Workbench project is located (it should be STM32CubeIDE). 
@@ -147,7 +147,7 @@ SRA Application Team
 
 ### <b>License</b>
 
-Copyright (c) 2024 STMicroelectronics.
+Copyright (c) 2025 STMicroelectronics.
 All rights reserved.
 
 This software is licensed under terms that can be found in the LICENSE file

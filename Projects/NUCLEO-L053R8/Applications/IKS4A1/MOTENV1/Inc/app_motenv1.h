@@ -3,14 +3,14 @@
   ******************************************************************************
   * @file    app_motenv1.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   This file provides code for the configuration FP-SNS-MOTENV1
   *          application instances.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -34,7 +34,8 @@ extern "C" {
 #include "stm32l0xx_hal.h"
 #include "stm32l0xx_hal_exti.h"
 
-#include "BLE_Manager.h"
+#include "ble_manager.h"
+#include "hw_advance_features.h"
 
 /* Exported Defines ----------------------------------------------------------*/
 #define STM32L0xx

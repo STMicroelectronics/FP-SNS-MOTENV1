@@ -3,13 +3,13 @@
   ******************************************************************************
   * @file    motenv1_config.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   FP-SNS-MOTENV1 configuration
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -115,14 +115,14 @@ extern "C" {
 #define MOTENV1_DEBUG_NOTIFY_TRAMISSION
 
 /* Firmware Id */
-#define CUSTOM_FIRMWARE_ID 0x01
+#define CUSTOM_FIRMWARE_ID 0x04
 
 /*************** Don't Change the following defines *************/
 /* USER CODE END 1 */
 
 /* Package Version only numbers 0->9 */
 #define MOTENV1_VERSION_MAJOR '5'
-#define MOTENV1_VERSION_MINOR '0'
+#define MOTENV1_VERSION_MINOR '1'
 #define MOTENV1_VERSION_PATCH '0'
 
 /* Package Name */

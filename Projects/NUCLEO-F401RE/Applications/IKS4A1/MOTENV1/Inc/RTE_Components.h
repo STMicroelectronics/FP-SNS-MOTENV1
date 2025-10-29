@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,12 +22,12 @@
 #define  __RTE_COMPONENTS_H__
 
 /* Defines ------------------------------------------------------------------*/
-/* STMicroelectronics.FP-SNS-MOTENV1.5.0.0 */
+/* STMicroelectronics.FP-SNS-MOTENV1.5.1.0 */
 #define MOTENV1_IKS4A1_FOTA_ALL_FEATURES
 /* STMicroelectronics.X-CUBE-BLE2.3.3.0 */
 #define HCI_TL
 #define HCI_TL_INTERFACE
-/* STMicroelectronics.X-CUBE-BLEMGR.3.0.0 */
+/* STMicroelectronics.X-CUBE-BLEMGR.4.1.0 */
 #define USE_PARSON
 #define BLE_MANAGER_ACC_EVENT
 #define BLE_MANAGER_ENVIRONMENTAL
@@ -41,7 +41,7 @@
 #define BLE_MANAGER_PEDOMETER_ALGORITHM
 #define BLE_MANAGER_SENSOR_FUSION
 #define BLUENRG_2
-/* STMicroelectronics.X-CUBE-MEMS1.10.0.0 */
+/* STMicroelectronics.X-CUBE-MEMS1.11.3.0 */
 #define IKS4A1
 
 #endif /* __RTE_COMPONENTS_H__ */

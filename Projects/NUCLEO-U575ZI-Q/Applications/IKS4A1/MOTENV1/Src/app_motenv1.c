@@ -3,14 +3,14 @@
   ******************************************************************************
   * @file    app_motenv1.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   This file provides code for FP-SNS-MOTENV1 application.
   *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -26,9 +26,8 @@
 #include "app_motenv1.h"
 
 #include "main.h"
-#include "BLE_Manager.h"
+#include "ble_manager.h"
 #include "ble_function.h"
-#include "hw_advance_features.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -97,6 +96,9 @@ unsigned char isCal = 0;
 uint32_t ForceReCalibration = 0;
 /* Count the numbers of step of the pedometer algorithm */
 uint16_t PedometerStepCount = 0;
+
+MPM_output_t PM_DataOUTStored;
+
 uint32_t CurrentActiveBank = 0;
 uint32_t OthersBank = 0;
 uint16_t FwId_Bank1;
@@ -292,11 +294,13 @@ static void User_Init(void)
   /* Check the Meta Data */
   if (CurrentActiveBank == 1)
   {
+    MOTENV1_PRINTF("\r\nRead Meta data (0x%x)\r\n", ADDRESS_META_DATA_BANK1);
     memcpy((void *)&FirmwareMetaData, (void *)ADDRESS_META_DATA_BANK1, sizeof(MetaData_t));
   }
 
   if (CurrentActiveBank == 2)
   {
+    MOTENV1_PRINTF("\r\nRead Meta data (0x%x)\r\n", ADDRESS_META_DATA_BANK2);
     memcpy((void *)&FirmwareMetaData, (void *)ADDRESS_META_DATA_BANK2, sizeof(MetaData_t));
   }
 
@@ -331,7 +335,7 @@ static void User_Init(void)
 #endif /* MOTENV1_DEBUG_NOTIFY_TRAMISSION */
 
   /* Initialize the BlueNRG stack and services */
-  BluetoothInit();
+  bluetooth_init();
 
   InitHWFeatures();
 
@@ -398,7 +402,27 @@ static void User_Process(void)
     }
 
     /* Now update the BLE advertize data and make the Board connectable */
-    setConnectable();
+    enable_extended_configuration_command();
+
+    if (CurrentActiveBank == 1)
+    {
+      if (FwId_Bank2 == FW_ID_NOT_VALID)
+      {
+        /* Enable the Banks Swap only if there is a valid fw on second bank */
+        ble_extended_configuration_value.banks_swap = 0;
+      }
+    }
+
+    if (CurrentActiveBank == 2)
+    {
+      if (FwId_Bank1 == FW_ID_NOT_VALID)
+      {
+        /* Enable the Banks Swap only if there is a valid fw on second bank */
+        ble_extended_configuration_value.banks_swap = 0;
+      }
+    }
+
+    set_connectable_ble();
     set_connectable = FALSE;
   }
 
@@ -489,7 +513,7 @@ static void User_Process(void)
     ComputeMotionID();
   }
 
-  /* Wait for Event */
+  /* Wait for event */
   __WFI();
 }
 
@@ -617,13 +641,13 @@ static void ButtonCallback(void)
       else
       {
         HowManyButtonPress++;
-        if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+        if (ble_std_term_service == BLE_SERV_ENABLE)
         {
-          BytesToWrite = sprintf((char *)BufferToWrite,
-                                 "%ld in %ldmS Reset Calib\r\n",
-                                 3 - HowManyButtonPress,
-                                 2000 - (tickstop - tickstart));
-          Term_Update(BufferToWrite, BytesToWrite);
+          bytes_to_write = sprintf((char *)buffer_to_write,
+                                   "%ld in %ldmS Reset Calib\r\n",
+                                   3 - HowManyButtonPress,
+                                   2000 - (tickstop - tickstart));
+          term_update(buffer_to_write, bytes_to_write);
         }
         else
         {
@@ -654,14 +678,14 @@ static void ReCalibration(void)
     MFX_MagCal_output_t mag_cal_test;
 
     /* Notifications of Compass Calibration */
-    Config_Update(FEATURE_MASK_SENSORFUSION_SHORT, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
-    Config_Update(FEATURE_MASK_ECOMPASS, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
+    config_update(FEATURE_MASK_SENSORFUSION_SHORT, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
+    config_update(FEATURE_MASK_ECOMPASS, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
 
     /* Reset the Calibration */
-    if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+    if (ble_std_term_service == BLE_SERV_ENABLE)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "\r\nForce ReCalibration\r\n");
-      Term_Update(BufferToWrite, BytesToWrite);
+      bytes_to_write = sprintf((char *)buffer_to_write, "\r\nForce ReCalibration\r\n");
+      term_update(buffer_to_write, bytes_to_write);
     }
 
     MOTENV1_PRINTF("\r\nForce ReCalibration\r\n");
@@ -686,6 +710,14 @@ static void MEMSCallback(void)
 
   MOTION_SENSOR_GET_EVENT_STATUS(ACCELERO_INSTANCE, &status);
 
+  uint8_t AccEvents = 0;
+  uint8_t NeedToSend = 0;
+
+  if (!W2ST_CHECK_HW_FEATURE(W2ST_HWF_PEDOMETER))
+  {
+    PedometerStepCount = 0;
+  }
+
   if ((W2ST_CHECK_HW_FEATURE(W2ST_HWF_PEDOMETER)) ||
       (W2ST_CHECK_HW_FEATURE(W2ST_HWF_MULTIPLE_EVENTS)))
   {
@@ -693,10 +725,7 @@ static void MEMSCallback(void)
     if (status.StepStatus != 0)
     {
       PedometerStepCount = GetStepHWPedometer();
-      if (W2ST_CHECK_HW_FEATURE(W2ST_HWF_PEDOMETER))
-      {
-        BLE_AccEnvUpdate(PedometerStepCount, 2);
-      }
+      NeedToSend = 1;
     }
   }
 
@@ -706,7 +735,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Free Fall */
     if (status.FreeFallStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_FREE_FALL, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_FREE_FALL;
     }
   }
 
@@ -716,7 +746,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Single Tap */
     if (status.TapStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_SINGLE_TAP, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_SINGLE_TAP;
     }
   }
 
@@ -726,7 +757,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Double Tap */
     if (status.DoubleTapStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_DOUBLE_TAP, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_DOUBLE_TAP;
     }
   }
 
@@ -736,7 +768,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Tilt */
     if (status.TiltStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_TILT, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_TILT;
     }
   }
 
@@ -746,8 +779,9 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to 6D Orientation */
     if (status.D6DOrientationStatus != 0)
     {
-      AccEventType Orientation = GetHWOrientation6D();
-      BLE_AccEnvUpdate(Orientation, 2);
+      acc_event_type_t Orientation = GetHWOrientation6D();
+      NeedToSend = 1;
+      AccEvents |= Orientation;
     }
   }
 
@@ -756,13 +790,14 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Wake Up */
     if (status.WakeUpStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_WAKE_UP, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_WAKE_UP;
     }
   }
 
-  if (W2ST_CHECK_HW_FEATURE(W2ST_HWF_MULTIPLE_EVENTS))
+  if (NeedToSend)
   {
-    BLE_AccEnvUpdate(PedometerStepCount, 3);
+    ble_acc_env_update(AccEvents, PedometerStepCount);
   }
 }
 
@@ -777,9 +812,9 @@ static void SendMotionData(void)
   MOTION_SENSOR_AXES_T GYR_Value;
   MOTION_SENSOR_AXES_T MAG_Value;
 
-  BLE_MANAGER_INERTIAL_Axes_t ACC_SensorValue;
-  BLE_MANAGER_INERTIAL_Axes_t GYR_SensorValue;
-  BLE_MANAGER_INERTIAL_Axes_t MAG_SensorValue;
+  ble_manager_inertial_axes_t ACC_SensorValue;
+  ble_manager_inertial_axes_t GYR_SensorValue;
+  ble_manager_inertial_axes_t MAG_SensorValue;
 
   /* Read the Acc values */
   MOTION_SENSOR_GET_AXES(ACCELERO_INSTANCE, MOTION_ACCELERO, &ACC_Value);
@@ -790,19 +825,19 @@ static void SendMotionData(void)
   /* Read the Gyro values */
   MOTION_SENSOR_GET_AXES(GYRO_INSTANCE, MOTION_GYRO, &GYR_Value);
 
-  ACC_SensorValue.Axis_x = ACC_Value.x;
-  ACC_SensorValue.Axis_y = ACC_Value.y;
-  ACC_SensorValue.Axis_z = ACC_Value.z;
+  ACC_SensorValue.axis_x = ACC_Value.x;
+  ACC_SensorValue.axis_y = ACC_Value.y;
+  ACC_SensorValue.axis_z = ACC_Value.z;
 
-  GYR_SensorValue.Axis_x = GYR_Value.x;
-  GYR_SensorValue.Axis_y = GYR_Value.y;
-  GYR_SensorValue.Axis_z = GYR_Value.z;
+  GYR_SensorValue.axis_x = GYR_Value.x;
+  GYR_SensorValue.axis_y = GYR_Value.y;
+  GYR_SensorValue.axis_z = GYR_Value.z;
 
-  MAG_SensorValue.Axis_x = MAG_Value.x;
-  MAG_SensorValue.Axis_y = MAG_Value.y;
-  MAG_SensorValue.Axis_z = MAG_Value.z;
+  MAG_SensorValue.axis_x = MAG_Value.x;
+  MAG_SensorValue.axis_y = MAG_Value.y;
+  MAG_SensorValue.axis_z = MAG_Value.z;
 
-  BLE_AccGyroMagUpdate(&ACC_SensorValue, &GYR_SensorValue, &MAG_SensorValue);
+  ble_acc_gyro_mag_update(&ACC_SensorValue, &GYR_SensorValue, &MAG_SensorValue);
 }
 
 /**
@@ -813,7 +848,7 @@ static void SendMotionData(void)
 static void ComputeMotionCP(void)
 {
   static MCP_output_t CarryPositionCodeStored = MCP_UNKNOWN;
-  BLE_CP_output_t CarryPositionCodeSent;
+  ble_cp_output_t CarryPositionCodeSent;
   MOTION_SENSOR_AXES_RAW_T ACC_Value_Raw;
 
   /* Read the Acc RAW values */
@@ -824,13 +859,13 @@ static void ComputeMotionCP(void)
   {
     CarryPositionCodeStored = CarryPositionCode;
 
-    CarryPositionCodeSent = (BLE_CP_output_t)CarryPositionCode;
-    BLE_CarryPositionUpdate(CarryPositionCodeSent);
+    CarryPositionCodeSent = (ble_cp_output_t)CarryPositionCode;
+    ble_carry_position_update(CarryPositionCodeSent);
 
-    if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+    if (ble_std_term_service == BLE_SERV_ENABLE)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "Sending: Carry Position Code= %d\r\n", CarryPositionCode);
-      Term_Update(BufferToWrite, BytesToWrite);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Sending: Carry Position Code= %d\r\n", CarryPositionCode);
+      term_update(buffer_to_write, bytes_to_write);
     }
     else
     {
@@ -847,7 +882,7 @@ static void ComputeMotionCP(void)
 static void ComputeMotionGR(void)
 {
   static MGR_output_t GestureRecognitionCodeStored = MGR_NOGESTURE;
-  BLE_GR_output_t GestureRecognitionCodeSent;
+  ble_gr_output_t GestureRecognitionCodeSent;
   MOTION_SENSOR_AXES_RAW_T ACC_Value_Raw;
 
   /* Read the Acc RAW values */
@@ -857,15 +892,15 @@ static void ComputeMotionGR(void)
   if (GestureRecognitionCodeStored != GestureRecognitionCode)
   {
     GestureRecognitionCodeStored = GestureRecognitionCode;
-    GestureRecognitionCodeSent = (BLE_GR_output_t)GestureRecognitionCode;
-    BLE_GestureRecognitionUpdate(GestureRecognitionCodeSent);
+    GestureRecognitionCodeSent = (ble_gr_output_t)GestureRecognitionCode;
+    ble_gesture_recognition_update(GestureRecognitionCodeSent);
 
-    if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+    if (ble_std_term_service == BLE_SERV_ENABLE)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite,
-                             "Sending: Gesture Recognition Code= %d\r\n",
-                             GestureRecognitionCode);
-      Term_Update(BufferToWrite, BytesToWrite);
+      bytes_to_write = sprintf((char *)buffer_to_write,
+                               "Sending: Gesture Recognition Code= %d\r\n",
+                               GestureRecognitionCode);
+      term_update(buffer_to_write, bytes_to_write);
     }
     else
     {
@@ -881,8 +916,7 @@ static void ComputeMotionGR(void)
   */
 static void ComputeMotionPM(void)
 {
-  static MPM_output_t PM_DataOUTStored;
-  BLE_PM_output_t PM_DataOUT_Sent;
+  ble_pm_output_t PM_DataOUT_Sent;
   MOTION_SENSOR_AXES_RAW_T ACC_Value_Raw;
 
   /* Read the Acc RAW values */
@@ -892,9 +926,9 @@ static void ComputeMotionPM(void)
   if ((PM_DataOUTStored.Nsteps != PM_DataOUT.Nsteps) | (PM_DataOUTStored.Cadence != PM_DataOUT.Cadence))
   {
     PM_DataOUTStored = PM_DataOUT;
-    PM_DataOUT_Sent.Cadence = PM_DataOUT.Cadence;
-    PM_DataOUT_Sent.Nsteps = PM_DataOUT.Nsteps;
-    BLE_PedometerAlgorithmUpdate(&PM_DataOUT_Sent);
+    PM_DataOUT_Sent.cadence = PM_DataOUT.Cadence;
+    PM_DataOUT_Sent.n_steps = PM_DataOUT.Nsteps;
+    ble_pedometer_algorithm_update(&PM_DataOUT_Sent);
   }
 }
 
@@ -906,7 +940,7 @@ static void ComputeMotionPM(void)
 static void ComputeMotionAR(void)
 {
   static MAR_output_t ActivityCodeStored = MAR_NOACTIVITY;
-  BLE_AR_output_t ActivityCodeSent;
+  ble_ar_output_t ActivityCodeSent;
   MOTION_SENSOR_AXES_RAW_T ACC_Value_Raw;
 
   /* Read the Acc RAW values */
@@ -918,14 +952,14 @@ static void ComputeMotionAR(void)
   {
     ActivityCodeStored = ActivityCode;
 
-    ActivityCodeSent = (BLE_AR_output_t)ActivityCode;
+    ActivityCodeSent = (ble_ar_output_t)ActivityCode;
 
-    BLE_ActRecUpdate(ActivityCodeSent, HAR_ALGO_IDX_NONE);
+    ble_act_rec_update(ActivityCodeSent, HAR_ALGO_IDX_NONE);
 
-    if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+    if (ble_std_term_service == BLE_SERV_ENABLE)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "Sending: Activity Recognition Code= %d\r\n", ActivityCode);
-      Term_Update(BufferToWrite, BytesToWrite);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Sending: Activity Recognition Code= %d\r\n", ActivityCode);
+      term_update(buffer_to_write, bytes_to_write);
     }
     else
     {
@@ -942,7 +976,7 @@ static void ComputeMotionAR(void)
 static void ComputeMotionID(void)
 {
   static MID_output_t MIDStored = MID_ON_DESK; /* on desk */
-  BLE_ID_output_t MIDCodeSent;
+  ble_id_output_t MIDCodeSent;
   MOTION_SENSOR_AXES_RAW_T ACC_Value_Raw;
 
   /* Read the Acc RAW values */
@@ -954,14 +988,14 @@ static void ComputeMotionID(void)
   {
     MIDStored = MIDCode;
 
-    MIDCodeSent = (BLE_ID_output_t)MIDCode;
+    MIDCodeSent = (ble_id_output_t)MIDCode;
 
-    BLE_MotionIntensityUpdate(MIDCodeSent);
+    ble_motion_intensity_update(MIDCodeSent);
 
-    if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+    if (ble_std_term_service == BLE_SERV_ENABLE)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "Sending: Motion Intensity Code= %d\r\n", MIDCode);
-      Term_Update(BufferToWrite, BytesToWrite);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Sending: Motion Intensity Code= %d\r\n", MIDCode);
+      term_update(buffer_to_write, bytes_to_write);
     }
     else
     {
@@ -977,7 +1011,7 @@ static void ComputeMotionID(void)
 static void ComputeQuaternions(void)
 {
   static MOTION_SENSOR_AXES_T quat_axes[SEND_N_QUATERNIONS];
-  static BLE_MOTION_SENSOR_Axes_t quat_axes_send[SEND_N_QUATERNIONS];
+  static ble_motion_sensor_axes_t quat_axes_send[SEND_N_QUATERNIONS];
   static int32_t calibIndex = 0;
   static int32_t CounterFX  = 0;
   static int32_t CounterEC  = 0;
@@ -1059,10 +1093,10 @@ static void ComputeQuaternions(void)
 
       if (isCal == 0x01)
       {
-        if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+        if (ble_std_term_service == BLE_SERV_ENABLE)
         {
-          BytesToWrite = sprintf((char *)BufferToWrite, "\r\nCompass Calibrated\r\n");
-          Term_Update(BufferToWrite, BytesToWrite);
+          bytes_to_write = sprintf((char *)buffer_to_write, "\r\nCompass Calibrated\r\n");
+          term_update(buffer_to_write, bytes_to_write);
         }
 
         MOTENV1_PRINTF("\r\nCompass Calibrated\r\n");
@@ -1071,12 +1105,12 @@ static void ComputeQuaternions(void)
         LedOnTargetPlatform();
         if (LedEnabled)
         {
-          BLE_LedStatusUpdate(TargetBoardFeatures.LedStatus);
+          ble_led_status_update(TargetBoardFeatures.LedStatus);
         }
 
         /* Notifications of Compass Calibration */
-        Config_Update(FEATURE_MASK_SENSORFUSION_SHORT, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
-        Config_Update(FEATURE_MASK_ECOMPASS, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
+        config_update(FEATURE_MASK_SENSORFUSION_SHORT, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
+        config_update(FEATURE_MASK_ECOMPASS, W2ST_COMMAND_CAL_STATUS, isCal ? 100 : 0);
       }
     }
   }
@@ -1092,9 +1126,9 @@ static void ComputeQuaternions(void)
     /* E-Compass Updated every 0.1 Seconds*/
     if (CounterEC == 10)
     {
-      uint16_t Angle = (uint16_t)trunc(100 * pdata_out->heading);
+      uint16_t Angle = (uint16_t)trunc(100 * (double)pdata_out->heading);
       CounterEC = 0;
-      BLE_ECompassUpdate(Angle);
+      ble_e_compass_update(Angle);
     }
   }
   else
@@ -1118,14 +1152,14 @@ static void ComputeQuaternions(void)
       quat_axes[QuaternionNumber].z = (int32_t)(pdata_out->quaternion[2] * 10000);
     }
 
-    quat_axes_send[QuaternionNumber].Axis_x = quat_axes[QuaternionNumber].x;
-    quat_axes_send[QuaternionNumber].Axis_y = quat_axes[QuaternionNumber].y;
-    quat_axes_send[QuaternionNumber].Axis_z = quat_axes[QuaternionNumber].z;
+    quat_axes_send[QuaternionNumber].axis_x = quat_axes[QuaternionNumber].x;
+    quat_axes_send[QuaternionNumber].axis_y = quat_axes[QuaternionNumber].y;
+    quat_axes_send[QuaternionNumber].axis_z = quat_axes[QuaternionNumber].z;
 
     /* Every QUAT_UPDATE_MUL_10MS*10 mSeconds Send Quaternions information via bluetooth */
     if (CounterFX == QUAT_UPDATE_MUL_10MS)
     {
-      BLE_SensorFusionUpdate(quat_axes_send, SEND_N_QUATERNIONS);
+      ble_sensor_fusion_update(quat_axes_send, SEND_N_QUATERNIONS);
       CounterFX = 0;
     }
   }
@@ -1205,20 +1239,20 @@ static void SendEnvironmentalData(void)
     ReadEnvironmentalData(&PressToSend, &HumToSend, &Temp1ToSend, &Temp2ToSend);
 
 #ifdef MOTENV1_DEBUG_NOTIFY_TRAMISSION
-    if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+    if (ble_std_term_service == BLE_SERV_ENABLE)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "Sending: ");
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Press=%ld ", PressToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Hum=%d ", HumToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Temp=%d ", Temp1ToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Temp2=%d ", Temp2ToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "\r\n");
-      Term_Update(BufferToWrite, BytesToWrite);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Sending: ");
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Press=%ld ", PressToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Hum=%d ", HumToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Temp=%d ", Temp1ToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Temp2=%d ", Temp2ToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "\r\n");
+      term_update(buffer_to_write, bytes_to_write);
     }
 
     MOTENV1_PRINTF("Sending: ");
@@ -1229,7 +1263,7 @@ static void SendEnvironmentalData(void)
     MOTENV1_PRINTF("\r\n");
 #endif /* MOTENV1_DEBUG_NOTIFY_TRAMISSION */
 
-    BLE_EnvironmentalUpdate(PressToSend, HumToSend, Temp2ToSend, Temp1ToSend);
+    ble_environmental_update(PressToSend, HumToSend, Temp2ToSend, Temp1ToSend);
   }
 }
 
@@ -1389,7 +1423,7 @@ static void MagCalibTest(void)
     else
     {
       MOTENV1_PRINTF("Magneto Calibration Not correct for Current %s board\r\n",
-                     TargetBoardFeatures.mems_expansion_board ? "IKS01A3" : "IKS4A1");
+                     TargetBoardFeatures.mems_expansion_board ? "Unknown" : "IKS4A1");
       ResetCalibrationInMemory();
       isCal = 0;
     }
@@ -1431,10 +1465,10 @@ static unsigned char SaveCalibrationToMemory(void)
   FirmwareMetaData.Calibration[4] = MAG_Offset.y;
   FirmwareMetaData.Calibration[5] = MAG_Offset.z;
 
-  if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+  if (ble_std_term_service == BLE_SERV_ENABLE)
   {
-    BytesToWrite = sprintf((char *)BufferToWrite, "Magneto Calibration will be saved in FLASH\r\n");
-    Term_Update(BufferToWrite, BytesToWrite);
+    bytes_to_write = sprintf((char *)buffer_to_write, "Magneto Calibration will be saved in FLASH\r\n");
+    term_update(buffer_to_write, bytes_to_write);
   }
   else
   {
@@ -1462,10 +1496,10 @@ static unsigned char ResetCalibrationInMemory(void)
     FirmwareMetaData.Calibration[Counter] = 0x0;
   }
 
-  if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+  if (ble_std_term_service == BLE_SERV_ENABLE)
   {
-    BytesToWrite = sprintf((char *)BufferToWrite, "Magneto Calibration will be eresed in FLASH\r\n");
-    Term_Update(BufferToWrite, BytesToWrite);
+    bytes_to_write = sprintf((char *)buffer_to_write, "Magneto Calibration will be eresed in FLASH\r\n");
+    term_update(buffer_to_write, bytes_to_write);
   }
   else
   {
@@ -1545,12 +1579,12 @@ void UpdateNodeNameMetaData(void)
   {
     if (CurrentActiveBank == 1)
     {
-      FirmwareMetaData.NodeName[i + 1] = BLE_StackValue.BoardName[i];
+      FirmwareMetaData.NodeName[i + 1] = ble_stack_value.board_name[i];
     }
 
     if (CurrentActiveBank == 2)
     {
-      FirmwareMetaData.NodeName_2[i + 1] = BLE_StackValue.BoardName[i];
+      FirmwareMetaData.NodeName_2[i + 1] = ble_stack_value.board_name[i];
     }
   }
 
@@ -1574,7 +1608,7 @@ unsigned char ReCallNodeNameFromMemory(void)
 
     for (uint32_t i = 0; i < 7; i++)
     {
-      FirmwareMetaData.NodeName[i + 1] = BLE_StackValue.BoardName[i];
+      FirmwareMetaData.NodeName[i + 1] = ble_stack_value.board_name[i];
     }
 
     FirmwareMetaData.NodeName[8] = '\0';
@@ -1582,16 +1616,16 @@ unsigned char ReCallNodeNameFromMemory(void)
     NecessityToSaveMetaData = 1;
 
     MOTENV1_PRINTF("\r\nNode name not present in FLASH\r\n");
-    MOTENV1_PRINTF("\tNode name written to FLASH= %s\r\n", BLE_StackValue.BoardName);
+    MOTENV1_PRINTF("\tNode name written to FLASH= %s\r\n", ble_stack_value.board_name);
   }
   else
   {
     for (uint32_t i = 0; i < 7; i++)
     {
-      BLE_StackValue.BoardName[i] = FirmwareMetaData.NodeName[i + 1];
+      ble_stack_value.board_name[i] = FirmwareMetaData.NodeName[i + 1];
     }
 
-    MOTENV1_PRINTF("\r\nNode name read from FLASH (%s)\r\n", BLE_StackValue.BoardName);
+    MOTENV1_PRINTF("\r\nNode name read from FLASH (%s)\r\n", ble_stack_value.board_name);
   }
 
   return Success;
@@ -1613,7 +1647,7 @@ unsigned char ReCallNodeName2FromMemory(void)
 
     for (uint32_t i = 0; i < 7; i++)
     {
-      FirmwareMetaData.NodeName_2[i + 1] = BLE_StackValue.BoardName[i];
+      FirmwareMetaData.NodeName_2[i + 1] = ble_stack_value.board_name[i];
     }
 
     FirmwareMetaData.NodeName_2[8] = '\0';
@@ -1621,16 +1655,16 @@ unsigned char ReCallNodeName2FromMemory(void)
     NecessityToSaveMetaData = 1;
 
     MOTENV1_PRINTF("\r\nNode name not present in FLASH\r\n");
-    MOTENV1_PRINTF("\tNode name written to FLASH= %s\r\n", BLE_StackValue.BoardName);
+    MOTENV1_PRINTF("\tNode name written to FLASH= %s\r\n", ble_stack_value.board_name);
   }
   else
   {
     for (uint32_t i = 0; i < 7; i++)
     {
-      BLE_StackValue.BoardName[i] = FirmwareMetaData.NodeName_2[i + 1];
+      ble_stack_value.board_name[i] = FirmwareMetaData.NodeName_2[i + 1];
     }
 
-    MOTENV1_PRINTF("\r\nNode name read from FLASH (%s)\r\n", BLE_StackValue.BoardName);
+    MOTENV1_PRINTF("\r\nNode name read from FLASH (%s)\r\n", ble_stack_value.board_name);
   }
 
   return Success;

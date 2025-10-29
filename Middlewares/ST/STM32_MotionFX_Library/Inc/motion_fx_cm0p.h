@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    motion_fx_cm0p.h
   * @author  MEMS Application Team
-  * @version V2.6.1
-  * @date    10-August-2021
   * @brief   Header for motion_fx_cm0p module
   ******************************************************************************
   * @attention
@@ -15,7 +13,7 @@
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
-  ******************************************************************************
+  ********************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -46,6 +44,7 @@ typedef enum
   MFX_CM0P_MCU_BLUE_NRG1,
   MFX_CM0P_MCU_BLUE_NRG2,
   MFX_CM0P_MCU_BLUE_NRG_LP,
+  MFX_CMOP_MCU_STM32WB0,
 } MFX_CM0P_mcu_type_t;
 
 typedef enum

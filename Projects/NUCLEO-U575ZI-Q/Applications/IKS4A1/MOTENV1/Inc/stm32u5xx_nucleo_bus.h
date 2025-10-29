@@ -1,12 +1,15 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file  stm32u5xx_nucleo_bus.h
-  * @brief header file for the BSP BUS IO driver
+  * @file    stm32u5xx_nucleo_bus.h
+  * @author  System Research & Applications Team - Catania Lab.
+  * @version 5.1.0
+  * @date    12-September-2025
+  * @brief   header file for the BSP BUS IO driver
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file

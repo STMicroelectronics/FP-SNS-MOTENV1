@@ -9,7 +9,6 @@
 | STM32U5 HAL                              | STMicroelectronics   | BSD-3-Clause |
 | BSP Components                           | STMicroelectronics   | BSD-3-Clause |
 | BSP IKS4A1                               | STMicroelectronics   | BSD-3-Clause |
-| BSP IKS01A3                              | STMicroelectronics   | BSD-3-Clause |
 | BSP STM32F4xx-Nucleo                     | STMicroelectronics   | BSD-3-Clause |
 | BSP STM32L0xx_Nucleo                     | STMicroelectronics   | BSD-3-Clause |
 | BSP STM32L4xx_Nucleo                     | STMicroelectronics   | BSD-3-Clause |

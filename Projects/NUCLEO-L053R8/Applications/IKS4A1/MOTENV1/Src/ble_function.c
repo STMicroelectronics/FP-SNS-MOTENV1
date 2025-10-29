@@ -2,14 +2,12 @@
 /**
   ******************************************************************************
   * @file    ble_function.c
-  * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @author  System Research & Applications Team - Agrate/Catania Lab.
   * @brief   BLE function API definition
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -24,7 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
 #include "hw_advance_features.h"
-#include "BLE_Manager.h"
+#include "ble_manager.h"
 #include "app_motenv1.h"
 #include "main.h"
 #include "motenv1_config.h"
@@ -45,21 +43,21 @@ static uint8_t TIM2_CHANNEL_3_Enabled = 0;
 static uint32_t DebugConsoleCommandParsing(uint8_t *att_data, uint8_t data_length);
 
 /* Start/Stop BLE notify for accelerometer events */
-static void AccEnv_StartStop(BLE_NotifyEvent_t Event);
+static void AccEnv_StartStop(ble_notify_event_t event);
 
 /* Start/Stop channels 1 of the timer for BLE notify */
-static void TIM2_CHANNEL_1_StartStop(BLE_NotifyEvent_t Event);
+static void TIM2_CHANNEL_1_StartStop(ble_notify_event_t event);
 /* Start/Stop channels 3 of the timer for BLE notify */
-static void TIM2_CHANNEL_3_StartStop(BLE_NotifyEvent_t Event);
+static void TIM2_CHANNEL_3_StartStop(ble_notify_event_t event);
 
 /**
   * @brief  Set Board Name.
   * @param  None
   * @retval None
   */
-void SetBoardName(void)
+void set_board_name(void)
 {
-  sprintf(BLE_StackValue.BoardName, "%s%c%c%c", "ME1V",
+  sprintf(ble_stack_value.board_name, "%s%c%c%c", "ME1V",
           MOTENV1_VERSION_MAJOR,
           MOTENV1_VERSION_MINOR,
           MOTENV1_VERSION_PATCH);
@@ -70,7 +68,7 @@ void SetBoardName(void)
   * @param  uint8_t *manuf_data: Advertize Data
   * @retval None
   */
-void BLE_SetCustomAdvertiseData(uint8_t *manuf_data)
+void ble_set_custom_advertise_data(uint8_t *manuf_data)
 {
 #ifndef BLE_MANAGER_SDKV2
   /**
@@ -87,7 +85,14 @@ void BLE_SetCustomAdvertiseData(uint8_t *manuf_data)
 #else /* BLE_MANAGER_SDKV2 */
   /* USER CODE BEGIN 2 */
   manuf_data[BLE_MANAGER_CUSTOM_FIELD1] = CUSTOM_FIRMWARE_ID; /* Custom Firmware */
-  manuf_data[BLE_MANAGER_CUSTOM_FIELD2] = 0x00;
+  if (TargetBoardFeatures.IKS01Ax_support)
+  {
+    manuf_data[BLE_MANAGER_CUSTOM_FIELD2] = 0x00;
+  } /*  TargetBoardFeatures.IKS01Ax_support  */
+  else
+  {
+    manuf_data[BLE_MANAGER_CUSTOM_FIELD2] = 0xFF;
+  }
   manuf_data[BLE_MANAGER_CUSTOM_FIELD3] = 0x00;
   manuf_data[BLE_MANAGER_CUSTOM_FIELD4] = 0x00;
   /* USER CODE END 2 */
@@ -100,7 +105,7 @@ void BLE_SetCustomAdvertiseData(uint8_t *manuf_data)
   * @param  uint8_t data_length length of the data
   * @retval uint32_t SendBackData true/false
   */
-uint32_t DebugConsoleParsing(uint8_t *att_data, uint8_t data_length)
+uint32_t debug_console_parsing(uint8_t *att_data, uint8_t data_length)
 {
   /* By default Answer with the same message received */
   uint32_t SendBackData = 1;
@@ -127,11 +132,11 @@ static uint32_t DebugConsoleCommandParsing(uint8_t *att_data, uint8_t data_lengt
     /* Print Legend */
     SendBackData = 0;
 
-    BytesToWrite = sprintf((char *)BufferToWrite, "Command:\r\n"
-                           "pr->HW pedometer reset\r\n"
-                           "info-> System Info\r\n"
-                           "versionBle-> Ble Version\r\n");
-    Term_Update(BufferToWrite, BytesToWrite);
+    bytes_to_write = sprintf((char *)buffer_to_write, "Command:\r\n"
+                             "pr->HW pedometer reset\r\n"
+                             "info-> System Info\r\n"
+                             "versionBle-> Ble Version\r\n");
+    term_update(buffer_to_write, bytes_to_write);
   }
   /* HW pedometer reset command */
   else if ((att_data[0] == 'p') & (att_data[1] == 'r'))
@@ -139,51 +144,49 @@ static uint32_t DebugConsoleCommandParsing(uint8_t *att_data, uint8_t data_lengt
     /* Reset the pedometer DS3 HW counter */
     ResetHWPedometer();
     SendBackData = 0;
-    BytesToWrite = sprintf((char *)BufferToWrite, "Pedometer HW counter reset\r\n");
-    Term_Update(BufferToWrite, BytesToWrite);
+    bytes_to_write = sprintf((char *)buffer_to_write, "Pedometer HW counter reset\r\n");
+    term_update(buffer_to_write, bytes_to_write);
   }
   /* info command */
   else if (!strncmp("info", (char *)(att_data), 4))
   {
     SendBackData = 0;
 
-    BytesToWrite = sprintf((char *)BufferToWrite, "\r\nSTMicroelectronics %s:\r\n"
-                           "\tVersion %c.%c.%c\r\n"
-                           "\tSTM32L053R8-Nucleo board"
-                           "\r\n",
-                           MOTENV1_PACKAGENAME,
-                           MOTENV1_VERSION_MAJOR, MOTENV1_VERSION_MINOR, MOTENV1_VERSION_PATCH);
+    bytes_to_write = sprintf((char *)buffer_to_write, "\r\nSTMicroelectronics %s:\r\n"
+                             "\tVersion %c.%c.%c\r\n"
+                             "\tSTM32L053R8-Nucleo board"
+                             "\r\n",
+                             MOTENV1_PACKAGENAME,
+                             MOTENV1_VERSION_MAJOR, MOTENV1_VERSION_MINOR, MOTENV1_VERSION_PATCH);
 
-    Term_Update(BufferToWrite, BytesToWrite);
+    term_update(buffer_to_write, bytes_to_write);
 
-    BytesToWrite = sprintf((char *)BufferToWrite, "\t(HAL %ld.%ld.%ld_%ld)\r\n"
-                           "\tCompiled %s %s"
+    bytes_to_write = sprintf((char *)buffer_to_write, "\t(HAL %ld.%ld.%ld_%ld)\r\n"
+                             "\tCompiled %s %s"
 #if defined (__IAR_SYSTEMS_ICC__)
-                           " (IAR)\r\n",
+                             " (IAR)\r\n",
 #elif defined (__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)) /* For ARM Compiler 5 and 6 */
-                           " (KEIL)\r\n",
+                             " (KEIL)\r\n",
 #elif defined (__GNUC__)
-                           " (STM32CubeIDE)\r\n",
+                             " (STM32CubeIDE)\r\n",
 #endif /* IDE */
-                           HAL_GetHalVersion() >> 24,
-                           (HAL_GetHalVersion() >> 16) & 0xFF,
-                           (HAL_GetHalVersion() >> 8) & 0xFF,
-                           HAL_GetHalVersion()      & 0xFF,
-                           __DATE__, __TIME__);
+                             HAL_GetHalVersion() >> 24,
+                             (HAL_GetHalVersion() >> 16) & 0xFF,
+                             (HAL_GetHalVersion() >> 8) & 0xFF,
+                             HAL_GetHalVersion()      & 0xFF,
+                             __DATE__, __TIME__);
 
-    Term_Update(BufferToWrite, BytesToWrite);
+    term_update(buffer_to_write, bytes_to_write);
 
     if (TargetBoardFeatures.IKS01Ax_support)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "Code compiled for X-NUCLEO-IKS4A1\r\n");
-
+      bytes_to_write = sprintf((char *)buffer_to_write, "Code compiled for X-NUCLEO-IKS4A1\r\n");
     }
     else
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "\tX-NUCLEO-IKS4A1 Board not present\r\n");
-
+      bytes_to_write = sprintf((char *)buffer_to_write, "\tX-NUCLEO-IKS4A1 Board not present\r\n");
     }
-    Term_Update(BufferToWrite, BytesToWrite);
+    term_update(buffer_to_write, bytes_to_write);
   }
   /* versionBle command */
   else if (!strncmp("versionBle", (char *)(att_data), 10))
@@ -191,13 +194,13 @@ static uint32_t DebugConsoleCommandParsing(uint8_t *att_data, uint8_t data_lengt
     uint8_t  hwVersion;
     uint16_t fwVersion = 0;
     /* get the BlueNRG HW and FW versions */
-    getBlueNRGVersion(&hwVersion, &fwVersion);
-    BytesToWrite = sprintf((char *)BufferToWrite, "%s_%d.%d.%c\r\n",
-                           "BlueNRG2",
-                           (fwVersion >> 8) & 0xF,
-                           (fwVersion >> 4) & 0xF,
-                           ('a' + (fwVersion & 0xF)));
-    Term_Update(BufferToWrite, BytesToWrite);
+    get_blue_nrg_version(&hwVersion, &fwVersion);
+    bytes_to_write = sprintf((char *)buffer_to_write, "%s_%d.%d.%c\r\n",
+                             "BlueNRG2",
+                             (fwVersion >> 8) & 0xF,
+                             (fwVersion >> 4) & 0xF,
+                             ('a' + (fwVersion & 0xF)));
+    term_update(buffer_to_write, bytes_to_write);
     SendBackData = 0;
   }
   /* UID command */
@@ -206,12 +209,12 @@ static uint32_t DebugConsoleCommandParsing(uint8_t *att_data, uint8_t data_lengt
     /* Write back the STM32 UID */
     uint8_t *uid = (uint8_t *)BLE_STM32_UUID;
     uint32_t MCU_ID = BLE_STM32_MCU_ID[0] & 0xFFF;
-    BytesToWrite = sprintf((char *)BufferToWrite, "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X_%.3lX\r\n",
-                           uid[ 3], uid[ 2], uid[ 1], uid[ 0],
-                           uid[ 7], uid[ 6], uid[ 5], uid[ 4],
-                           uid[11], uid[ 10], uid[9], uid[8],
-                           MCU_ID);
-    Term_Update(BufferToWrite, BytesToWrite);
+    bytes_to_write = sprintf((char *)buffer_to_write, "%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X%.2X_%.3lX\r\n",
+                             uid[ 3], uid[ 2], uid[ 1], uid[ 0],
+                             uid[ 7], uid[ 6], uid[ 5], uid[ 4],
+                             uid[11], uid[ 10], uid[9], uid[8],
+                             MCU_ID);
+    term_update(buffer_to_write, bytes_to_write);
     SendBackData = 0;
   }
 
@@ -223,7 +226,7 @@ static uint32_t DebugConsoleCommandParsing(uint8_t *att_data, uint8_t data_lengt
   * @param  None
   * @retval None
   */
-void DisconnectionCompletedFunction(void)
+void disconnection_completed_function(void)
 {
   connected = FALSE;
 
@@ -286,7 +289,7 @@ void DisconnectionCompletedFunction(void)
   * @param  None
   * @retval None
   */
-void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Address_Type, uint8_t addr[6])
+void connection_completed_function(uint16_t ConnectionHandle, uint8_t Address_Type, uint8_t addr[6])
 {
   connected = TRUE;
 
@@ -316,7 +319,7 @@ void ConnectionCompletedFunction(uint16_t ConnectionHandle, uint8_t Address_Type
   * @param uint8_t data_length length of the data
   * @retval None
   */
-void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
+void write_request_config_function(uint8_t *att_data, uint8_t data_length)
 {
   uint32_t FeatureMask = (att_data[3]) | (att_data[2] << 8) | (att_data[1] << 16) | (att_data[0] << 24);
   uint8_t Command = att_data[4];
@@ -327,10 +330,10 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
     case FEATURE_MASK_ACC_EVENTS:
       /* Acc events */
 #ifdef MOTENV1_DEBUG_CONNECTION
-      if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+      if (ble_std_term_service == BLE_SERV_ENABLE)
       {
-        BytesToWrite = sprintf((char *)BufferToWrite, "Conf Sig F=%lx C=%c D=%x\r\n", FeatureMask, Command, Data);
-        Term_Update(BufferToWrite, BytesToWrite);
+        bytes_to_write = sprintf((char *)buffer_to_write, "Conf Sig F=%lx C=%c D=%x\r\n", FeatureMask, Command, Data);
+        term_update(buffer_to_write, bytes_to_write);
       }
       else
       {
@@ -346,11 +349,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
             case 1:
               EnableHWMultipleEvents();
               ResetHWPedometer();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWMultipleEvents();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -360,11 +363,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
           {
             case 1:
               EnableHWFreeFall();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWFreeFall();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -374,11 +377,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
           {
             case 1:
               EnableHWDoubleTap();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWDoubleTap();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -388,11 +391,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
           {
             case 1:
               EnableHWSingleTap();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWSingleTap();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -403,11 +406,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
             case 1:
               EnableHWPedometer();
               ResetHWPedometer();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWPedometer();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -417,11 +420,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
           {
             case 1:
               EnableHWWakeUp();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWWakeUp();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -431,11 +434,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
           {
             case 1:
               EnableHWTilt();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWTilt();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -445,11 +448,11 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
           {
             case 1:
               EnableHWOrientation6D();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
             case 0:
               DisableHWOrientation6D();
-              Config_Update(FEATURE_MASK_ACC_EVENTS, Command, Data);
+              config_update(FEATURE_MASK_ACC_EVENTS, Command, Data);
               break;
           }
           break;
@@ -458,10 +461,10 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
     case FEATURE_MASK_LED:
       /* Led events */
 #ifdef MOTENV1_DEBUG_CONNECTION
-      if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+      if (ble_std_term_service == BLE_SERV_ENABLE)
       {
-        BytesToWrite = sprintf((char *)BufferToWrite, "Conf Sig F=%lx C=%2x\n\r", FeatureMask, Command);
-        Term_Update(BufferToWrite, BytesToWrite);
+        bytes_to_write = sprintf((char *)buffer_to_write, "Conf Sig F=%lx C=%2x\n\r", FeatureMask, Command);
+        term_update(buffer_to_write, bytes_to_write);
       }
       else
       {
@@ -472,17 +475,17 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
       {
         case 1:
           LedOnTargetPlatform();
-          Config_Update(FEATURE_MASK_LED, Command, Data);
+          config_update(FEATURE_MASK_LED, Command, Data);
           break;
         case 0:
           LedOffTargetPlatform();
-          Config_Update(FEATURE_MASK_LED, Command, Data);
+          config_update(FEATURE_MASK_LED, Command, Data);
           break;
       }
       /* Update the LED feature */
       if (LedEnabled)
       {
-        BLE_LedStatusUpdate(TargetBoardFeatures.LedStatus);
+        ble_led_status_update(TargetBoardFeatures.LedStatus);
       }
       break;
   }
@@ -493,65 +496,75 @@ void WriteRequestConfigFunction(uint8_t *att_data, uint8_t data_length)
   **************************************************/
 /**
   * @brief  Enable/Disable Led BLE Features
-  * @param  BLE_NotifyEvent_t Event
+  * @param  ble_notify_event_t event
   * @retval None
   */
-void NotifyEventLed(BLE_NotifyEvent_t Event)
+void notify_event_led(ble_notify_event_t event)
 {
   /* Led Features */
-  if (Event == BLE_NOTIFY_SUB)
+  if (event == BLE_NOTIFY_SUB)
   {
     LedEnabled = 1;
-    BLE_LedStatusUpdate(TargetBoardFeatures.LedStatus);
+    ble_led_status_update(TargetBoardFeatures.LedStatus);
   }
 
-  if (Event == BLE_NOTIFY_UNSUB)
+  if (event == BLE_NOTIFY_UNSUB)
   {
     LedEnabled = 0;
   }
 }
 
 /**
-  * @brief  Enable/Disable Accelerometer events BLE Features
-  * @param  BLE_NotifyEvent_t Event
+  * @brief  Callback Function for Led read request.
+  * @param  uint8_t *led_status Status of the led
   * @retval None
   */
-void NotifyEventAccEvent(BLE_NotifyEvent_t Event)
+void read_request_led_function(uint8_t *led_status)
+{
+  *led_status = TargetBoardFeatures.LedStatus;
+}
+
+/**
+  * @brief  Enable/Disable Accelerometer events BLE Features
+  * @param  ble_notify_event_t event
+  * @retval None
+  */
+void notify_event_acc_event(ble_notify_event_t event)
 {
   /* Accelerometer events Features */
-  if (Event != BLE_NOTIFY_NOTHING)
+  if (event != BLE_NOTIFY_NOTHING)
   {
-    AccEnv_StartStop(Event);
+    AccEnv_StartStop(event);
   }
 }
 
 /**
   * @brief  Enable/Disable environmental BLE Features
-  * @param  BLE_NotifyEvent_t Event
+  * @param  ble_notify_event_t event
   * @retval None
   */
-void NotifyEventEnv(BLE_NotifyEvent_t Event)
+void notify_event_env(ble_notify_event_t event)
 {
   /* Environmental Features */
-  if (Event != BLE_NOTIFY_NOTHING)
+  if (event != BLE_NOTIFY_NOTHING)
   {
     /* Enable/Disable TIM2 Channel 1 */
-    TIM2_CHANNEL_1_StartStop(Event);
+    TIM2_CHANNEL_1_StartStop(event);
   }
 }
 
 /**
   * @brief  Enable/Disable inertial BLE Features
-  * @param  BLE_NotifyEvent_t Event
+  * @param  ble_notify_event_t event
   * @retval None
   */
-void NotifyEventInertial(BLE_NotifyEvent_t Event)
+void notify_event_inertial(ble_notify_event_t event)
 {
   /* Inertial Features */
-  if (Event != BLE_NOTIFY_NOTHING)
+  if (event != BLE_NOTIFY_NOTHING)
   {
     /* Enable/Disable TIM2 Channel 3 */
-    TIM2_CHANNEL_3_StartStop(Event);
+    TIM2_CHANNEL_3_StartStop(event);
   }
 }
 
@@ -564,18 +577,16 @@ void NotifyEventInertial(BLE_NotifyEvent_t Event)
   * @param  None
   * @retval None
   */
-static void AccEnv_StartStop(BLE_NotifyEvent_t Event)
+static void AccEnv_StartStop(ble_notify_event_t event)
 {
-  if ((Event == BLE_NOTIFY_SUB) &&
+  if ((event == BLE_NOTIFY_SUB) &&
       (!AccEventEnabled))
   {
-    EnableHWMultipleEvents();
     ResetHWPedometer();
-    Config_Update(FEATURE_MASK_ACC_EVENTS, 'm', 1);
     AccEventEnabled = 1;
   }
 
-  if ((Event == BLE_NOTIFY_UNSUB) &&
+  if ((event == BLE_NOTIFY_UNSUB) &&
       (AccEventEnabled))
   {
     DisableHWMultipleEvents();
@@ -588,10 +599,10 @@ static void AccEnv_StartStop(BLE_NotifyEvent_t Event)
   * @param  None
   * @retval None
   */
-static void TIM2_CHANNEL_1_StartStop(BLE_NotifyEvent_t Event)
+static void TIM2_CHANNEL_1_StartStop(ble_notify_event_t event)
 {
   /* Enable TIM2 Channel 1 */
-  if ((Event == BLE_NOTIFY_SUB) &&
+  if ((event == BLE_NOTIFY_SUB) &&
       (!TIM2_CHANNEL_1_Enabled))
   {
 
@@ -614,7 +625,7 @@ static void TIM2_CHANNEL_1_StartStop(BLE_NotifyEvent_t Event)
   }
 
   /* Disable TIM2 Channel 1 */
-  if ((Event == BLE_NOTIFY_UNSUB) &&
+  if ((event == BLE_NOTIFY_UNSUB) &&
       (TIM2_CHANNEL_1_Enabled))
   {
     /* Stop the TIM Base generation in interrupt mode (for Acc/Gyro/Mag sensor) */
@@ -634,10 +645,10 @@ static void TIM2_CHANNEL_1_StartStop(BLE_NotifyEvent_t Event)
   * @param  None
   * @retval None
   */
-static void TIM2_CHANNEL_3_StartStop(BLE_NotifyEvent_t Event)
+static void TIM2_CHANNEL_3_StartStop(ble_notify_event_t event)
 {
   /* Enable TIM2 Channel 3 */
-  if ((Event == BLE_NOTIFY_SUB) &&
+  if ((event == BLE_NOTIFY_SUB) &&
       (!TIM2_CHANNEL_3_Enabled))
   {
     /* Start the TIM Base generation in interrupt mode */
@@ -659,7 +670,7 @@ static void TIM2_CHANNEL_3_StartStop(BLE_NotifyEvent_t Event)
   }
 
   /* Disable TIM2 Channel 3 */
-  if ((Event == BLE_NOTIFY_UNSUB) &&
+  if ((event == BLE_NOTIFY_UNSUB) &&
       (TIM2_CHANNEL_3_Enabled))
   {
     /* Stop the TIM Base generation in interrupt mode (for Acc/Gyro/Mag sensor) */

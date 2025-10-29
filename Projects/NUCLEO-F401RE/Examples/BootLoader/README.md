@@ -25,11 +25,16 @@ BootLoader
   - for Keil, open the "Options for Target" and in the tab "Target" set 0x3F00 as ROM size. 
 - This example must run starting at the beginning of the FLASH 0x08000000 in memory and works in collaboration with another program saved on the FLASH at address 0x08004000
 
+### <b>Known Issues</b>
+
+Compiler warning "BootLoader.elf has a LOAD segment with RWX permissions" is generated with STM32CubeIDE.
+It doesn’t affect application performances.
+
 ### <b>Dependencies</b>
 
 STM32Cube packages:
 
-  - STM32F4xx drivers from STM32CubeF4 V1.28.0
+  - STM32F4xx drivers from STM32CubeF4 V1.28.3
 
 ### <b>How to use it?</b>
 
@@ -42,21 +47,21 @@ In order to make the  program work, you must do the following:
 
 For IAR:
 
- - Open IAR toolchain (this firmware has been successfully tested with Embedded Workbench V9.20.1).
+ - Open IAR toolchain (this firmware has been successfully tested with Embedded Workbench V9.60.3).
  - Open the IAR project file EWARM/Project.eww
  - Rebuild all files and load your image into target memory.
  - Run the example.
 
 For Keil µVision 5:
 
- - Open Keil µVision 5 toolchain (this firmware has been successfully tested with MDK-ARM Professional Version: 5.37.0).
+ - Open Keil µVision 5 toolchain (this firmware has been successfully tested with MDK-ARM Professional Version: 5.38.0).
  - Open the µVision project file MDK-ARM/BootLoader.uvprojx
  - Rebuild all files and load your image into target memory.
  - Run the example.
  
 For Integrated Development Environment for STM32:
 
- - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.14.0).
+ - Open STM32CubeIDE (this firmware has been successfully tested with Version 1.19.0).
  - Set the default workspace proposed by the IDE (please be sure that there are not spaces in the workspace path).
  - Press "File" -> "Import" -> "Existing Projects into Workspace"; press "Browse" in the "Select root directory" and choose the path where the System
    Workbench project is located (it should be STM32CubeIDE). 
@@ -69,7 +74,7 @@ SRA Application Team
 
 ### <b>License</b>
 
-Copyright (c) 2024 STMicroelectronics.
+Copyright (c) 2025 STMicroelectronics.
 All rights reserved.
 
 This software is licensed under terms that can be found in the LICENSE file

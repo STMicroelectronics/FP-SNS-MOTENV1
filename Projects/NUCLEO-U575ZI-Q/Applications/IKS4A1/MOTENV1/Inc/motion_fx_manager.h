@@ -3,13 +3,13 @@
   ******************************************************************************
   * @file    motion_fx_manager.h
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   Header for motion_fx_manager.c
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -23,6 +23,10 @@
 
 #ifndef _MOTIONFX_MANAGER_H_
 #define _MOTIONFX_MANAGER_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "motion_fx.h"
 #include "target_features.h"
@@ -50,6 +54,10 @@ extern void MotionFX_manager_MagCal_stop(int sampletime);
 
 extern MFX_output_t *MotionFX_manager_getDataOUT(void);
 extern MFX_input_t *MotionFX_manager_getDataIN(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _MOTIONFX_MANAGER_H_ */
 

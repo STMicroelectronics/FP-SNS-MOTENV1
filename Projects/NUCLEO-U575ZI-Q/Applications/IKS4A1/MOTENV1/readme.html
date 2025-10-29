@@ -96,6 +96,21 @@ on less that 2 seconds, he forces a new Calibration for MotionFX Library
 calibration value could be stored on FLASH memory or in RAM for avoiding
 to do the calibration at each board reset</p></li>
 </ol>
+<h3 id="required-stm32cubemx-settings"><b>Required STM32CubeMX settings</b></h3>
+<p>Before code generation in Project Manager:</p>
+<ul>
+<li>for toolchain/IDE EWARM set Min Version to 8.50 (default is 9.20).</li>
+<li>for toolchain/IDE MKD-ARM set Min Version to 5.32 (default is 5.39).</li>
+</ul>
+<p>Without this setting the code will be building but the flashing on board will fail.</p>
+<h3 id="required-ide-settings"><b>Required IDE settings</b></h3>
+<p>For Keil IDE:</p>
+<ul>
+<li>set the “Micro LIB” option from within the “Project/Option for
+Target” menu (Target tab).</li>
+<li>set the “Misc Controls” option with the “-Wno-format” string, from
+within the “Project/Option for Target” menu (C/C++ (AC6) tab).</li>
+</ul>
 <h3 id="keywords"><b>Keywords</b></h3>
 <p>BLE, BLE_Manager, BlueNRG-2, SPI, UART, MEMS</p>
 <h3 id="hardware-and-software-environment"><b>Hardware and Software
@@ -126,16 +141,18 @@ LIS2DUXS12</li>
 <p>ADDITIONAL_COMP : <a href="https://www.st.com/en/mems-and-sensors/stts22h.html">STTS22H</a></p>
 <p>ADDITIONAL_BOARD : <a href="https://www.st.com/en/ecosystems/x-nucleo-cca02m2.html">X-NUCLEO-CCA02M2</a></p>
 <p>ADDITIONAL_COMP : <a href="https://www.st.com/en/mems-and-sensors/mp34dt06j.html">MP34DT06J</a></p>
+<h3 id="dependencies"><b>Known Issues</b></h3>
+<p>For IAR Embedded Workbench v9.60.3 and after code generate from STM32CubeMX, using an editor tool to open EWARM/MOTENV1.ewp file, modify "DSPExtension" from 0 to 1</p>
 <h3 id="dependencies"><b>Dependencies</b></h3>
 <p>STM32Cube packages:</p>
 <ul>
-<li>STM32U5xx drivers from STM32CubeU5 V1.4.0</li>
+<li>STM32U5xx drivers from STM32CubeU5 V1.8.0</li>
 </ul>
 <p>X-CUBE packages:</p>
 <ul>
 <li>X-CUBE-BLE2 V3.3.0</li>
-<li>X-CUBE-BLEMGR V3.0.0</li>
-<li>X-CUBE-MEMS1 V10.0.0</li>
+<li>X-CUBE-BLEMGR V4.1.0</li>
+<li>X-CUBE-MEMS1 V11.3.0</li>
 </ul>
 <h3 id="how-to-use-it"><b>How to use it?</b></h3>
 <p>This package contains projects for 3 IDEs viz. IAR, Keil µVision 5
@@ -149,7 +166,7 @@ report errors after building.</li>
 <p>For IAR:</p>
 <ul>
 <li>Open IAR toolchain (this firmware has been successfully tested with
-Embedded Workbench V9.20.1).</li>
+Embedded Workbench V9.60.3).</li>
 <li>Open the IAR project file EWARM/Project.eww</li>
 <li>Rebuild all files and run these script that you find on the
 directory Utilities and you had installed STM32CubeProgrammer tool:
@@ -160,7 +177,7 @@ directory Utilities and you had installed STM32CubeProgrammer tool:
 <p>For Keil µVision 5:</p>
 <ul>
 <li>Open Keil µVision 5 toolchain (this firmware has been successfully
-tested with MDK-ARM Professional Version: 5.37.0).</li>
+tested with MDK-ARM Professional Version: 5.38.0).</li>
 <li>Open the µVision project file MDK-ARM/MOTENV1.uvprojx</li>
 <li>Rebuild all files and run these script that you find on the
 directory Utilities and you had installed STM32CubeProgrammer tool:
@@ -171,7 +188,7 @@ directory Utilities and you had installed STM32CubeProgrammer tool:
 <p>For Integrated Development Environment for STM32:</p>
 <ul>
 <li>Open STM32CubeIDE (this firmware has been successfully tested with
-Version 1.14.0).</li>
+Version 1.19.0).</li>
 <li>Set the default workspace proposed by the IDE (please be sure that
 there are not spaces in the workspace path).</li>
 <li>Press “File” -&gt; “Import” -&gt; “Existing Projects into
@@ -187,7 +204,7 @@ directory Utilities and you had installed STM32CubeProgrammer tool:
 <h3 id="author"><b>Author</b></h3>
 <p>SRA Application Team</p>
 <h3 id="license"><b>License</b></h3>
-<p>Copyright (c) 2024 STMicroelectronics. All rights reserved.</p>
+<p>Copyright (c) 2025 STMicroelectronics. All rights reserved.</p>
 <p>This software is licensed under terms that can be found in the
 LICENSE file in the root directory of this software component. If no
 LICENSE file comes with this software, it is provided AS-IS.</p>

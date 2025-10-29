@@ -3,13 +3,14 @@
   ******************************************************************************
   * @file    app_motenv1.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   This file provides code for FP-SNS-MOTENV1 application.
+  *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -25,9 +26,8 @@
 #include "app_motenv1.h"
 
 #include "main.h"
-#include "BLE_Manager.h"
+#include "ble_manager.h"
 #include "ble_function.h"
-#include "hw_advance_features.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -194,7 +194,7 @@ static void User_Init(void)
 #endif /* MOTENV1_DEBUG_NOTIFY_TRAMISSION */
 
   /* Initialize the BlueNRG stack and services */
-  BluetoothInit();
+  bluetooth_init();
 
   InitHWFeatures();
 
@@ -250,16 +250,16 @@ static void User_Process(void)
     /* Now update the node name */
     if (FirstConnectionConfig)
     {
-      sprintf(BLE_StackValue.BoardName, "%s%c%c%c", "ME1V",
+      sprintf(ble_stack_value.board_name, "%s%c%c%c", "ME1V",
               MOTENV1_VERSION_MAJOR,
               MOTENV1_VERSION_MINOR,
               MOTENV1_VERSION_PATCH);
 
-      MOTENV1_PRINTF("\r\nFixed node name = %s\r\n\r\n", BLE_StackValue.BoardName);
+      MOTENV1_PRINTF("\r\nFixed node name = %s\r\n\r\n", ble_stack_value.board_name);
       FirstConnectionConfig = 0;
     }
 
-    setConnectable();
+    set_connectable_ble();
     set_connectable = FALSE;
   }
 
@@ -294,7 +294,7 @@ static void User_Process(void)
     SendMotionData();
   }
 
-  /* Wait for Event */
+  /* Wait for event */
   __WFI();
 }
 
@@ -334,6 +334,14 @@ static void MEMSCallback(void)
 
   MOTION_SENSOR_GET_EVENT_STATUS(ACCELERO_INSTANCE, &status);
 
+  uint8_t AccEvents = 0;
+  uint8_t NeedToSend = 0;
+
+  if (!W2ST_CHECK_HW_FEATURE(W2ST_HWF_PEDOMETER))
+  {
+    PedometerStepCount = 0;
+  }
+
   if ((W2ST_CHECK_HW_FEATURE(W2ST_HWF_PEDOMETER)) ||
       (W2ST_CHECK_HW_FEATURE(W2ST_HWF_MULTIPLE_EVENTS)))
   {
@@ -341,10 +349,7 @@ static void MEMSCallback(void)
     if (status.StepStatus != 0)
     {
       PedometerStepCount = GetStepHWPedometer();
-      if (W2ST_CHECK_HW_FEATURE(W2ST_HWF_PEDOMETER))
-      {
-        BLE_AccEnvUpdate(PedometerStepCount, 2);
-      }
+      NeedToSend = 1;
     }
   }
 
@@ -354,7 +359,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Free Fall */
     if (status.FreeFallStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_FREE_FALL, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_FREE_FALL;
     }
   }
 
@@ -364,7 +370,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Single Tap */
     if (status.TapStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_SINGLE_TAP, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_SINGLE_TAP;
     }
   }
 
@@ -374,7 +381,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Double Tap */
     if (status.DoubleTapStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_DOUBLE_TAP, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_DOUBLE_TAP;
     }
   }
 
@@ -384,7 +392,8 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Tilt */
     if (status.TiltStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_TILT, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_TILT;
     }
   }
 
@@ -394,8 +403,9 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to 6D Orientation */
     if (status.D6DOrientationStatus != 0)
     {
-      AccEventType Orientation = GetHWOrientation6D();
-      BLE_AccEnvUpdate(Orientation, 2);
+      acc_event_type_t Orientation = GetHWOrientation6D();
+      NeedToSend = 1;
+      AccEvents |= Orientation;
     }
   }
 
@@ -404,13 +414,14 @@ static void MEMSCallback(void)
     /* Check if the interrupt is due to Wake Up */
     if (status.WakeUpStatus != 0)
     {
-      BLE_AccEnvUpdate(ACC_WAKE_UP, 2);
+      NeedToSend = 1;
+      AccEvents |= ACC_WAKE_UP;
     }
   }
 
-  if (W2ST_CHECK_HW_FEATURE(W2ST_HWF_MULTIPLE_EVENTS))
+  if (NeedToSend)
   {
-    BLE_AccEnvUpdate(PedometerStepCount, 3);
+    ble_acc_env_update(AccEvents, PedometerStepCount);
   }
 }
 
@@ -425,9 +436,9 @@ static void SendMotionData(void)
   MOTION_SENSOR_AXES_T GYR_Value;
   MOTION_SENSOR_AXES_T MAG_Value;
 
-  BLE_MANAGER_INERTIAL_Axes_t ACC_SensorValue;
-  BLE_MANAGER_INERTIAL_Axes_t GYR_SensorValue;
-  BLE_MANAGER_INERTIAL_Axes_t MAG_SensorValue;
+  ble_manager_inertial_axes_t ACC_SensorValue;
+  ble_manager_inertial_axes_t GYR_SensorValue;
+  ble_manager_inertial_axes_t MAG_SensorValue;
 
   /* Read the Acc values */
   MOTION_SENSOR_GET_AXES(ACCELERO_INSTANCE, MOTION_ACCELERO, &ACC_Value);
@@ -438,19 +449,19 @@ static void SendMotionData(void)
   /* Read the Gyro values */
   MOTION_SENSOR_GET_AXES(GYRO_INSTANCE, MOTION_GYRO, &GYR_Value);
 
-  ACC_SensorValue.Axis_x = ACC_Value.x;
-  ACC_SensorValue.Axis_y = ACC_Value.y;
-  ACC_SensorValue.Axis_z = ACC_Value.z;
+  ACC_SensorValue.axis_x = ACC_Value.x;
+  ACC_SensorValue.axis_y = ACC_Value.y;
+  ACC_SensorValue.axis_z = ACC_Value.z;
 
-  GYR_SensorValue.Axis_x = GYR_Value.x;
-  GYR_SensorValue.Axis_y = GYR_Value.y;
-  GYR_SensorValue.Axis_z = GYR_Value.z;
+  GYR_SensorValue.axis_x = GYR_Value.x;
+  GYR_SensorValue.axis_y = GYR_Value.y;
+  GYR_SensorValue.axis_z = GYR_Value.z;
 
-  MAG_SensorValue.Axis_x = MAG_Value.x;
-  MAG_SensorValue.Axis_y = MAG_Value.y;
-  MAG_SensorValue.Axis_z = MAG_Value.z;
+  MAG_SensorValue.axis_x = MAG_Value.x;
+  MAG_SensorValue.axis_y = MAG_Value.y;
+  MAG_SensorValue.axis_z = MAG_Value.z;
 
-  BLE_AccGyroMagUpdate(&ACC_SensorValue, &GYR_SensorValue, &MAG_SensorValue);
+  ble_acc_gyro_mag_update(&ACC_SensorValue, &GYR_SensorValue, &MAG_SensorValue);
 }
 
 /**
@@ -510,20 +521,20 @@ static void SendEnvironmentalData(void)
     ReadEnvironmentalData(&PressToSend, &HumToSend, &Temp1ToSend, &Temp2ToSend);
 
 #ifdef MOTENV1_DEBUG_NOTIFY_TRAMISSION
-    if (BLE_StdTerm_Service == BLE_SERV_ENABLE)
+    if (ble_std_term_service == BLE_SERV_ENABLE)
     {
-      BytesToWrite = sprintf((char *)BufferToWrite, "Sending: ");
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Press=%ld ", PressToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Hum=%d ", HumToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Temp=%d ", Temp1ToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "Temp2=%d ", Temp2ToSend);
-      Term_Update(BufferToWrite, BytesToWrite);
-      BytesToWrite = sprintf((char *)BufferToWrite, "\r\n");
-      Term_Update(BufferToWrite, BytesToWrite);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Sending: ");
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Press=%ld ", PressToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Hum=%d ", HumToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Temp=%d ", Temp1ToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "Temp2=%d ", Temp2ToSend);
+      term_update(buffer_to_write, bytes_to_write);
+      bytes_to_write = sprintf((char *)buffer_to_write, "\r\n");
+      term_update(buffer_to_write, bytes_to_write);
     }
 
     MOTENV1_PRINTF("Sending: ");
@@ -534,7 +545,7 @@ static void SendEnvironmentalData(void)
     MOTENV1_PRINTF("\r\n");
 #endif /* MOTENV1_DEBUG_NOTIFY_TRAMISSION */
 
-    BLE_EnvironmentalUpdate(PressToSend, HumToSend, Temp2ToSend, Temp1ToSend);
+    ble_environmental_update(PressToSend, HumToSend, Temp2ToSend, Temp1ToSend);
   }
 }
 

@@ -3,13 +3,13 @@
   ******************************************************************************
   * @file    motion_fx_manager.c
   * @author  System Research & Applications Team - Catania Lab.
-  * @version 5.0.0
-  * @date    12-February-2024
+  * @version 5.1.0
+  * @date    12-September-2025
   * @brief   This file includes sensor fusion interface functions
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -68,6 +68,8 @@ void MotionFX_manager_init(void)
   {
     Error_Handler();
   }
+
+  memset(mfxstate, 0, (sizeof(uint8_t) * STATE_SIZE));
 
   MotionFX_initialize((MFXState_t *)mfxstate);
   MotionFX_GetLibVersion(LibVersion);
